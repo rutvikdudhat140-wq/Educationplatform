@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const connectDB = async () => {
   try {
-    const connStr = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/education_platform?directConnection=true';
+    const connStr = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/education_platform';
     await mongoose.connect(connStr, {
       directConnection: true,
       serverSelectionTimeoutMS: 5000

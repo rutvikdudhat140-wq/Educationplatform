@@ -7,29 +7,15 @@ import adminRoutes from './src/routes/admin.routes.js';
 
 const app = express();
 
-app.use(cors({
-  origin: '*',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
-
 const PORT = process.env.PORT || 5001;
 
-const startServer = async () => {
-  try {
-    await connectDB();
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error.message);
-  }
-};
+await connectDB();
 
-startServer();
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

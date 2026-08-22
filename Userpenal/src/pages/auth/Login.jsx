@@ -1,6 +1,6 @@
 import LoginForm from '../../components/auth/LoginForm';
 
-export default function Login() {
+ function Login() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white p-8 border border-gray-200 rounded-lg shadow-sm">
@@ -10,3 +10,5 @@ export default function Login() {
     </div>
   );
 }
+
+export default Login

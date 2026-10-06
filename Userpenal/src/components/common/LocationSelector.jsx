@@ -62,14 +62,14 @@ function getNearestCity(lat, lon) {
 }
 
 export function getLocation() {
-  return localStorage.getItem("user_city_v2") || "";
+  return localStorage.getItem("user_city_v3") || "";
 }
 
 export function setLocation(city) {
   if (city) {
-    localStorage.setItem("user_city_v2", city);
+    localStorage.setItem("user_city_v3", city);
   } else {
-    localStorage.removeItem("user_city_v2");
+    localStorage.removeItem("user_city_v3");
   }
   window.dispatchEvent(
     new CustomEvent("user_location_changed", { detail: { city } })

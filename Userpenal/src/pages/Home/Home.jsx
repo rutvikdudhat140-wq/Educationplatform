@@ -70,8 +70,8 @@ export default function Home() {
       try {
         const [collegeResponse, topCollegeResponse, courseResponse] =
           await Promise.all([
-            fetch(createApiUrl('/college?status=Active')).then(r => r.json()),
-            fetch(createApiUrl('/college?status=Active&isTopCollege=true')).then(r => r.json()),
+            fetch(createApiUrl('/college?limit=100')).then(r => r.json()),
+            fetch(createApiUrl('/college?isTopCollege=true')).then(r => r.json()),
             fetch(createApiUrl('/course/popular')).then(r => r.json()),
           ]);
 

@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -14,44 +18,46 @@ export default function LoginForm() {
     try {
       const response = await axios.post('http://localhost:5001/api/admin/login', { email, password });
       localStorage.setItem('adminToken', response.data.token);
-      navigate('/dashboard');
+      navigate('/admin/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {error && <div className="p-3 bg-red-50 text-red-700 text-sm rounded">{error}</div>}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-        <input
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      <div className="space-y-2">
+        <Label>Email</Label>
+        <Input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
         />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-        <input
+      <div className="space-y-2">
+        <Label>Password</Label>
+        <Input
           type="password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
         />
       </div>
-      <button
+      <Button
         type="submit"
-        className="w-full py-2 px-4 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded transition"
+        className="w-full"
       >
         Login
-      </button>
-      <p className="mt-4 text-center text-sm text-gray-600">
+      </Button>
+      <p className="text-center text-sm text-muted-foreground">
         Don't have an admin account?{' '}
-        <Link to="/signup" className="text-blue-600 hover:underline">
+        <Link to="/signup" className="font-medium text-primary underline-offset-4 hover:underline">
           Sign Up
         </Link>
       </p>

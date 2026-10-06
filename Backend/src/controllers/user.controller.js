@@ -24,7 +24,7 @@ export const signUp = async (req, res) => {
     });
 
     const token = jwt.sign({ id: user._id, role: 'user' }, JWT_SECRET, { expiresIn: '1d' });
-    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email } });
+    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone, image: user.image } });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: error.message || 'server error' })
@@ -50,62 +50,86 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id, role: 'user' }, JWT_SECRET, { expiresIn: '1d' });
-    res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+    res.json({ token, user: { id: user.id, name: user.name, email: user.email, phone: user.phone, image: user.image } });
   } catch (error) {
-    console.error('Login error:', error.message);
-    res.status(500).json({ message: 'Server error' });
+    
   }
 };
 
-export const changePassword = async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
-    const {
-      currentPassword,
-      newPassword,
-      confirmPassword
-    } = req.body;
-
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      return res.status(400).json({
-        message: 'All fields are required'
-      });
-    }
-
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({
-        message: 'New passwords not match'
-      });
-    }
-
-    const user = await User.findById(req.user.id);
-
+    const user = await User.findById(req.user.id).select('-password');
     if (!user) {
       return res.status(404).json({
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
-    const isMatch = await bcrypt.compare(
-      currentPassword,
-      user.password
-    );
-
-    if (!isMatch) {
-      return res.status(400).json({
-        message: 'Current password is incorrect'
-      });
-    }
-
-    user.password = await bcrypt.hash(newPassword, 10);
-
-    await user.save();
-
-    res.json({
-      message: 'Password changed successfully'
+    res.status(200).json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        image: user.image,
+      },
     });
   } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
+
+// export const changePassword = async (req, res) => {
+//   try {
+//     const {
+//       currentPassword,
+//       newPassword,
+//       confirmPassword
+//     } = req.body;
+
+//     if (!currentPassword || !newPassword || !confirmPassword) {
+//       return res.status(400).json({
+//         message: 'All fields are required'
+//       });
+//     }
+
+//     if (newPassword !== confirmPassword) {
+//       return res.status(400).json({
+//         message: 'New passwords not match'
+//       });
+//     }
+
+//     const user = await User.findById(req.user.id);
+
+//     if (!user) {
+//       return res.status(404).json({
+//         message: 'User not found'
+//       });
+//     }
+
+//     const isMatch = await bcrypt.compare(
+//       currentPassword,
+//       user.password
+//     );
+
+//     if (!isMatch) {
+//       return res.status(400).json({
+//         message: 'Current password is incorrect'
+//       });
+//     }
+
+//     user.password = await bcrypt.hash(newPassword, 10);
+
+//     await user.save();
+
+//     res.json({
+//       message: 'Password changed successfully'
+//     });
+//   } catch (error) {
+//   }
+// };
 
 export const logout = async (req, res) => {
   try {

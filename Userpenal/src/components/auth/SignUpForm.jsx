@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function SignUpForm() {
   const [name, setName] = useState('');
@@ -11,58 +14,56 @@ export default function SignUpForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+
     try {
       const response = await axios.post('http://localhost:5001/api/user/signup', { name, email, password });
       localStorage.setItem('userToken', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Sign up failed');
+
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {error && <div className="p-3 bg-red-50 text-red-700 text-sm rounded">{error}</div>}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-        <input
+    <form onSubmit={handleSubmit} className="space-y-5">
+
+      <div className="space-y-2">
+        <Label>Full Name</Label>
+        <Input
           type="text"
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
         />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-        <input
+      <div className="space-y-2">
+        <Label>Email</Label>
+        <Input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
         />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-        <input
+      <div className="space-y-2">
+        <Label>Password</Label>
+        <Input
           type="password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
         />
       </div>
-      <button
+      <Button
         type="submit"
-        className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition"
+        className="w-full"
       >
         Sign Up
-      </button>
-      <p className="mt-4 text-center text-sm text-gray-600">
+      </Button>
+      <p className="text-center text-sm text-muted-foreground">
         Already have an account?{' '}
-        <Link to="/login" className="text-blue-600 hover:underline">
+        <Link to="/login" className="font-medium text-primary underline-offset-4 hover:underline">
           Login
         </Link>
       </p>

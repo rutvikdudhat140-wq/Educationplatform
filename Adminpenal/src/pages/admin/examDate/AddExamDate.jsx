@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
+import axios from "axios";
 
 const AddExamDate = () => {
     const navigate = useNavigate();
 
     const [exams, setExams] = useState([]);
     const [examSessions, setExamSessions] = useState([]);
-    const token = localStorage.getItem('adminToken');
 
     const [form, setForm] = useState({
         exam: "",
         examSession: "",
         registrationStartDate: "",
         registrationEndDate: "",
+        correctionStartDate: "",
+        correctionEndDate: "",
         admitCardDate: "",
         answerKeyDate: "",
         examStartDate: "",
@@ -28,7 +29,7 @@ const AddExamDate = () => {
 
     useEffect(() => {
         axios
-            .get("http://localhost:5001/api/exam")
+            .get("/api/exam")
             .then((res) => {
                 setExams(res.data.exams);
             });
@@ -44,11 +45,7 @@ const AddExamDate = () => {
 
         if (name === "exam") {
             axios
-                .get(`http://localhost:5001/api/exam-session?exam=${value}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
+                .get(`/api/exam-session?exam=${value}`)
                 .then((res) => {
                     setExamSessions(res.data.examSessions || []);
                 });
@@ -59,11 +56,7 @@ const AddExamDate = () => {
         e.preventDefault();
 
         axios
-            .post("http://localhost:5001/api/exam-date", form, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            .post("/api/exam-date", form)
             .then(() => {
                 navigate("/admin/exam-date/list");
             });
@@ -73,9 +66,8 @@ const AddExamDate = () => {
         <div className="mx-auto max-w-4xl space-y-5">
 
             <div className="flex items-center gap-3">
-                <Button variant="ghost"size="icon"onClick={() => navigate("/admin/exam-date/list")} ></Button>
 
-                <div>
+<div>
                     <h2 className="text-2xl font-semibold">Add Exam Date</h2>
                     <p className="text-sm text-muted-foreground">Add important dates for an exam session</p>
                 </div>
@@ -131,8 +123,7 @@ const AddExamDate = () => {
 
                 </div>
 
-
-                <div>
+<div>
                     <p className="mb-3 text-sm font-semibold">Registration Date</p>
 
                     <div className="grid gap-5 md:grid-cols-2">
@@ -156,6 +147,38 @@ const AddExamDate = () => {
                                 type="date"
                                 name="registrationEndDate"
                                 value={form.registrationEndDate}
+                                onChange={handleChange}
+                                className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm"
+                            />
+                        </label>
+
+                    </div>
+                </div>
+
+                <div>
+                    <p className="mb-3 text-sm font-semibold">Correction Dates</p>
+
+                    <div className="grid gap-5 md:grid-cols-2">
+
+                        <label className="block space-y-1 text-sm font-medium">
+                            Correction Start Date
+
+                            <input
+                                type="date"
+                                name="correctionStartDate"
+                                value={form.correctionStartDate}
+                                onChange={handleChange}
+                                className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm"
+                            />
+                        </label>
+
+                        <label className="block space-y-1 text-sm font-medium">
+                            Correction End Date
+
+                            <input
+                                type="date"
+                                name="correctionEndDate"
+                                value={form.correctionEndDate}
                                 onChange={handleChange}
                                 className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm"
                             />

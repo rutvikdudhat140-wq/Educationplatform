@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 import { Button } from '@/components/ui/button';
 import ExamForm from './ExamForm';
 
@@ -18,16 +18,10 @@ export default function AddExam() {
     const navigate = useNavigate();
 
     const saveExam = async (form) => {
-        const token = localStorage.getItem('adminToken');
 
         await axios.post(
-            'http://localhost:5001/api/exam',
-            form,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
+            '/api/exam',
+            form
         );
 
         navigate('/admin/exam/list');

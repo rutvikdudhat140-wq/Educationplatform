@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import {
     Table,
     TableBody,
@@ -10,17 +9,14 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import axios from 'axios';
 
 const ExamPreparationList = () => {
     const [preparations, setPreparations] = useState([]);
 
-    const token = localStorage.getItem('adminToken');
-
-    const fetchPreparations = () => {
+const fetchPreparations = () => {
         axios
-            .get('http://localhost:5001/api/exam-preparation', {
-                headers: { Authorization: `Bearer ${token}` },
-            })
+            .get('/api/exam-preparation')
             .then((res) => {
                 setPreparations(res.data.examPreparations || []);
             });
@@ -34,18 +30,15 @@ const ExamPreparationList = () => {
         const status = item.status === 'Active' ? 'Inactive' : 'Active';
         axios
             .put(
-                `http://localhost:5001/api/exam-preparation/${item._id}`,
-                { status },
-                { headers: { Authorization: `Bearer ${token}` } }
+                `/api/exam-preparation/${item._id}`,
+                { status }
             )
             .then(() => fetchPreparations());
     };
 
     const deletePreparation = (id) => {
         axios
-            .delete(`http://localhost:5001/api/exam-preparation/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
+            .delete(`/api/exam-preparation/${id}`)
             .then(() => fetchPreparations());
     };
 
@@ -91,7 +84,7 @@ const ExamPreparationList = () => {
                                         <span
                                             className={`rounded-full px-2 py-1 text-xs font-medium ${
                                                 item.status === 'Active'
-                                                    ? 'bg-green-50 text-green-700'
+                                                    ? 'bg-green-50 text-brand'
                                                     : 'bg-red-50 text-red-700'
                                             }`}
                                         >

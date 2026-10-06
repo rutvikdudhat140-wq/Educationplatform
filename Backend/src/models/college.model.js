@@ -6,17 +6,14 @@ const collegeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    slug: {
-      type: String,
-      unique: true,
-    },
+
     description: {
       type: String,
       default: '',
     },
     category: {
       type: String,
-      enum: ['Engineering', 'MBA', 'Medical', 'Law'],
+      default: 'Engineering'
     },
     collegeType: {
       type: String,
@@ -75,13 +72,12 @@ const collegeSchema = new mongoose.Schema(
       default: []
     },
 
-    // Accreditations like NAAC A++, NBA, AICTE, UGC, NBA
+
     accreditations: {
       type: [String],
       default: [],
     },
 
-    // Overall rating (e.g. 4.70)
     rating: {
       type: Number,
       default: 0,
@@ -130,12 +126,12 @@ const collegeSchema = new mongoose.Schema(
           type: String,
           default: '',
         },
-        // Total number of semesters for this course
+      
         totalSemesters: {
           type: Number,
           default: 8,
         },
-        // Semester-wise breakdown
+
         semesters: [
           {
             semesterNumber: {
@@ -253,13 +249,33 @@ const collegeSchema = new mongoose.Schema(
       enum: ['Active', 'Inactive'],
       default: 'Active',
     },
-    isTopCollege: {
+     isTopCollege: {
       type: Boolean,
       default: false,
     },
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform(doc, ret) {
+        // Seeded documents were written with `collegeName`, so `name` comes back
+        // empty and every consumer renders a blank heading.
+        if (!ret.name) {
+          ret.name = ret.collegeName || '';
+        }
+        delete ret.collegeName;
+
+        // Same for images: `coverImageUrl` holds the real photo while
+        // `coverImage` was stored empty, and `images[0]` is Google's favicon
+        // proxy, which 404s for any domain it has no icon cached for.
+        if (!ret.coverImage) {
+          ret.coverImage = ret.coverImageUrl || '';
+        }
+
+        return ret;
+      },
+    },
   }
 );
 

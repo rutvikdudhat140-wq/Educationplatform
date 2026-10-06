@@ -2,7 +2,7 @@
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/utils"
 
 const DrawerContext = React.createContext(null)
 

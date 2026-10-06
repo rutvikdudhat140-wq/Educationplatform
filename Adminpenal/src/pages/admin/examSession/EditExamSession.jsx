@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 import { Button } from '@/components/ui/button';
 import ExamSessionForm from './ExamSessionForm';
 
@@ -18,16 +18,9 @@ export default function EditExamSession() {
     const [session, setSession] = useState(null);
     const [exams, setExams] = useState([]);
 
-    const token = localStorage.getItem('adminToken');
-
-    useEffect(() => {
+useEffect(() => {
         axios.get(
-            `http://localhost:5001/api/exam-session/${id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+            `/api/exam-session/${id}`
         ).then((response) => {
             const item = response.data.examSession;
 
@@ -38,12 +31,7 @@ export default function EditExamSession() {
             });
         });
         axios.get(
-            'http://localhost:5001/api/exam?status=Active',
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+            '/api/exam?status=Active'
         ).then((response) => {
             setExams(response.data.exams);
         });
@@ -51,13 +39,8 @@ export default function EditExamSession() {
 
     const updateSession = async (form) => {
         await axios.put(
-            `http://localhost:5001/api/exam-session/${id}`,
-            form,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+            `/api/exam-session/${id}`,
+            form
         );
         navigate('/admin/exam-session/list');
     };

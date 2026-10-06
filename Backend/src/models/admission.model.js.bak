@@ -1,0 +1,120 @@
+import mongoose from "mongoose";
+
+const documentSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  fileUrl: { type: String, required: true },
+  status: {
+    type: String,
+    enum: ['Uploaded', 'Under Review', 'Verified', 'Rejected'],
+    default: 'Uploaded'
+  },
+  remark: { type: String }
+}, { _id: true });
+
+const statusHistorySchema = new mongoose.Schema({
+  status: { type: String, required: true },
+  note: { type: String },
+  changedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  changedAt: { type: Date, default: Date.now }
+}, { _id: false });
+
+const admissionSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    applicationNumber: {
+      type: String,
+      unique: true,
+      sparse: true, // Allow null/undefined for Drafts
+    },
+
+    collegeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "College",
+      required: true,
+    },
+
+    courseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+      required: true,
+    },
+
+    admissionYear: {
+      type: Number,
+    },
+
+    // Personal Details
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String, required: true },
+    dob: { type: Date },
+    gender: { type: String },
+    state: { type: String },
+    city: { type: String },
+    address: { type: String },
+
+    // Academic Details
+    tenthBoard: { type: String },
+    tenthPercentage: { type: Number },
+    twelfthBoard: { type: String },
+    twelfthPercentage: { type: Number },
+    qualification: { type: String },
+    passingYear: { type: Number },
+    subjects: { type: String },
+    graduationPercentage: { type: Number },
+    
+    // Exam Details
+    examId: { type: mongoose.Schema.Types.ObjectId, ref: "Exam" },
+    examSessionId: { type: mongoose.Schema.Types.ObjectId, ref: "ExamSession" },
+    rank: { type: Number },
+    score: { type: Number }, // added score
+    percentile: { type: Number }, // existing
+
+    category: { type: String },
+    message: { type: String },
+
+    // Documents
+    documents: [documentSchema],
+
+    // Workflow
+    status: {
+      type: String,
+      enum: [
+        "Draft",
+        "Submitted",
+        "Under Review",
+        "Documents Required",
+        "Documents Rejected",
+        "Verified",
+        "Shortlisted",
+        "Approved",
+        "Offer Issued",
+        "Admission Confirmed",
+        "Rejected",
+        "Withdrawn",
+      ],
+      default: "Draft",
+    },
+
+    statusHistory: [statusHistorySchema],
+
+    adminNotes: { type: String }, // renamed from adminRemark, or keep adminRemark and add adminNotes
+
+    // Scholarship
+    scholarshipId: { type: mongoose.Schema.Types.ObjectId, ref: "Scholarship" },
+
+    // Final confirmation
+    submittedAt: { type: Date },
+    admissionDate: { type: Date },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export default mongoose.model("Admission", admissionSchema);

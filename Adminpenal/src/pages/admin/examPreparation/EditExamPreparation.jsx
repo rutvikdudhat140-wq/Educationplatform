@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 
 const EditExamPreparation = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const token = localStorage.getItem("adminToken");
 
     const [exams, setExams] = useState([]);
     const [examSessions, setExamSessions] = useState([]);
@@ -37,9 +35,7 @@ const EditExamPreparation = () => {
 
     useEffect(() => {
         axios
-            .get("http://localhost:5001/api/exam", {
-                headers: { Authorization: `Bearer ${token}` },
-            })
+            .get("/api/exam")
             .then((res) => {
                 setExams(res.data.exams || []);
             });
@@ -47,9 +43,7 @@ const EditExamPreparation = () => {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:5001/api/exam-preparation/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
+            .get(`/api/exam-preparation/${id}`)
             .then((res) => {
                 const data = res.data.examPreparation;
 
@@ -91,8 +85,7 @@ const EditExamPreparation = () => {
 
         axios
             .get(
-                `http://localhost:5001/api/exam-session?exam=${form.exam}`,
-                { headers: { Authorization: `Bearer ${token}` } }
+                `/api/exam-session?exam=${form.exam}`
             )
             .then((res) => {
                 setExamSessions(res.data.examSessions || []);
@@ -123,9 +116,8 @@ const EditExamPreparation = () => {
 
         axios
             .put(
-                `http://localhost:5001/api/exam-preparation/${id}`,
-                { ...form, faqs },
-                { headers: { Authorization: `Bearer ${token}` } }
+                `/api/exam-preparation/${id}`,
+                { ...form, faqs }
             )
             .then(() => {
                 navigate("/admin/exam-preparation/list");

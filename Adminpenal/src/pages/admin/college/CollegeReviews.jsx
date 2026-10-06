@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card } from "@/components/ui/card";
@@ -8,7 +7,7 @@ const CollegeReviews = () => {
   const [reviews, setReviews] = useState([]);
 
   const fetchReviews = async () => {
-    const res = await axios.get("http://localhost:5001/api/reviews");
+    const res = await axios.get("/api/reviews");
 
     if (res.data.success) {
       setReviews(res.data.data);
@@ -21,7 +20,7 @@ const CollegeReviews = () => {
 
   const updateStatus = async (id, status) => {
     await axios.put(
-      `http://localhost:5001/api/reviews/${id}/status`,
+      `/api/reviews/${id}/status`,
       { status }
     );
 
@@ -29,9 +28,7 @@ const CollegeReviews = () => {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(
-      `http://localhost:5001/api/reviews/${id}`
-    );
+    await axios.delete(`/api/reviews/${id}`);
 
     fetchReviews();
   };
@@ -83,7 +80,7 @@ const CollegeReviews = () => {
                     <span
                       className={`rounded px-1.5 py-0.5 text-[10px] ${
                         review.status === "approved"
-                          ? "bg-green-100 text-green-700"
+                          ? "bg-green-100 text-brand"
                           : review.status === "rejected"
                           ? "bg-red-100 text-red-700"
                           : "bg-yellow-100 text-yellow-700"
@@ -102,7 +99,7 @@ const CollegeReviews = () => {
                           onClick={() =>
                             updateStatus(review._id, "approved")
                           }
-                          className="h-6 px-1.5 text-[10px] text-green-600">
+                          className="h-6 px-1.5 text-[10px] text-brand">
                           Approve
                         </Button>
                       )}

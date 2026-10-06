@@ -1,4 +1,4 @@
-import * as React from "react"
+﻿import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -25,7 +25,7 @@ function PaginationContent({
   return (
     <ul
       data-slot="pagination-content"
-      className={cn("flex items-center gap-0.5", className)}
+      className={cn("flex items-center gap-1", className)}
       {...props} />
   );
 }
@@ -44,9 +44,15 @@ function PaginationLink({
 }) {
   return (
     <Button
-      variant={isActive ? "outline" : "ghost"}
-      size={size}
-      className={cn(className)}
+      variant={isActive ? "default" : "outline"}
+      size={size === "icon" ? "icon-sm" : size}
+      className={cn(
+        "rounded-md",
+        isActive
+          ? "pointer-events-none bg-primary text-primary-foreground hover:bg-primary"
+          : "text-ink-soft",
+        className
+      )}
       nativeButton={false}
       render={
         <a
@@ -66,7 +72,7 @@ function PaginationPrevious({
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      size="default"
+      size="sm"
       className={cn("pl-1.5!", className)}
       {...props}>
       <ChevronLeftIcon data-icon="inline-start" />
@@ -83,7 +89,7 @@ function PaginationNext({
   return (
     <PaginationLink
       aria-label="Go to next page"
-      size="default"
+      size="sm"
       className={cn("pr-1.5!", className)}
       {...props}>
       <span className="hidden sm:block">{text}</span>
@@ -101,7 +107,7 @@ function PaginationEllipsis({
       aria-hidden
       data-slot="pagination-ellipsis"
       className={cn(
-        "flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
+        "flex size-8 items-center justify-center rounded-md text-muted-foreground [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}>

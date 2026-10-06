@@ -1,153 +1,159 @@
-import { ArrowRight, CalendarDays, Clock3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import {
+  GraduationCap,
+  CalendarDays,
+  MapPin,
+  ChevronRight,
+  BookOpen,
+  Award,
+  CheckCircle2,
+  Clock,
+  HelpCircle,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const formatDate = (value) => {
-
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) return 'Not announced';
-
-    return date.toLocaleDateString(undefined, {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-    });
+  if (!value) return 'Date TBA';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Date TBA';
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
+const computeExamStatus = (exam) => {
+  const dates = exam.dates?.[0];
+  if (!dates) return { label: 'Upcoming', color: 'bg-blue-50 text-blue-700 border-blue-200' };
 
-const dynamicStatusBadge = {
-    Upcoming: 'bg-blue-100 text-blue-700',
-    Ongoing: 'bg-amber-100 text-amber-700',
-    Completed: 'bg-gray-100 text-gray-700',
-};
+  const now = new Date();
+  const regEnd = dates.registrationEndDate ? new Date(dates.registrationEndDate) : null;
+  const examStart = dates.examStartDate ? new Date(dates.examStartDate) : null;
+  const examEnd = dates.examEndDate ? new Date(dates.examEndDate) : examStart;
 
-const computeExamStatus = (examStartDate, examEndDate) => {
-    if (!examStartDate || !examEndDate) return null;
-
-    const now = new Date();
-    const todayStart = new Date(
-        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
-    );
-    const tomorrowStart = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
-
-    if (new Date(examStartDate) >= tomorrowStart) return 'Upcoming';
-    if (new Date(examEndDate) < todayStart) return 'Completed';
-    return 'Ongoing';
+  if (examEnd && examEnd < now) {
+    return { label: 'Closed', color: 'bg-slate-100 text-slate-700 border-slate-200' };
+  }
+  if (regEnd) {
+    const diffDays = Math.ceil((regEnd - now) / (1000 * 60 * 60 * 24));
+    if (diffDays >= 0 && diffDays <= 5) {
+      return { label: 'Closing Soon', color: 'bg-orange-50 text-accent border-orange-200' };
+    }
+    if (diffDays > 5) {
+      return { label: 'Open', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
+    }
+  }
+  return { label: 'Upcoming', color: 'bg-blue-50 text-blue-700 border-blue-200' };
 };
 
 export default function ExamCard({ exam }) {
-    const examDate = exam.dates?.[0];
-    const eligibility = exam.eligibility?.[0];
-    const dynamicStatus = computeExamStatus(
-        examDate?.examStartDate,
-        examDate?.examEndDate
-    );
+  const examDate = exam.dates?.[0];
+  const eligibility = exam.eligibility?.[0];
+  const pattern = exam.patterns?.[0] || exam.pattern;
+  const statusInfo = computeExamStatus(exam);
 
-    return (
-        <Link
-            to={`/exams/${exam._id}`}
-            className="group block h-full rounded-lg border bg-white p-4 transition hover:border-primary/40 hover:shadow-md"
-        >
-
-            {dynamicStatus && (
-                <div className="mb-3 flex flex-wrap items-center gap-2">
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${dynamicStatusBadge[dynamicStatus]}`}>
-                        {dynamicStatus}
-                    </span>
-                </div>
-            )}
-
-            <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-sm font-bold text-primary">
-                        {exam.shortName?.charAt(0) || exam.name?.charAt(0) || 'E'}
-                    </div>
-
-                    <div>
-                        <p className="text-xs text-muted-foreground">{exam.stream}</p>
-
-                        <h2 className="text-base font-semibold text-foreground group-hover:text-primary">{exam.name}</h2>
-                    </div>
-                </div>
-
-                <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${exam.status === 'Active'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-muted text-muted-foreground'
-                        }`}
-                >
-                    {exam.status}
-                </span>
+  return (
+    <div className="group rounded-md border border-line bg-white p-4 shadow-none hover:border-brand/40 transition-all flex flex-col justify-between h-full">
+      <div>
+        {/* Top bar: Short Code/Icon, Title & Status */}
+        <div className="flex items-start justify-between gap-3 mb-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-blue-50 text-brand font-bold text-xs border border-blue-100 uppercase">
+              {exam.shortName ? exam.shortName.slice(0, 3) : (exam.name?.slice(0, 3) || 'EXM')}
             </div>
-
-
-            <div className="mt-4 space-y-2 border-t pt-3">
-                <div className="flex items-center gap-2 text-sm">
-                    <span className="w-24 text-muted-foreground">
-                        Conducting
-                    </span>
-                    <span className="font-medium">
-                        {exam.conductingBody || 'Not added'}
-                    </span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm">
-                    <span className="w-24 text-muted-foreground">
-                        Exam Type
-                    </span>
-                    <span className="font-medium">
-                        {exam.examType || 'Not added'}
-                    </span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm">
-                    <span className="w-24 text-muted-foreground">
-                        Level
-                    </span>
-                    <span className="font-medium">
-                        {exam.level || 'Not added'}
-                    </span>
-                </div>
-            </div>
-
-            <div className="mt-3 space-y-2">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Clock3 className="size-4 text-primary" />
-
-                    <span>
-                        Apply: {formatDate(examDate?.registrationStartDate)} - {formatDate(examDate?.registrationEndDate)}
-                    </span>
-                </div>
-
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <CalendarDays className="size-4 text-primary" />
-
-                    <span>
-                        Exam: {formatDate(examDate?.examStartDate)} - {formatDate(examDate?.examEndDate)}
-                    </span>
-                </div>
-            </div>
-
-
-            <div className="mt-3 rounded-md bg-muted/40 px-3 py-2">
-                <p className="text-xs text-muted-foreground">
-                    Eligibility
+            <div className="min-w-0">
+              <h3 className="text-sm font-bold text-ink group-hover:text-brand transition-colors truncate">
+                {exam.name}
+              </h3>
+              {exam.conductingBody && (
+                <p className="text-[11px] text-ink-muted truncate">
+                  By {exam.conductingBody}
                 </p>
-
-                <p className="mt-0.5 line-clamp-1 text-sm font-medium">
-                    {eligibility?.minimumQualification || 'Not added'}
-                </p>
+              )}
             </div>
+          </div>
 
-            {/* Bottom */}
-            <div className="mt-4 flex items-center justify-between border-t pt-3">
-                <span className="text-xs text-muted-foreground">
-                    View exam details
-                </span>
+          <span className={`shrink-0 rounded px-2 py-0.5 text-[10px] font-bold border ${statusInfo.color}`}>
+            {statusInfo.label}
+          </span>
+        </div>
 
-                <ArrowRight className="size-4 text-primary transition-transform group-hover:translate-x-1" />
+        {/* Tags Row */}
+        <div className="flex flex-wrap items-center gap-1.5 mb-3 text-[11px] text-ink-muted">
+          {exam.stream && (
+            <span className="rounded bg-surface px-2 py-0.5 border border-line">
+              {exam.stream}
+            </span>
+          )}
+          {exam.level && (
+            <span className="rounded bg-surface px-2 py-0.5 border border-line">
+              {exam.level}
+            </span>
+          )}
+          {exam.examType && (
+            <span className="rounded bg-surface px-2 py-0.5 border border-line">
+              {exam.examType}
+            </span>
+          )}
+        </div>
+
+        {/* Essential Info List */}
+        <div className="space-y-1.5 text-xs text-ink-muted py-2 border-t border-line/60">
+          {/* Exam Dates */}
+          <div className="flex items-center justify-between">
+            <span className="flex items-center gap-1.5 text-ink-muted">
+              <CalendarDays size={13} className="text-brand shrink-0" /> Exam Date:
+            </span>
+            <span className="font-semibold text-ink">
+              {formatDate(examDate?.examStartDate)}
+            </span>
+          </div>
+
+          {/* Registration Deadline */}
+          {examDate?.registrationEndDate && (
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1.5 text-ink-muted">
+                <Clock size={13} className="text-brand shrink-0" /> Reg. Deadline:
+              </span>
+              <span className="font-medium text-ink">
+                {formatDate(examDate.registrationEndDate)}
+              </span>
             </div>
+          )}
+
+          {/* Exam Specs (Duration / Questions / Marks) if present */}
+          {(pattern?.duration || pattern?.totalQuestions || pattern?.totalMarks) && (
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-ink-muted">Pattern:</span>
+              <span className="font-medium text-ink">
+                {pattern?.duration ? `${pattern.duration} • ` : ''}
+                {pattern?.totalQuestions ? `${pattern.totalQuestions} Qs • ` : ''}
+                {pattern?.totalMarks ? `${pattern.totalMarks} Marks` : ''}
+              </span>
+            </div>
+          )}
+
+          {/* Eligibility */}
+          {eligibility?.minimumQualification && (
+            <div className="pt-1">
+              <span className="text-ink-muted block text-[11px]">Eligibility:</span>
+              <p className="text-ink font-medium text-[11px] line-clamp-1">
+                {eligibility.minimumQualification}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Action Footer */}
+      <div className="mt-3 pt-3 border-t border-line">
+        <Link to={`/exams/${exam._id}`} className="block w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full rounded-md border-line text-xs font-semibold h-8 text-brand hover:bg-blue-50/50 hover:border-brand/40 shadow-none flex items-center justify-center gap-1"
+          >
+            View Exam Details <ChevronRight size={13} />
+          </Button>
         </Link>
-    );
+      </div>
+    </div>
+  );
 }

@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -24,15 +23,9 @@ const UniversityApplications = () => {
 
   useEffect(() => {
     const getApplications = async () => {
-      const token = localStorage.getItem('adminToken');
 
       const response = await axios.get(
-        `http://localhost:5001/api/university-applications/university/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `/api/university-applications/university/${id}`
       );
 
       setApplications(response.data.applications || []);
@@ -80,9 +73,8 @@ const UniversityApplications = () => {
                   <TableRow key={application._id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                    
 
-                        <span className="font-medium">{application.name}</span>
+<span className="font-medium">{application.name}</span>
                       </div>
                     </TableCell>
 

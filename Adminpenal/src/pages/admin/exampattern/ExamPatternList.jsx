@@ -1,23 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 export default function ExamPatternList() {
     const navigate = useNavigate();
     const [data, setData] = useState([]);
-    const token = localStorage.getItem('adminToken');
 
     const fetchData = async () => {
 
-        try {
-            const res = await axios.get('http://localhost:5001/api/exam-pattern', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+const res = await axios.get('/api/exam-pattern');
             setData(res.data.data || []);
-        } catch (error) {
-        }
+
     };
 
     useEffect(() => {
@@ -26,30 +21,22 @@ export default function ExamPatternList() {
 
     const handleDelete = async (id) => {
 
-        try {
-            await axios.delete(`http://localhost:5001/api/exam-pattern/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+await axios.delete(`/api/exam-pattern/${id}`);
             fetchData();
-        } catch (error) {
-        }
+
     };
 
     const handleToggleStatus = async (item) => {
-        try {
+      
             await axios.put(
-                `http://localhost:5001/api/exam-pattern/${item._id}`,
+                `/api/exam-pattern/${item._id}`,
                 {
                     status: item.status === 'Active' ? 'Inactive' : 'Active',
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
 
             fetchData();
-        } catch (error) {
-        }
+
     };
 
     return (

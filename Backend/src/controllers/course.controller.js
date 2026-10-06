@@ -32,10 +32,21 @@ export const getCourses = async (req, res) => {
     if (req.query.isActive && req.query.isActive !== 'all') {
       filter.isActive = req.query.isActive === 'true';
     }
-    const courses = await Course.find(filter)
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
+
+    const courses = await Course.find(filter).skip(skip).limit(limit);
+    const total = await Course.countDocuments(filter);
+    const totalPages = Math.ceil(total / limit);
+
     res.status(200).json({
       data: courses,
-      courses
+      courses,
+      total,
+      totalPages,
+      page,
+      limit,
     })
   } catch (error) {
     res.status(500).json({
@@ -128,15 +139,15 @@ export const getPopularCourses = async (req, res) => {
   try {
     const courses = await Course.find({
       isPopular: true,
-      isActive: true,
-      status: 'Active',
-    });
-
-    const popularCourses = courses.slice(0, 6);
+      $or: [{ isActive: true }, { isActive: { $exists: false } }],
+      $and: [{ $or: [{ status: 'Active' }, { status: { $exists: false } }] }],
+    })
+      .sort({ displayOrder: 1, name: 1 })
+      .limit(6);
 
     res.status(200).json({
-      data: popularCourses,
-      courses: popularCourses,
+      data: courses,
+      courses,
     });
   } catch (error) {
     res.status(500).json({

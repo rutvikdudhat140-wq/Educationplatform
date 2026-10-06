@@ -4,6 +4,15 @@ import {
   FileText,
   GraduationCap,
   BookOpen,
+  ArrowLeft,
+  Bookmark,
+  BellRing,
+  HelpCircle,
+  FileCode,
+  Award,
+  Layers,
+  ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -14,20 +23,19 @@ const tabs = [
   { id: "dates", label: "Exam Dates", icon: CalendarDays },
   { id: "eligibility", label: "Eligibility", icon: ClipboardCheck },
   { id: "application", label: "Application", icon: ClipboardCheck },
-  { id: "pattern", label: "Exam Pattern", icon: FileText },
+  { id: "pattern", label: "Exam Pattern", icon: Layers },
   { id: "syllabus", label: "Syllabus", icon: BookOpen },
   { id: "sessions", label: "Sessions", icon: GraduationCap },
-  { id: "preparation", label: "Preparation", icon: BookOpen },
-  { id: "previous-papers", label: "Previous Papers", icon: FileText },
+  { id: "preparation", label: "Preparation", icon: Sparkles },
+  { id: "previous-papers", label: "Previous Papers", icon: FileCode },
   { id: "sample-papers", label: "Sample Papers", icon: FileText },
   { id: "books", label: "Books", icon: BookOpen },
-  { id: "mock-tests", label: "Mock Tests", icon: FileText },
-  { id: "faqs", label: "FAQs", icon: FileText },
+  { id: "mock-tests", label: "Mock Tests", icon: Award },
+  { id: "faqs", label: "FAQs", icon: HelpCircle },
 ];
 
 const formatDate = (value) => {
-  if (!value) return "";
-
+  if (!value) return "—";
   return new Date(value).toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "short",
@@ -37,14 +45,12 @@ const formatDate = (value) => {
 
 const DetailRow = ({ label, value }) => {
   if (!value) return null;
-
   return (
-    <div className="border-b border-slate-100 py-2.5 last:border-0">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+    <div className="border-b border-[#E5E7EB] py-1.5 last:border-0">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-[#64748B]">
         {label}
       </p>
-
-      <p className="mt-0.5 text-sm font-semibold text-slate-800">
+      <p className="mt-0.5 text-xs sm:text-[13px] font-semibold text-[#172554]">
         {value}
       </p>
     </div>
@@ -53,21 +59,19 @@ const DetailRow = ({ label, value }) => {
 
 const SectionCard = ({ title, icon: Icon, children }) => {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+    <div className="rounded-md border border-[#E5E7EB] bg-white p-3 sm:p-4">
       {title && (
-        <div className="mb-3 flex items-center gap-2.5">
+        <div className="mb-2.5 flex items-center gap-2 border-b border-[#E5E7EB] pb-2">
           {Icon && (
-            <div className="flex size-7 items-center justify-center rounded-md bg-teal-50">
-              <Icon className="size-4 text-teal-700" />
+            <div className="flex size-6 items-center justify-center rounded-[4px] bg-[#EFF6FF] text-[#172554]">
+              <Icon className="size-3.5 text-[#172554]" />
             </div>
           )}
-
-          <h2 className="text-base font-bold text-slate-900">
+          <h2 className="text-[13px] sm:text-[15px] font-bold text-[#172554] tracking-tight">
             {title}
           </h2>
         </div>
       )}
-
       {children}
     </div>
   );
@@ -75,9 +79,9 @@ const SectionCard = ({ title, icon: Icon, children }) => {
 
 const EmptyState = ({ text }) => {
   return (
-    <p className="mt-3 rounded-md bg-slate-50 px-3 py-2.5 text-sm text-slate-500">
+    <div className="rounded-[4px] border border-dashed border-[#E5E7EB] bg-[#F8FAFC] px-3 py-3 text-center text-xs text-[#64748B]">
       {text}
-    </p>
+    </div>
   );
 };
 
@@ -94,6 +98,7 @@ export default function ExamDetails() {
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     axios
       .get(`http://localhost:5001/api/exam/${id}`)
       .then((res) => {
@@ -105,314 +110,311 @@ export default function ExamDetails() {
 
           axios
             .get(`http://localhost:5001/api/exam-preparation?exam=${examId}&status=Active`)
-            .then((res) => setPreparations(res.data.examPreparations || []));
+            .then((res) => setPreparations(res.data.examPreparations || []))
+            .catch(() => {});
 
           axios
             .get(`http://localhost:5001/api/exam-pattern?exam=${examId}&status=Active`)
-            .then((res) => setPatterns(res.data.data || []));
+            .then((res) => setPatterns(res.data.data || []))
+            .catch(() => {});
 
           axios
             .get(`http://localhost:5001/api/exam-syllabus?exam=${examId}&status=Active`)
-            .then((res) => setSyllabuses(res.data.data || []));
+            .then((res) => setSyllabuses(res.data.data || []))
+            .catch(() => {});
 
           axios
             .get(`http://localhost:5001/api/exam-sample-paper?exam=${examId}&status=Active`)
-            .then((res) => setSamplePapers(res.data.data || []));
+            .then((res) => setSamplePapers(res.data.data || []))
+            .catch(() => {});
 
           axios
             .get(`http://localhost:5001/api/exam-mock-test?exam=${examId}&status=Active`)
-            .then((res) => setMockTests(res.data.data || []));
+            .then((res) => setMockTests(res.data.data || []))
+            .catch(() => {});
 
           axios
             .get(`http://localhost:5001/api/exam-faq?exam=${examId}&status=Active`)
-            .then((res) => setFaqs(res.data.data || []));
+            .then((res) => setFaqs(res.data.data || []))
+            .catch(() => {});
         }
       })
       .catch((err) => console.error(err));
   }, [id]);
 
   if (!exam) {
-    return <div className="min-h-screen bg-slate-50" />;
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-2.5 bg-white">
+        <div className="size-6 animate-spin rounded-full border-2 border-[#172554] border-t-transparent" />
+        <p className="text-xs text-[#64748B]">Loading entrance exam details...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-
-          <div className="mb-4 flex items-center gap-1.5 text-xs text-slate-400">
-            <Link to="/exams"className="hover:text-teal-700">Home</Link>
-
+    <div className="min-h-screen bg-white pb-14 text-[#111827]">
+      {/* Top Banner / Cover */}
+      <div className="relative h-20 w-full bg-[#172554] sm:h-28">
+        <div className="edu-container flex h-full items-center justify-between text-white/80">
+          <nav className="flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-300">
+            <Link to="/" className="flex items-center gap-1 hover:text-white">
+              <ArrowLeft size={11} />
+              Home
+            </Link>
             <span>/</span>
-            <span>{exam.stream}</span>
+            <Link to="/exams" className="hover:text-white">
+              Exams
+            </Link>
             <span>/</span>
+            <span className="max-w-[150px] sm:max-w-xs truncate font-medium text-white">
+              {exam.shortName || exam.name}
+            </span>
+          </nav>
+        </div>
+      </div>
 
-            <span className="font-medium text-slate-600">{exam.shortName || exam.name}</span>
-          </div>
+      {/* Exam Identity Bar & Integrated Tabs */}
+      <div className="edu-container relative z-10 -mt-5 mb-3 sm:-mt-8 sm:mb-4">
+        <div className="rounded-md border border-[#E5E7EB] bg-white p-3 sm:p-5 shadow-none">
+          {/* Main Identity Box */}
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex items-start gap-2.5 sm:gap-3">
+              {/* Logo / Icon Box */}
+              <div className="flex size-11 sm:size-14 shrink-0 items-center justify-center rounded-[4px] border border-[#BFDBFE] bg-[#EFF6FF] text-[#172554]">
+                <GraduationCap className="size-5 sm:size-7 text-[#172554]" />
+              </div>
 
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              {/* Title & Details */}
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <h1 className="text-[15px] sm:text-[1.25rem] font-bold tracking-tight text-[#172554] leading-tight">
+                    {exam.name}
+                  </h1>
+                  {exam.shortName && (
+                    <span className="rounded-[4px] border border-[#BFDBFE] bg-[#EFF6FF] px-1.5 py-0.2 text-[10px] sm:text-[11px] font-bold text-[#172554]">
+                      {exam.shortName}
+                    </span>
+                  )}
+                </div>
 
-            <div className="max-w-3xl">
+                <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] sm:text-xs text-[#64748B]">
+                  {exam.stream && <span>Stream: <strong className="text-[#172554]">{exam.stream}</strong></span>}
+                  {exam.level && (
+                    <>
+                      <span>·</span>
+                      <span>Level: <strong className="text-[#172554]">{exam.level}</strong></span>
+                    </>
+                  )}
+                  {exam.conductingBody && (
+                    <>
+                      <span>·</span>
+                      <span className="truncate max-w-[200px] sm:max-w-none">
+                        By {exam.conductingBody}
+                      </span>
+                    </>
+                  )}
+                </div>
 
-              <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{exam.stream} Entrance Exam</p>
-
-              <h1 className="mt-1.5 text-xl font-bold leading-tight text-slate-900 sm:text-2xl lg:text-3xl">{exam.name}</h1>
-
-              {exam.shortName && (
-                <p className="mt-1.5 text-sm text-slate-500">{exam.shortName}</p>
-              )}
-
-              <div className="mt-3 flex flex-wrap gap-1.5">
-
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600">{exam.stream}</span>
-
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600">{exam.examType || exam.category}
-                </span>
-
-                <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-semibold text-teal-700">{exam.level}
-                </span>
-
+                <div className="mt-1.5 flex flex-wrap gap-1">
+                  {exam.examType && (
+                    <span className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] px-1.5 py-0.2 text-[10px] font-semibold text-slate-700">
+                      {exam.examType}
+                    </span>
+                  )}
+                  {exam.category && (
+                    <span className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] px-1.5 py-0.2 text-[10px] font-medium text-slate-600">
+                      {exam.category}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="min-w-[200px] rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">conducting Body</p>
-              <p className="mt-0.5 text-sm font-semibold text-slate-900">{exam.conductingBody}</p>
+            {/* Actions */}
+            <div className="flex items-center gap-1.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E5E7EB]">
+              <button
+                onClick={() => alert("Exam notification alert activated!")}
+                className="flex items-center gap-1 rounded-[4px] border border-[#E5E7EB] bg-white px-2.5 py-1 text-[11px] font-semibold text-[#172554] hover:bg-[#F8FAFC] transition-colors"
+              >
+                <BellRing size={12} className="text-[#172554]" />
+                <span>Updates</span>
+              </button>
+              <button
+                onClick={() => alert("Exam saved to your bookmarks!")}
+                className="flex items-center gap-1 rounded-[4px] bg-[#172554] px-3 py-1 text-[11px] font-bold text-white hover:bg-[#0F172A] transition-colors shadow-none"
+              >
+                <Bookmark size={12} />
+                Save Exam
+              </button>
             </div>
-
           </div>
 
-          <Link
-            to="/exams"
-            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-teal-700"
-          >
-            All entrance exams
-          </Link>
+          {/* Clean Integrated Horizontal Tabs */}
+          <div className="mt-3 -mx-3 -mb-3 sm:-mx-5 sm:-mb-5 overflow-x-auto border-t border-[#E5E7EB] px-3 sm:px-5 no-scrollbar">
+            <div className="flex min-w-max gap-1">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
 
-        </div>
-      </div>
-
-
-      <div className="sticky top-0 z-20 border-b border-slate-200 bg-white shadow-sm">
-
-        <div className="mx-auto max-w-7xl overflow-x-auto px-4 sm:px-6 lg:px-8">
-
-          <nav className="flex min-w-max">
-
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 border-b-2 px-4 py-3 text-sm font-medium ${activeTab === tab.id
-                    ? "border-teal-600 text-teal-700"
-                    : "border-transparent text-slate-500 hover:border-slate-200 hover:text-slate-800"
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${
+                      isActive
+                        ? "border-[#172554] text-[#172554] font-bold"
+                        : "border-transparent text-[#64748B] hover:text-[#172554]"
                     }`}
-                >
-                  <Icon className="size-3.5" />
-                  {tab.label}
-                </button>
-              );
-            })}
-
-          </nav>
-
+                  >
+                    <Icon className="size-3.5" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
-
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_260px]">
-
-          <main className="space-y-4">
-
+      {/* Main Grid: Left Tab Content + Right Info Sidebar */}
+      <div className="edu-container">
+        <div className="grid grid-cols-1 gap-3 md:gap-5 lg:grid-cols-3">
+          {/* Main Tab Panels */}
+          <main className="space-y-2.5 sm:space-y-3 lg:col-span-2">
             {activeTab === "overview" && (
               <>
-                <SectionCard>
-
-                  <div className="rounded-md border-l-4 border-teal-600 bg-teal-50/50 px-3.5 py-2.5">
-
-                    <p className="text-sm leading-6 text-slate-600">
+                {exam.description && (
+                  <SectionCard title="About Exam" icon={FileText}>
+                    <div className="rounded-[4px] border-l-2 border-[#172554] bg-[#F8FAFC] p-2.5 text-xs leading-relaxed text-slate-700">
                       {exam.description}
-                    </p>
+                    </div>
+                  </SectionCard>
+                )}
 
-                  </div>
-
-                </SectionCard>
-
-                <SectionCard title={`About ${exam.name}`}>
-
-                  <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
-                    {exam.description}
-                  </p>
-
-                </SectionCard>
-
-                <SectionCard title={`${exam.name} Overview`}>
-
-                  <dl className="grid sm:grid-cols-2 sm:gap-x-6">
-
-                    <DetailRow label="Exam Name"value={exam.name}/>
-
-                    <DetailRow label="Short Name"value={exam.shortName}/>
-
-                    <DetailRow label="Stream"value={exam.stream}/>
-
-                    <DetailRow label="Level"value={exam.level}/>
-
-                    <DetailRow label="Exam Type"value={exam.examType || exam.category}/>
-
-                    <DetailRow label="Conducting Body"value={exam.conductingBody}/>
-
+                <SectionCard title={`${exam.shortName || exam.name} Quick Facts`} icon={GraduationCap}>
+                  <dl className="grid sm:grid-cols-2 gap-x-4">
+                    <DetailRow label="Exam Name" value={exam.name} />
+                    <DetailRow label="Short Name" value={exam.shortName} />
+                    <DetailRow label="Stream" value={exam.stream} />
+                    <DetailRow label="Exam Level" value={exam.level} />
+                    <DetailRow label="Exam Type" value={exam.examType || exam.category} />
+                    <DetailRow label="Conducting Body" value={exam.conductingBody} />
                   </dl>
                 </SectionCard>
 
-                <SectionCard title="Other Information">
-                  <p className="whitespace-pre-line text-sm leading-7 text-slate-600">{exam.otherInformation}</p>
-                </SectionCard>
+                {exam.otherInformation && (
+                  <SectionCard title="Other Information" icon={BookOpen}>
+                    <p className="whitespace-pre-line text-xs leading-relaxed text-slate-600">
+                      {exam.otherInformation}
+                    </p>
+                  </SectionCard>
+                )}
               </>
             )}
 
-
             {activeTab === "dates" && (
-              <SectionCard
-                title={`${exam.name} Exam Dates`}
-                icon={CalendarDays}
-              >
-                <p className="-mt-2 mb-2 text-xs text-slate-500">Important dates related to the examination.</p>
+              <SectionCard title={`${exam.shortName || exam.name} Important Dates`} icon={CalendarDays}>
+                <p className="-mt-1 mb-2 text-[10px] text-[#64748B]">
+                  Check live timeline and examination schedules.
+                </p>
 
                 {exam.dates?.length ? (
-                  exam.dates.map((date) => (
-                    <div
-                      key={date._id}
-                      className="border-b border-slate-100 py-4 last:border-0"
-                    >
+                  <div className="space-y-2.5">
+                    {exam.dates.map((date) => (
+                      <div
+                        key={date._id}
+                        className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5"
+                      >
+                        {date.examSession && (
+                          <div className="mb-1.5 inline-flex items-center rounded-[4px] bg-[#172554] px-1.5 py-0.2 text-[10px] font-bold text-white">
+                            {date.examSession.sessionName} ({date.examSession.academicYear})
+                          </div>
+                        )}
 
-                      {date.examSession && (
-                        <p className="mb-2 inline-flex rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-semibold text-teal-700">
-                          {date.examSession.sessionName} (
-                          {date.examSession.academicYear})
-                        </p>
-                      )}
+                        <dl className="grid sm:grid-cols-2 gap-x-4">
+                          <DetailRow label="Registration Start" value={formatDate(date.registrationStartDate)} />
+                          <DetailRow label="Registration End" value={formatDate(date.registrationEndDate)} />
+                          <DetailRow label="Correction Start" value={formatDate(date.correctionStartDate)} />
+                          <DetailRow label="Correction End" value={formatDate(date.correctionEndDate)} />
+                          <DetailRow label="Admit Card Date" value={formatDate(date.admitCardDate)} />
+                          <DetailRow label="Exam Start" value={formatDate(date.examStartDate)} />
+                          <DetailRow label="Exam End" value={formatDate(date.examEndDate)} />
+                          <DetailRow label="Answer Key" value={formatDate(date.answerKeyDate)} />
+                          <DetailRow label="Result Announcement" value={formatDate(date.resultDate)} />
+                        </dl>
 
-                      <dl className="grid sm:grid-cols-2 sm:gap-x-6">
-
-                        <DetailRow label="Registration Start"value={formatDate(date.registrationStartDate)}/>
-
-                        <DetailRow label="Registration End"value={formatDate(date.registrationEndDate)}/>
-
-                        <DetailRow label="Correction Start"value={formatDate(date.correctionStartDate)}/>
-
-                        <DetailRow label="Correction End"value={formatDate(date.correctionEndDate)}/>
-
-                        <DetailRow label="Admit Card"value={formatDate(date.admitCardDate)}/>
-
-                        <DetailRow label="Exam Start"value={formatDate(date.examStartDate)}/>
-
-                        <DetailRow label="Exam End"value={formatDate(date.examEndDate)}/>
-
-                        <DetailRow label="Answer Key"value={formatDate(date.answerKeyDate)}/>
-
-                        <DetailRow label="Result"value={formatDate(date.resultDate)}/>
-
-                      </dl>
-                      <p className="pt-2 text-sm leading-6 text-slate-600">{date.description}</p>
-                    </div>
-                  ))
+                        {date.description && (
+                          <p className="mt-1.5 border-t border-[#E5E7EB] pt-1.5 text-[11px] text-slate-600">
+                            {date.description}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  <EmptyState text="Exam dates have not been announced." />
+                  <EmptyState text="Exam dates have not been officially announced yet." />
                 )}
               </SectionCard>
             )}
 
             {activeTab === "eligibility" && (
-              <SectionCard
-                title={`${exam.name} Eligibility`}
-                icon={ClipboardCheck}
-              >
-                <p className="-mt-2 mb-2 text-xs text-slate-500">Check the eligibility criteria before applying.</p>
+              <SectionCard title="Eligibility Criteria" icon={ClipboardCheck}>
+                <p className="-mt-1 mb-2 text-[10px] text-[#64748B]">
+                  Verify academic qualifications and criteria before applying.
+                </p>
 
                 {exam.eligibility?.length ? (
-                  exam.eligibility.map((item) => (
-                    <dl
-                      key={item._id}
-                      className="grid border-b border-slate-100 py-3 last:border-0 sm:grid-cols-2 sm:gap-x-6"
-                    >
-
-                      <DetailRow label="Educational Qualification"value={item.minimumQualification}/>
-
-                      <DetailRow label="Minimum Marks"value={item.minimumPercentage}/>
-
-                      <DetailRow label="Age Limit"value={item.ageLimit}/>
-
-                      <DetailRow label="Subjects Required"value={item.requiredSubjects?.join(", ")}/>
-
-                      <DetailRow label="Number of Attempts"value={item.numberOfAttempts}/>
-
-                      <DetailRow label="Nationality"value={item.nationality}/>
-
-                      <DetailRow label="Additional Requirements"value={item.otherRequirements}/>
-
-                      <DetailRow label="Description"value={item.description}/>
-
-                    </dl>
-                  ))
+                  <div className="space-y-2.5">
+                    {exam.eligibility.map((item) => (
+                      <div key={item._id} className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5">
+                        <dl className="grid sm:grid-cols-2 gap-x-4">
+                          <DetailRow label="Educational Qualification" value={item.minimumQualification} />
+                          <DetailRow label="Minimum Marks" value={item.minimumPercentage} />
+                          <DetailRow label="Age Limit" value={item.ageLimit} />
+                          <DetailRow label="Subjects Required" value={item.requiredSubjects?.join(", ")} />
+                          <DetailRow label="Number of Attempts" value={item.numberOfAttempts} />
+                          <DetailRow label="Nationality" value={item.nationality} />
+                          <DetailRow label="Additional Requirements" value={item.otherRequirements} />
+                          <DetailRow label="Description" value={item.description} />
+                        </dl>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  <EmptyState text="Eligibility details have not been added." />
+                  <EmptyState text="Eligibility details have not been added yet." />
                 )}
-
               </SectionCard>
             )}
 
             {activeTab === "application" && (
-              <SectionCard
-                title={`${exam.name} Application`}
-                icon={ClipboardCheck}
-              >
-                <EmptyState text="Application information will be updated soon." />
+              <SectionCard title="Application Process" icon={ClipboardCheck}>
+                <EmptyState text="Official application guidelines and links will be updated once registration opens." />
               </SectionCard>
             )}
 
             {activeTab === "pattern" && (
-              <SectionCard
-                title={`${exam.name} Exam Pattern`}
-                icon={FileText}
-              >
+              <SectionCard title="Exam Pattern & Marking" icon={Layers}>
                 {patterns.length ? (
-                  <div className="space-y-4">
+                  <div className="space-y-2.5">
                     {patterns.map((item) => (
                       <div
                         key={item._id}
-                        className="border-b border-slate-100 pb-4 last:border-0"
+                        className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5 sm:p-3"
                       >
-                        <h3 className="text-base font-bold text-slate-800">
+                        <h3 className="text-xs sm:text-[13px] font-bold text-[#172554]">
                           {item.paperName}
                         </h3>
 
-                        <div className="mt-3 grid sm:grid-cols-2 sm:gap-x-6">
+                        <div className="mt-1.5 grid sm:grid-cols-2 gap-x-4">
                           <DetailRow
                             label="Duration"
-                            value={
-                              item.duration
-                                ? `${item.duration} Minutes`
-                                : ""
-                            }
+                            value={item.duration ? `${item.duration} Minutes` : ""}
                           />
-                          <DetailRow label="Total Questions"value={item.totalQuestions}/>
-
-                          <DetailRow label="Total Marks"value={item.totalMarks}/>
-
-                          <DetailRow label="Question Types"value={item.questionTypes}/>
-
-                          <DetailRow label="Marking Scheme"value={item.markingScheme}/>
-
-                          <DetailRow label="Negative Marking"value={item.negativeMarking}/>
-
+                          <DetailRow label="Total Questions" value={item.totalQuestions} />
+                          <DetailRow label="Total Marks" value={item.totalMarks} />
+                          <DetailRow label="Question Types" value={item.questionTypes} />
+                          <DetailRow label="Marking Scheme" value={item.markingScheme} />
+                          <DetailRow label="Negative Marking" value={item.negativeMarking} />
                           <DetailRow
                             label="Subjects"
                             value={
@@ -424,7 +426,9 @@ export default function ExamDetails() {
                         </div>
 
                         {item.description && (
-                          <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-600">{item.description}</p>
+                          <p className="mt-2 whitespace-pre-line text-xs text-slate-600 border-t border-[#E5E7EB] pt-1.5">
+                            {item.description}
+                          </p>
                         )}
 
                         {item.fileUrl && (
@@ -432,9 +436,9 @@ export default function ExamDetails() {
                             href={item.fileUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="mt-3 inline-block text-sm font-medium text-teal-700"
+                            className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#172554] underline hover:text-[#2563EB]"
                           >
-                            View Details
+                            View Pattern Document &rarr;
                           </a>
                         )}
                       </div>
@@ -447,409 +451,150 @@ export default function ExamDetails() {
             )}
 
             {activeTab === "syllabus" && (
-              <SectionCard
-                title="Syllabus"
-                icon={BookOpen}
-              >
-
+              <SectionCard title="Official Syllabus" icon={BookOpen}>
                 {syllabuses.length ? (
-                  <div className="space-y-4">
-
+                  <div className="space-y-2.5">
                     {syllabuses.map((item) => (
                       <div
                         key={item._id}
-                        className="border-b pb-3 last:border-0">
-
-                        <h3 className="font-bold text-slate-800">{item.title}</h3>
-
-                        <p className="mt-1 whitespace-pre-line text-sm text-slate-600">{item.description}</p>
-
+                        className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5 sm:p-3"
+                      >
+                        <h3 className="text-xs sm:text-[13px] font-bold text-[#172554]">{item.title}</h3>
+                        <p className="mt-1 whitespace-pre-line text-xs text-slate-600">
+                          {item.description}
+                        </p>
                         {item.fileUrl && (
                           <a
                             href={item.fileUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="mt-2 inline-block text-sm text-teal-600">Download Syllabus</a>
+                            className="mt-2 inline-flex items-center gap-1 rounded-[4px] bg-[#172554] px-2.5 py-1 text-[11px] font-bold text-white hover:bg-[#0F172A]"
+                          >
+                            Download Syllabus PDF
+                          </a>
                         )}
-
                       </div>
                     ))}
-
                   </div>
                 ) : (
-                  <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
-                    {exam.syllabus}
+                  <p className="whitespace-pre-line text-xs leading-relaxed text-slate-600">
+                    {exam.syllabus || "Syllabus details will be announced with the official notification."}
                   </p>
                 )}
-
               </SectionCard>
             )}
 
-
             {activeTab === "sessions" && (
-              <SectionCard
-                title={`${exam.name} Sessions`}
-                icon={GraduationCap}
-              >
-
-                <p className="-mt-2 mb-3 text-xs text-slate-500">
-                  Academic year and session information.
+              <SectionCard title="Academic Sessions" icon={GraduationCap}>
+                <p className="-mt-1 mb-2 text-[10px] text-[#64748B]">
+                  Upcoming & active examination sessions.
                 </p>
 
                 {exam.sessions?.length ? (
                   <div className="space-y-2">
-
                     {exam.sessions.map((session) => (
                       <div
                         key={session._id}
-                        className="rounded-lg border border-slate-200 bg-slate-50/50 p-3.5"
+                        className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5"
                       >
-
-                        <div className="flex items-center justify-between gap-3">
-
-                          <h3 className="text-sm font-semibold text-slate-900">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="text-xs font-bold text-[#172554]">
                             {session.sessionName}
                           </h3>
-
-                          <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-semibold text-teal-700">
+                          <span className="rounded-[4px] bg-[#172554] px-1.5 py-0.2 text-[10px] font-bold text-white">
                             {session.academicYear}
                           </span>
-
                         </div>
-
-                        <p className="mt-2 text-sm leading-6 text-slate-600">
-                          {session.description}
-                        </p>
-
+                        {session.description && (
+                          <p className="mt-1 text-xs text-slate-600">
+                            {session.description}
+                          </p>
+                        )}
                       </div>
                     ))}
-
                   </div>
                 ) : (
-                  <EmptyState text="No sessions have been announced." />
+                  <EmptyState text="No specific sessions announced yet." />
                 )}
-
               </SectionCard>
             )}
 
             {activeTab === "preparation" && (
-              <SectionCard
-                title={`${exam.name} Information & Preparation`}
-                icon={BookOpen}
-              >
+              <SectionCard title="Preparation Guide & Strategy" icon={Sparkles}>
                 {preparations.length ? (
-                  <div className="space-y-8">
+                  <div className="space-y-3">
                     {preparations.map((prep) => (
                       <div
                         key={prep._id}
-                        className="overflow-hidden rounded-xl border border-slate-200 bg-white"
+                        className="rounded-[4px] border border-[#E5E7EB] bg-white overflow-hidden"
                       >
-                        {/* Header */}
-                        <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
-                          <div className="flex flex-col gap-2">
-                            <div>
-                              <h3 className="text-xl font-bold text-slate-800">
-                                {prep.title}
-                              </h3>
-
-                              <p className="mt-1 text-sm text-slate-500">
-                                Complete preparation guide for{" "}
-                                <span className="font-semibold text-slate-700">
-                                  {exam.name}
-                                </span>
-                              </p>
-                            </div>
-
+                        <div className="border-b border-[#E5E7EB] bg-[#F8FAFC] p-2.5 sm:p-3">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <h3 className="text-xs sm:text-sm font-bold text-[#172554]">
+                              {prep.title}
+                            </h3>
                             {prep.examSession && (
-                              <div>
-                                <span className="inline-flex items-center rounded-md border border-teal-100 bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700">
-                                  Session:{" "}
-                                  {prep.examSession.academicYear
-                                    ? `${prep.examSession.academicYear} - ${prep.examSession.sessionName}`
-                                    : prep.examSession.sessionName}
-                                </span>
-                              </div>
+                              <span className="rounded-[4px] border border-[#BFDBFE] bg-[#EFF6FF] px-1.5 py-0.2 text-[10px] font-bold text-[#172554]">
+                                {prep.examSession.academicYear} - {prep.examSession.sessionName}
+                              </span>
                             )}
                           </div>
                         </div>
 
-                        {/* Content */}
-                        <div className="space-y-7 p-5">
-                          {/* Overview */}
+                        <div className="space-y-2.5 p-2.5 sm:p-3">
                           {prep.overview && (
-                            <div className="rounded-lg border border-slate-200 bg-slate-50 p-5">
-                              <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-700">
+                            <div>
+                              <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
                                 Overview
                               </h4>
-
-                              <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
+                              <p className="mt-0.5 whitespace-pre-line text-xs text-slate-700 leading-relaxed">
                                 {prep.overview}
                               </p>
                             </div>
                           )}
 
-                          {/* Strategy + Subject Preparation */}
-                          {(prep.preparationStrategy ||
-                            prep.subjectWisePreparation) && (
-                              <div className="grid gap-5 lg:grid-cols-2">
-                                {prep.preparationStrategy && (
-                                  <div className="rounded-lg border border-slate-200 p-5">
-                                    <div className="mb-3 flex items-center gap-2">
-                                      <div className="h-2 w-2 rounded-full bg-teal-600" />
-                                      <h4 className="text-sm font-bold text-slate-800">
-                                        Preparation Strategy
-                                      </h4>
-                                    </div>
-
-                                    <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
-                                      {prep.preparationStrategy}
-                                    </p>
-                                  </div>
-                                )}
-
-                                {prep.subjectWisePreparation && (
-                                  <div className="rounded-lg border border-slate-200 p-5">
-                                    <div className="mb-3 flex items-center gap-2">
-                                      <div className="h-2 w-2 rounded-full bg-teal-600" />
-                                      <h4 className="text-sm font-bold text-slate-800">
-                                        Subject-wise Preparation
-                                      </h4>
-                                    </div>
-
-                                    <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
-                                      {prep.subjectWisePreparation}
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                          {/* Important Topics + Study Plan */}
-                          {(prep.importantTopics || prep.studyPlan) && (
-                            <div className="grid gap-5 lg:grid-cols-2">
-                              {prep.importantTopics && (
-                                <div className="rounded-lg border border-slate-200 p-5">
-                                  <div className="mb-3 flex items-center gap-2">
-                                    <div className="h-2 w-2 rounded-full bg-teal-600" />
-                                    <h4 className="text-sm font-bold text-slate-800">
-                                      Important Topics
-                                    </h4>
-                                  </div>
-
-                                  <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
-                                    {prep.importantTopics}
-                                  </p>
+                          {(prep.preparationStrategy || prep.subjectWisePreparation) && (
+                            <div className="grid gap-2 sm:grid-cols-2">
+                              {prep.preparationStrategy && (
+                                <div className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5">
+                                  <h5 className="text-[11px] font-bold text-[#172554]">Preparation Strategy</h5>
+                                  <p className="mt-0.5 text-xs text-slate-600 leading-relaxed">{prep.preparationStrategy}</p>
                                 </div>
                               )}
-
-                              {prep.studyPlan && (
-                                <div className="rounded-lg border border-slate-200 p-5">
-                                  <div className="mb-3 flex items-center gap-2">
-                                    <div className="h-2 w-2 rounded-full bg-teal-600" />
-                                    <h4 className="text-sm font-bold text-slate-800">
-                                      Study Plan
-                                    </h4>
-                                  </div>
-
-                                  <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
-                                    {prep.studyPlan}
-                                  </p>
+                              {prep.subjectWisePreparation && (
+                                <div className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5">
+                                  <h5 className="text-[11px] font-bold text-[#172554]">Subject-wise Strategy</h5>
+                                  <p className="mt-0.5 text-xs text-slate-600 leading-relaxed">{prep.subjectWisePreparation}</p>
                                 </div>
                               )}
                             </div>
                           )}
 
-                          {/* Books / Previous Papers / Mock Test */}
-                          {(prep.bestBooks ||
-                            prep.previousYearPapers ||
-                            prep.mockTest) && (
-                              <div>
-                                <div className="mb-4">
-                                  <h4 className="text-sm font-bold uppercase tracking-wide text-slate-700">
-                                    Preparation Resources
-                                  </h4>
-                                  <p className="mt-1 text-xs text-slate-500">
-                                    Recommended resources and practice methods
-                                  </p>
-                                </div>
-
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                  {prep.bestBooks && (
-                                    <div className="rounded-lg border border-slate-200 p-4">
-                                      <h5 className="mb-2 text-sm font-bold text-slate-800">
-                                        Best Books
-                                      </h5>
-
-                                      <p className="whitespace-pre-line text-sm leading-6 text-slate-600">
-                                        {prep.bestBooks}
-                                      </p>
-                                    </div>
-                                  )}
-
-                                  {prep.previousYearPapers && (
-                                    <div className="rounded-lg border border-slate-200 p-4">
-                                      <h5 className="mb-2 text-sm font-bold text-slate-800">
-                                        Previous Year Papers
-                                      </h5>
-
-                                      <p className="whitespace-pre-line text-sm leading-6 text-slate-600">
-                                        {prep.previousYearPapers}
-                                      </p>
-                                    </div>
-                                  )}
-
-                                  {prep.mockTest && (
-                                    <div className="rounded-lg border border-slate-200 p-4">
-                                      <h5 className="mb-2 text-sm font-bold text-slate-800">
-                                        Mock Test
-                                      </h5>
-
-                                      <p className="whitespace-pre-line text-sm leading-6 text-slate-600">
-                                        {prep.mockTest}
-                                      </p>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-
-                          {/* Preparation Details Table */}
-                          {(prep.timeManagement ||
-                            prep.revisionStrategy ||
-                            prep.lastMinuteTips ||
-                            prep.examDayTips ||
-                            prep.commonMistakes) && (
-                              <div>
-                                <div className="mb-4">
-                                  <h4 className="text-sm font-bold uppercase tracking-wide text-slate-700">
-                                    Preparation Details
-                                  </h4>
-                                </div>
-
-                                <div className="overflow-hidden rounded-lg border border-slate-200">
-                                  <div className="hidden grid-cols-[220px_1fr] bg-slate-50 px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 sm:grid">
-                                    <div>Topic</div>
-                                    <div>Details</div>
-                                  </div>
-
-                                  <div className="divide-y divide-slate-200">
-                                    {prep.timeManagement && (
-                                      <div className="grid gap-2 px-4 py-4 sm:grid-cols-[220px_1fr]">
-                                        <div className="text-sm font-semibold text-slate-700">
-                                          Time Management
-                                        </div>
-
-                                        <div className="whitespace-pre-line text-sm leading-6 text-slate-600">
-                                          {prep.timeManagement}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {prep.revisionStrategy && (
-                                      <div className="grid gap-2 px-4 py-4 sm:grid-cols-[220px_1fr]">
-                                        <div className="text-sm font-semibold text-slate-700">
-                                          Revision Strategy
-                                        </div>
-
-                                        <div className="whitespace-pre-line text-sm leading-6 text-slate-600">
-                                          {prep.revisionStrategy}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {prep.lastMinuteTips && (
-                                      <div className="grid gap-2 px-4 py-4 sm:grid-cols-[220px_1fr]">
-                                        <div className="text-sm font-semibold text-slate-700">
-                                          Last Minute Tips
-                                        </div>
-
-                                        <div className="whitespace-pre-line text-sm leading-6 text-slate-600">
-                                          {prep.lastMinuteTips}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {prep.examDayTips && (
-                                      <div className="grid gap-2 px-4 py-4 sm:grid-cols-[220px_1fr]">
-                                        <div className="text-sm font-semibold text-slate-700">
-                                          Exam Day Tips
-                                        </div>
-
-                                        <div className="whitespace-pre-line text-sm leading-6 text-slate-600">
-                                          {prep.examDayTips}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {prep.commonMistakes && (
-                                      <div className="grid gap-2 px-4 py-4 sm:grid-cols-[220px_1fr]">
-                                        <div className="text-sm font-semibold text-slate-700">
-                                          Common Mistakes
-                                        </div>
-
-                                        <div className="whitespace-pre-line text-sm leading-6 text-slate-600">
-                                          {prep.commonMistakes}
-                                        </div>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-
-                          {/* FAQs */}
-                          {prep.faqs?.length > 0 && (
-                            <div>
-                              <div className="mb-4">
-                                <h4 className="text-sm font-bold uppercase tracking-wide text-slate-700">
-                                  Frequently Asked Questions
-                                </h4>
-
-                                <p className="mt-1 text-xs text-slate-500">
-                                  Common questions related to {exam.name} preparation
-                                </p>
-                              </div>
-
-                              <div className="space-y-3">
-                                {prep.faqs.map((faq, index) => (
-                                  <details
-                                    key={index}
-                                    className="group rounded-lg border border-slate-200 bg-white"
-                                  >
-                                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4">
-                                      <span className="text-sm font-semibold text-slate-800">
-                                        <span className="mr-2 text-teal-600">
-                                          Q{index + 1}.
-                                        </span>
-                                        {faq.question}
-                                      </span>
-
-                                      <span className="shrink-0 text-lg text-slate-400 transition-transform group-open:rotate-45">
-                                        +
-                                      </span>
-                                    </summary>
-
-                                    <div className="border-t border-slate-100 px-4 py-4">
-                                      <p className="text-sm leading-6 text-slate-600">
-                                        {faq.answer}
-                                      </p>
-                                    </div>
-                                  </details>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Description */}
-                          {prep.description && (
-                            <div className="border-t border-slate-200 pt-6">
-                              <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-700">
-                                About This Preparation Guide
+                          {(prep.bestBooks || prep.previousYearPapers || prep.mockTest) && (
+                            <div className="rounded-[4px] border border-[#E5E7EB] p-2.5">
+                              <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] mb-1.5">
+                                Recommended Resources
                               </h4>
-
-                              <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
-                                {prep.description}
-                              </p>
+                              <div className="grid gap-2 sm:grid-cols-3 text-xs">
+                                {prep.bestBooks && (
+                                  <div>
+                                    <span className="font-bold text-[#172554]">Best Books:</span>
+                                    <p className="text-slate-600 mt-0.5">{prep.bestBooks}</p>
+                                  </div>
+                                )}
+                                {prep.previousYearPapers && (
+                                  <div>
+                                    <span className="font-bold text-[#172554]">PYQ Papers:</span>
+                                    <p className="text-slate-600 mt-0.5">{prep.previousYearPapers}</p>
+                                  </div>
+                                )}
+                                {prep.mockTest && (
+                                  <div>
+                                    <span className="font-bold text-[#172554]">Mock Tests:</span>
+                                    <p className="text-slate-600 mt-0.5">{prep.mockTest}</p>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           )}
                         </div>
@@ -862,251 +607,199 @@ export default function ExamDetails() {
               </SectionCard>
             )}
 
-            {/* Previous Papers */}
             {activeTab === "previous-papers" && (
-              <SectionCard
-                title="Previous Year Papers"
-                icon={FileText}
-              >
-
-                <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
-                  {exam.questionPaper}
+              <SectionCard title="Previous Year Papers" icon={FileCode}>
+                <p className="whitespace-pre-line text-xs leading-relaxed text-slate-600">
+                  {exam.questionPaper || "Previous year papers will be made available for download soon."}
                 </p>
-
-                {!exam.questionPaper && (
-                  <EmptyState text="Previous year papers are not available yet." />
-                )}
-
               </SectionCard>
             )}
 
-            {/* Sample Papers */}
             {activeTab === "sample-papers" && (
-              <SectionCard
-                title="Sample Papers"
-                icon={FileText}
-              >
-
+              <SectionCard title="Sample Papers" icon={FileText}>
                 {samplePapers.length ? (
-                  <div className="space-y-4">
-
+                  <div className="space-y-2">
                     {samplePapers.map((paper) => (
                       <div
                         key={paper._id}
-                        className="border-b pb-3 last:border-0"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5"
                       >
-
-                        <h3 className="font-bold text-slate-800">
-                          {paper.title}
-                        </h3>
-
-                        <p className="mt-1 whitespace-pre-line text-sm text-slate-600">
-                          {paper.description}
-                        </p>
-
+                        <div>
+                          <h3 className="text-xs font-bold text-[#172554]">
+                            {paper.title}
+                          </h3>
+                          {paper.description && (
+                            <p className="text-[11px] text-slate-500 mt-0.5">{paper.description}</p>
+                          )}
+                        </div>
                         {paper.fileUrl && (
                           <a
                             href={paper.fileUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="mt-2 inline-block text-sm text-teal-600"
+                            className="shrink-0 rounded-[4px] bg-[#172554] px-2.5 py-1 text-xs font-bold text-white hover:bg-[#0F172A]"
                           >
-                            Download Paper
+                            Download
                           </a>
                         )}
-
                       </div>
                     ))}
-
                   </div>
                 ) : (
                   <EmptyState text="Sample papers are not available yet." />
                 )}
-
               </SectionCard>
             )}
 
-            {/* Books */}
             {activeTab === "books" && (
-              <SectionCard
-                title="Best Books"
-                icon={BookOpen}
-              >
-                <EmptyState text="Book recommendations are not available yet." />
+              <SectionCard title="Recommended Reference Books" icon={BookOpen}>
+                <EmptyState text="Book recommendations will be published shortly." />
               </SectionCard>
             )}
 
-            {/* Mock Tests */}
             {activeTab === "mock-tests" && (
-              <SectionCard
-                title="Mock Tests"
-                icon={FileText}
-              >
-
+              <SectionCard title="Practice Mock Tests" icon={Award}>
                 {mockTests.length ? (
-                  <div className="space-y-4">
-
+                  <div className="space-y-2">
                     {mockTests.map((test) => (
                       <div
                         key={test._id}
-                        className="border-b pb-3 last:border-0"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5"
                       >
-
-                        <h3 className="font-bold text-slate-800">
-                          {test.title}
-                        </h3>
-
-                        <p className="mt-1 whitespace-pre-line text-sm text-slate-600">
-                          {test.description}
-                        </p>
-
+                        <div>
+                          <h3 className="text-xs font-bold text-[#172554]">
+                            {test.title}
+                          </h3>
+                          {test.description && (
+                            <p className="text-[11px] text-slate-500 mt-0.5">{test.description}</p>
+                          )}
+                        </div>
                         {test.fileUrl && (
                           <a
                             href={test.fileUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="mt-2 inline-block text-sm text-teal-600"
+                            className="shrink-0 rounded-[4px] bg-[#172554] px-2.5 py-1 text-xs font-bold text-white hover:bg-[#0F172A]"
                           >
                             Take Mock Test
                           </a>
                         )}
-
                       </div>
                     ))}
-
                   </div>
                 ) : (
                   <EmptyState text="Mock tests are not available yet." />
                 )}
-
               </SectionCard>
             )}
 
-            {/* FAQs */}
             {activeTab === "faqs" && (
-              <SectionCard
-                title="FAQs"
-                icon={FileText}
-              >
-
+              <SectionCard title="Frequently Asked Questions" icon={HelpCircle}>
                 {faqs.length ? (
-                  <div className="space-y-4">
-
+                  <div className="space-y-2">
                     {faqs.map((faq) => (
                       <div
                         key={faq._id}
-                        className="border-b pb-3 last:border-0"
+                        className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] p-2.5"
                       >
-
-                        <h3 className="font-bold text-slate-800">
+                        <h3 className="text-xs font-bold text-[#172554]">
                           Q: {faq.title}
                         </h3>
-
-                        <p className="mt-1 whitespace-pre-line text-sm text-slate-600">
+                        <p className="mt-0.5 text-xs text-slate-600 leading-relaxed">
                           A: {faq.description}
                         </p>
-
                       </div>
                     ))}
-
                   </div>
                 ) : (
-                  <EmptyState text="FAQs are not available yet." />
+                  <EmptyState text="Frequently asked questions are not available yet." />
                 )}
-
               </SectionCard>
             )}
-
           </main>
 
-          {/* Sidebar */}
-          <aside className="space-y-4">
-
-            {/* Quick Links */}
-            <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
-
-              <div className="border-b border-slate-200 bg-slate-50 px-3.5 py-2.5">
-
-                <h2 className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                  Quick Links
+          {/* Right Sidebar */}
+          <aside className="space-y-2.5">
+            {/* Quick Links Card */}
+            <div className="hidden lg:block rounded-md border border-[#E5E7EB] bg-white">
+              <div className="border-b border-[#E5E7EB] bg-[#F8FAFC] px-3 py-2">
+                <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#172554]">
+                  Exam Navigation
                 </h2>
-
               </div>
-
-              <div className="p-1.5">
-
+              <div className="p-1 space-y-0.5">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
-
+                  const isActive = activeTab === tab.id;
                   return (
                     <button
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm ${activeTab === tab.id
-                        ? "bg-teal-50 font-semibold text-teal-700"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                        }`}
+                      className={`flex w-full items-center justify-between rounded-[4px] px-2 py-1.5 text-left text-xs transition-colors ${
+                        isActive
+                          ? "bg-[#EFF6FF] font-bold text-[#172554]"
+                          : "text-slate-600 hover:bg-[#F8FAFC] hover:text-[#172554]"
+                      }`}
                     >
-
-                      <Icon className="size-3.5" />
-
-                      <span className="truncate">
-                        {exam.shortName || exam.name}{" "}
+                      <span className="flex items-center gap-2 truncate">
+                        <Icon className="size-3 text-slate-400" />
                         {tab.label}
                       </span>
-
+                      <ChevronRight size={11} className="text-slate-300" />
                     </button>
                   );
                 })}
-
               </div>
-
             </div>
 
-
-            <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
-
-              <div className="border-b border-slate-200 px-3.5 py-2.5">
-
-                <h2 className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                  Exam Information
+            {/* Exam Information Summary Card */}
+            <div className="rounded-md border border-[#E5E7EB] bg-white">
+              <div className="border-b border-[#E5E7EB] bg-[#F8FAFC] px-3 py-2">
+                <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#172554]">
+                  Exam Summary
                 </h2>
-
               </div>
-
-              <div className="px-3.5 py-1">
-
-                <DetailRow
-                  label="Stream"
-                  value={exam.stream}
-                />
-
-                <DetailRow
-                  label="Exam Type"
-                  value={exam.examType || exam.category}
-                />
-
-                <DetailRow
-                  label="Level"
-                  value={exam.level}
-                />
-
-                <DetailRow
-                  label="Conducting Body"
-                  value={exam.conductingBody}
-                />
-
+              <div className="px-3 py-1.5">
+                <DetailRow label="Stream" value={exam.stream} />
+                <DetailRow label="Exam Type" value={exam.examType || exam.category} />
+                <DetailRow label="Level" value={exam.level} />
+                <DetailRow label="Conducting Body" value={exam.conductingBody} />
               </div>
-
             </div>
 
+            {/* Quick CTA Card */}
+            <div className="rounded-md border border-[#BFDBFE] bg-[#EFF6FF] p-3 text-center">
+              <h3 className="text-xs font-bold text-[#172554]">Need Exam Guidance?</h3>
+              <p className="mt-0.5 text-[11px] text-slate-600 leading-snug">
+                Connect with our expert mentors for college cutoff predictions & preparation.
+              </p>
+              <Link
+                to="/counselling"
+                className="mt-2 inline-block w-full rounded-[4px] bg-[#172554] py-1 text-xs font-bold text-white hover:bg-[#0F172A] transition-colors"
+              >
+                Book Free Counselling
+              </Link>
+            </div>
           </aside>
-
         </div>
-
       </div>
 
+      {/* Mobile Sticky Bottom Bar */}
+      <div className="md:hidden fixed bottom-[49px] left-0 right-0 px-3 py-1.5 bg-white/95 backdrop-blur-md border-t border-[#CBD5E1] shadow-md z-30 flex gap-2 h-11 items-center">
+        <button
+          onClick={() => alert("Exam Saved successfully!")}
+          className="flex-1 bg-white border border-[#CBD5E1] text-[#172554] text-[11px] font-bold rounded-[6px] h-8 active:bg-gray-50 transition-colors"
+        >
+          Save Exam
+        </button>
+        <button
+          onClick={() => alert("You will now receive updates for this exam!")}
+          className="flex-1 bg-[#172554] active:bg-[#0F172A] text-white text-[11px] font-bold rounded-[6px] h-8 transition-colors"
+        >
+          Get Updates
+        </button>
+      </div>
     </div>
   );
 }

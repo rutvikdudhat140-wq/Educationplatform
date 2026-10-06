@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { createApiUrl } from '@/lib/api';
 import { Link, useSearchParams } from "react-router-dom";
 import {
     Building2,
@@ -8,13 +8,17 @@ import {
     CheckCircle2,
     Download,
     ChevronRight,
-    ChevronUp
+    ChevronUp,
+    ArrowLeft,
+    Star,
+    Layers,
+    SlidersHorizontal,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function CollegePredictorResults() {
     const [searchParams] = useSearchParams();
     const [results, setResults] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     // Modal states
     const [showModal, setShowModal] = useState(false);
@@ -22,288 +26,205 @@ export default function CollegePredictorResults() {
 
     useEffect(() => {
         if (showModal) {
-            axios.get("http://localhost:5001/api/college").then((response) => {
-                setRecommendedColleges(response.data.colleges?.slice(0, 4) || []);
-            }).catch(() => { });
+            fetch(createApiUrl('/college'))
+                .then((r) => r.json())
+                .then((response) => {
+                    setRecommendedColleges(response.data?.colleges?.slice(0, 4) || []);
+                });
         }
     }, [showModal]);
 
     useEffect(() => {
-        const fetchResults = async () => {
-            try {
-                const payload = {
-                    examId: searchParams.get("examId"),
-                    examSessionId: searchParams.get("examSessionId"),
-                    rank: Number(searchParams.get("rank")),
-                    category: searchParams.get("category"),
-                    gender: searchParams.get("gender"),
-                    quota: searchParams.get("quota"),
-                };
-
-                if (searchParams.get("courseIds")) payload.courseIds = searchParams.get("courseIds");
-                if (searchParams.get("city")) payload.city = searchParams.get("city");
-                if (searchParams.get("state")) payload.state = searchParams.get("state");
-
-                const response = await axios.post("http://localhost:5001/api/college-predictor", payload);
-                setResults(response.data.results || []);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
+        const payload = {
+            examId: searchParams.get("examId"),
+            examSessionId: searchParams.get("examSessionId"),
+            rank: Number(searchParams.get("rank")),
+            category: searchParams.get("category"),
+            gender: searchParams.get("gender"),
+            quota: searchParams.get("quota"),
         };
 
-        fetchResults();
+        if (searchParams.get("courseIds")) payload.courseIds = searchParams.get("courseIds");
+        if (searchParams.get("city")) payload.city = searchParams.get("city");
+        if (searchParams.get("state")) payload.state = searchParams.get("state");
+
+        fetch(createApiUrl('/college-predictor'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        })
+            .then((r) => r.json())
+            .then((response) => {
+                setResults(response.data?.results || []);
+            });
     }, [searchParams]);
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20">
+        <div className="min-h-screen bg-surface pb-20 text-ink">
             {/* Header / Hero */}
-            <div className="bg-[#1e1b4b] text-white py-12 px-4">
-                <div className="max-w-5xl mx-auto">
-                    <h1 className="text-3xl font-bold mb-2">College Predictor Results</h1>
-                    <p className="text-indigo-200">Based on your rank and preferences</p>
+            <div className="border-b border-line bg-white">
+                <div className="mx-auto max-w-5xl px-4 py-6">
+                    <div className="mb-3 flex items-center gap-1.5 text-xs text-ink-muted">
+                        <Link to="/college-predictor" className="flex items-center gap-1 hover:text-ink">
+                            <ArrowLeft size={13} /> Edit Parameters
+                        </Link>
+                        <span>/</span>
+                        <span className="font-semibold text-ink">Prediction Results</span>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h1 className="text-xl sm:text-2xl font-bold text-ink">College Prediction Results</h1>
+                            <p className="text-xs text-ink-muted mt-0.5">Institutions matching your rank and category profile</p>
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <span className="rounded bg-blue-50 text-brand px-2.5 py-1 text-xs font-semibold border border-blue-100">
+                                Rank: {Number(searchParams.get("rank") || 0).toLocaleString()}
+                            </span>
+                            <span className="rounded bg-surface px-2.5 py-1 text-xs font-semibold border border-line text-ink">
+                                {searchParams.get("category") || 'OPEN'}
+                            </span>
+                            <span className="rounded bg-surface px-2.5 py-1 text-xs font-semibold border border-line text-ink">
+                                {searchParams.get("quota") || 'All'}
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <main className="max-w-5xl mx-auto px-4 mt-8">
-                {loading ? (
-                    <div className="text-center py-20 text-slate-500">Loading results...</div>
-                ) : (
-                    <>
-                        {results.length > 0 && (
-                            <div>
-                                <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+            <main className="max-w-5xl mx-auto px-4 py-8">
+                {results.length > 0 ? (
+                    <div>
+                        <div className="flex items-center justify-between mb-4 border-b border-line pb-3">
+                            <h2 className="text-base font-bold text-ink">
+                                Predicted Admissions ({results.length})
+                            </h2>
+                            <span className="text-xs text-ink-muted">Sorted by Cutoff Closeness</span>
+                        </div>
+
+                        <div className="space-y-4">
+                            {results.map((item) => (
+                                <div key={item.collegeId} className="rounded-md border border-line bg-white p-5 shadow-none hover:border-brand/40 transition-colors">
+                                    {/* College Header */}
+                                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-line pb-3 mb-3">
+                                        <div>
+                                            <h3 className="text-base font-bold text-ink">
+                                                {item.collegeName || "Engineering Institution"}
+                                            </h3>
+                                            <p className="text-xs text-ink-muted mt-0.5 flex items-center gap-1">
+                                                <MapPin size={12} /> {item.location || 'Campus Location'}
+                                            </p>
+                                        </div>
+
+                                        <Link
+                                            to={`/colleges/${item.collegeId}`}
+                                            className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline shrink-0"
+                                        >
+                                            View College <ChevronRight size={13} />
+                                        </Link>
+                                    </div>
+
+                                    {/* Course & Cutoff Info */}
                                     <div>
-                                        <h2 className="text-2xl font-bold">Recommended Colleges</h2>
-                                        <div className="flex gap-2 mt-2 flex-wrap">
-                                            <span className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">
-                                                Rank: {Number(searchParams.get("rank") || 0).toLocaleString()}
+                                        <h4 className="text-sm font-semibold text-ink mb-2">
+                                            {item.courseName || "B.Tech / B.E. Program"}
+                                        </h4>
+
+                                        {/* Round Info Chips */}
+                                        <div className="flex flex-wrap items-center gap-2 mb-3 text-xs">
+                                            <span className="rounded bg-surface px-2 py-0.5 border border-line font-medium text-ink">
+                                                Round {item.round || 1}
                                             </span>
-                                            <span className="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-xs font-medium">
-                                                {searchParams.get("category")}
+                                            <span className="rounded bg-surface px-2 py-0.5 border border-line font-medium text-ink">
+                                                Historical Closing: <strong className="text-brand">{item.historicalClosingRank?.toLocaleString() || "18,993"}</strong>
                                             </span>
-                                            <span className="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-xs font-medium">
-                                                {searchParams.get("gender")}
-                                            </span>
-                                            <span className="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-xs font-medium">
-                                                {searchParams.get("quota")}
+                                            <span className="rounded bg-blue-50 text-brand px-2 py-0.5 text-[10px] font-bold border border-blue-100">
+                                                {item.quota === 'HOME_STATE' ? 'Home State Quota' : (item.quota === 'ALL' ? 'All India Quota' : 'Other State Quota')}
                                             </span>
                                         </div>
-                                    </div>
-                                    <div className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold flex items-center shadow-sm">
-                                        <Building2 className="w-4 h-4 mr-2" />
-                                        {results.length} Colleges Found
-                                    </div>
-                                </div>
 
-                                <div className="flex flex-col gap-6">
-                                    {results.map((item) => (
-                                        <div key={item.collegeId} className="bg-white border border-gray-300 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                            {/* Header Section */}
-                                            <div className="p-4 border-b border-gray-200 flex justify-between items-start bg-white">
-
-                                                <Link
-                                                    to={`/colleges/${item.collegeId}`}
-                                                    className="text-sm font-semibold text-blue-600 hover:underline flex items-center gap-0.5 mt-1 shrink-0"
-                                                >
-                                                    View Details <ChevronRight className="w-4 h-4" />
-                                                </Link>
-                                            </div>
-
-                                            {/* Body Section */}
-                                            <div className="p-4">
-                                                {/* Course Info */}
-                                                <h4 className="font-bold text-lg text-black mb-1.5">
-                                                    {item.courseName || "B.E. in Information Technology"}
-                                                </h4>
-                                                <div className="flex items-center gap-1.5 text-sm text-gray-700 mb-4">
-                                                    <span className="font-medium">4.2</span>
-                                                    <span className="text-orange-400 text-[15px] tracking-widest">★★★★<span className="text-gray-300">★</span></span>
-                                                    <span className="text-teal-600">(70)</span>
-                                                    <span className="text-gray-400 mx-1">|</span>
-                                                    <span>₹ {item.fees || "4,990"}</span>
-                                                </div>
-
-                                                {/* Round Info */}
-                                                <div className="flex justify-between items-center mb-4">
-                                                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                        <span className="border border-black px-2 py-0.5 rounded-sm text-black font-medium text-xs">JEE Main</span>
-                                                        <span>Round <span className="font-bold text-black">{item.round || 1}</span></span>
-                                                        <span className="text-gray-400">|</span>
-                                                        <span>Rank <span className="font-bold text-black">{item.studentRank?.toLocaleString() || "1055"}</span></span>
-                                                        <span className="bg-red-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm ml-1">
-                                                            {item.quota === 'HOME_STATE' ? 'HS' : (item.quota === 'ALL' ? 'AI' : 'OS')}
-                                                        </span>
-                                                    </div>
-                                                    <button className="bg-slate-100 text-black text-sm font-medium px-3 py-1.5 rounded-md flex items-center gap-1 hover:bg-slate-200 transition-colors">
-                                                        All Rounds <ChevronUp className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-
-                                                {/* Table */}
-                                                <div className="border border-gray-300 rounded-sm overflow-hidden mb-5">
-                                                    <table className="w-full text-sm text-center">
-                                                        <thead className="border-b border-gray-300 bg-white">
-                                                            <tr>
-                                                                <th className="py-2.5 px-4 font-bold text-black border-r border-gray-300 w-1/2">Round</th>
-                                                                <th className="py-2.5 px-4 font-bold text-black w-1/2">Closing Rank '24</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr className="bg-blue-50/40">
-                                                                <td className="py-2.5 px-4 border-r border-gray-300 text-gray-800 font-medium">{item.round || 1}</td>
-                                                                <td className="py-2.5 px-4 text-gray-800 font-medium">{item.historicalClosingRank?.toLocaleString() || "18,993"}</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                                {/* Action Buttons */}
-                                                <div className="flex gap-4">
-                                                    <button className="flex-1 py-2 px-4 border border-teal-600 text-teal-600 font-bold rounded-md hover:bg-teal-50 transition-colors text-[15px]">
-                                                        Shortlist
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setShowModal(true)}
-                                                        className="flex-1 py-2 px-4 bg-[#0F766E] text-white font-bold rounded-md hover:bg-orange-600 transition-colors shadow-sm text-[15px]"
-                                                    >
-                                                        Download Brochure
-                                                    </button>
-                                                </div>
-                                            </div>
+                                        {/* Action Buttons */}
+                                        <div className="flex items-center gap-3 pt-3 border-t border-line">
+                                            <Link to={`/apply?collegeId=${item.collegeId}`} className="flex-1">
+                                                <Button className="w-full rounded-md bg-brand hover:bg-brand-dark text-white text-xs font-semibold h-9 shadow-none">
+                                                    Apply Now
+                                                </Button>
+                                            </Link>
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => setShowModal(true)}
+                                                className="flex-1 rounded-md border-line text-xs font-semibold h-9 shadow-none"
+                                            >
+                                                Download Cutoff Details
+                                            </Button>
                                         </div>
-                                    ))}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-
-                        {results.length === 0 && (
-                            <div className="bg-white rounded-2xl border p-10 text-center mt-8 shadow-sm">
-                                <p className="text-slate-500 text-lg font-medium">No colleges found for this rank.</p>
-                                <p className="text-slate-400 text-sm mt-2">Try another rank, category, or quota.</p>
-                                <Link to="/college-predictor" className="inline-block mt-6 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold">
-                                    Go Back
-                                </Link>
-                            </div>
-                        )}
-                    </>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="rounded-md border border-line bg-white px-5 py-10 text-center">
+                        <p className="text-sm font-semibold text-ink">No matching colleges found</p>
+                        <p className="mt-1 text-xs text-ink-muted">Try adjusting your prediction parameters.</p>
+                    </div>
                 )}
             </main>
 
-
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                    <div className="w-full max-w-xl overflow-hidden rounded-xl bg-white shadow-xl">
-
-                        {/* Header */}
-                        <div className="flex items-center justify-between border-b px-5 py-4">
-                            <h3 className="text-base font-semibold text-slate-900">
-                                Brochure Emailed
-                            </h3>
-
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="text-slate-400 hover:text-slate-700"
-                            >
-                                <X className="h-5 w-5" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+                    <div className="w-full max-w-md rounded-md bg-white border border-line shadow-lg overflow-hidden">
+                        <div className="flex items-center justify-between border-b border-line px-5 py-3.5 bg-surface">
+                            <h3 className="text-sm font-bold text-ink">Brochure & Cutoff Guide</h3>
+                            <button onClick={() => setShowModal(false)} className="text-ink-muted hover:text-ink">
+                                <X size={16} />
                             </button>
                         </div>
 
-                        {/* Body */}
-                        <div className="p-5">
-
-                            {/* Success */}
-                            <div className="flex items-start gap-3 rounded-lg bg-green-50 p-3">
-                                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
-
+                        <div className="p-5 space-y-4 text-xs">
+                            <div className="flex items-start gap-3 rounded bg-blue-50 p-3 border border-blue-100">
+                                <CheckCircle2 size={16} className="text-brand shrink-0 mt-0.5" />
                                 <div>
-                                    <h4 className="text-sm font-semibold text-slate-900">
-                                        Brochure has been mailed to youremail@gmail.com
-                                    </h4>
-
-                                    <p className="mt-1 text-xs leading-5 text-slate-600">
-                                        B.Tech. in Computer Science and Engineering has been added
-                                        to your shortlist.
-                                    </p>
+                                    <p className="font-bold text-ink">Cutoff information sent</p>
+                                    <p className="text-ink-muted mt-0.5">The detailed round-by-round opening and closing rank report has been forwarded.</p>
                                 </div>
                             </div>
 
-                            {/* Recommended Colleges */}
                             {recommendedColleges.length > 0 && (
-                                <div className="mt-5">
-                                    <h4 className="mb-3 text-sm font-semibold text-slate-900">
-                                        You may also be interested in
-                                    </h4>
-
+                                <div>
+                                    <p className="font-bold text-ink mb-2 uppercase tracking-wider text-[10px] text-ink-muted">Similar Recommended Campuses</p>
                                     <div className="space-y-2">
-                                        {recommendedColleges.slice(0, 3).map((college, idx) => {
-
-                                            const location =
-                                                typeof college.location === "object"
-                                                    ? [
-                                                        college.location?.city,
-                                                        college.location?.state,
-                                                        college.location?.country,
-                                                    ]
-                                                        .filter(Boolean)
-                                                        .join(", ")
-                                                    : college.location;
-
-                                            return (
-                                                <div
-                                                    key={college._id || idx}
-                                                    className="flex items-center justify-between rounded-lg border border-slate-200 p-3"
-                                                >
-                                                    <div className="min-w-0">
-                                                        <h5 className="truncate text-sm font-semibold text-slate-800">
-                                                            {college.name || "Engineering College"}
-                                                        </h5>
-
-                                                        <div className="mt-1 flex items-center gap-3 text-xs text-slate-500">
-                                                            <span className="flex items-center gap-1">
-                                                                <MapPin className="h-3 w-3" />
-                                                                {location || college.city || "Location"}
-                                                            </span>
-
-                                                            <span>
-                                                                ★ {college.rating || "4.2"}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    <button
-                                                        className="ml-3 flex shrink-0 items-center gap-1.5 rounded-md bg-teal-700 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-800"
-                                                    >
-                                                        <Download className="h-3.5 w-3.5" />
-                                                        Brochure
-                                                    </button>
+                                        {recommendedColleges.slice(0, 3).map((college, idx) => (
+                                            <div key={college._id || idx} className="flex items-center justify-between p-2 rounded border border-line bg-surface">
+                                                <div className="min-w-0">
+                                                    <p className="font-semibold text-ink truncate">{college.name}</p>
+                                                    <p className="text-[10px] text-ink-muted truncate">{college.location?.city || 'Location'}</p>
                                                 </div>
-                                            );
-                                        })}
+                                                <Link to={`/colleges/${college._id}`}>
+                                                    <Button size="sm" variant="ghost" className="h-7 text-xs text-brand hover:text-brand-dark">
+                                                        View
+                                                    </Button>
+                                                </Link>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             )}
 
-                            {/* Close */}
-                            <div className="mt-5 flex justify-end">
-                                <button
+                            <div className="pt-2 flex justify-end">
+                                <Button
+                                    variant="outline"
                                     onClick={() => setShowModal(false)}
-                                    className="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                                    className="rounded-md border-line text-xs font-semibold h-8"
                                 >
                                     Close
-                                </button>
+                                </Button>
                             </div>
-
                         </div>
                     </div>
                 </div>
             )}
-
-
-
-
         </div>
     );
 }

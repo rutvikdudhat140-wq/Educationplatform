@@ -1,124 +1,158 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 const EditCollege = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const [form, setForm] = useState({
-    name: '',
-    description: '',
-    category: 'Engineering',
-    collegeType: 'Private',
-    establishedYear: '',
-    status: 'Active',
+    name: "",
+    description: "",
+    category: "Engineering",
+    collegeType: "Private",
+    establishedYear: "",
+    status: "Active",
     isTopCollege: false,
 
-    logo: '',
-    coverImage: '',
-    images: '',
-    rating: '',
+    logo: "",
+    coverImage: "",
+    images: "",
+    rating: "",
+    accreditations: "",
 
-    accreditations: '',
+    city: "",
+    state: "",
+    country: "India",
+    address: "",
+    website: "",
+    email: "",
+    phone: "",
 
-    city: '',
-    state: '',
-    country: 'India',
-    address: '',
-    website: '',
-    email: '',
-    phone: '',
+    facultyStrength: "",
+    campusSize: "",
+    totalCourses: "",
+    facilities: "",
 
-    facultyStrength: '',
-    campusSize: '',
-    totalCourses: '',
-    facilities: '',
-
-    admissionDetails: '',
-    entranceExams: '',
-    importantDates: '',
+    admissionDetails: "",
+    entranceExams: "",
+    importantDates: "",
 
     rankings: [
-      { rankingBody: '', year: '', rank: '', description: '' },
-    ],
-    placements: [
-      { year: '', averagePackage: '', highestPackage: '', medianPackage: '', totalOffers: '', topRecruiters: '', description: '' },
+      {
+        rankingBody: "",
+        year: "",
+        rank: "",
+        description: "",
+      },
     ],
 
-    courseName: '',
-    specialization: '',
-    duration: '',
-    fees: '',
-    eligibility: '',
+    placements: [
+      {
+        year: "",
+        averagePackage: "",
+        highestPackage: "",
+        medianPackage: "",
+        totalOffers: "",
+        topRecruiters: "",
+        description: "",
+      },
+    ],
+
+    courseName: "",
+    specialization: "",
+    duration: "",
+    fees: "",
+    eligibility: "",
   });
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5001/api/college/${id}`)
+      .get(`/api/college/${id}`)
       .then((res) => {
         const college = res.data.college;
 
         setForm({
-          name: college.name || '',
-          description: college.description || '',
-          category: college.category || 'Engineering',
-          collegeType: college.collegeType || 'Private',
-          establishedYear: college.establishedYear || '',
-          status: college.status || 'Active',
+          name: college.name ,
+          description: college.description,
+          category: college.category || "Engineering",
+          collegeType: college.collegeType || "Private",
+          establishedYear: college.establishedYear ,
+          status: college.status || "Active",
           isTopCollege: college.isTopCollege || false,
 
-          logo: college.logo || '',
-          coverImage: college.coverImage || '',
-          images: college.images?.join(', ') || '',
-          rating: college.rating || '',
+          logo: college.logo ,
+          coverImage: college.coverImage,
+          images: college.images?.join(", ") ,
+          rating: college.rating ,
+          accreditations: college.accreditations?.join(", ") ,
 
-          accreditations: college.accreditations?.join(', ') || '',
+          city: college.location?.city ,
+          state: college.location?.state ,
+          country: college.location?.country || "India",
+          address: college.address,
+          website: college.website,
+          email: college.email ,
+          phone: college.phone ,
 
-          city: college.location?.city || '',
-          state: college.location?.state || '',
-          country: college.location?.country || 'India',
-          address: college.address || '',
-          website: college.website || '',
-          email: college.email || '',
-          phone: college.phone || '',
+          facultyStrength: college.highlights?.facultyStrength ,
+          campusSize: college.highlights?.campusSize ,
+          totalCourses: college.highlights?.totalCourses ,
+          facilities: college.facilities?.join(", "),
 
-          facultyStrength: college.highlights?.facultyStrength || '',
-          campusSize: college.highlights?.campusSize || '',
-          totalCourses: college.highlights?.totalCourses || '',
-          facilities: college.facilities?.join(', ') || '',
-
-          admissionDetails: college.admissions?.admissionDetails || '',
-          entranceExams: college.admissions?.entranceExams?.join(', ') || '',
-          importantDates: college.admissions?.importantDates || '',
+          admissionDetails:
+            college.admissions?.admissionDetails,
+          entranceExams:
+            college.admissions?.entranceExams?.join(", ") ,
+          importantDates:
+            college.admissions?.importantDates,
 
           rankings:
-            Array.isArray(college.ranking) && college.ranking.length
-              ? college.ranking.map((r) => ({
-                  rankingBody: r.rankingBody || '',
-                  year: r.year !== undefined && r.year !== null ? String(r.year) : '',
-                  rank: r.rank !== undefined && r.rank !== null ? String(r.rank) : '',
-                  description: r.description || '',
+            college.ranking?.length
+              ? college.ranking.map((item) => ({
+                  rankingBody: item.rankingBody ,
+                  year: item.year ,
+                  rank: item.rank ,
+                  description: item.description ,
                 }))
-              : [{ rankingBody: '', year: '', rank: '', description: '' }],
-          placements:
-            Array.isArray(college.placements) && college.placements.length
-              ? college.placements.map((p) => ({
-                  year: p.year !== undefined && p.year !== null ? String(p.year) : '',
-                  averagePackage: p.averagePackage || '',
-                  highestPackage: p.highestPackage || '',
-                  medianPackage: p.medianPackage || '',
-                  totalOffers: p.totalOffers !== undefined && p.totalOffers !== null ? String(p.totalOffers) : '',
-                  topRecruiters: Array.isArray(p.topRecruiters) ? p.topRecruiters.join(', ') : '',
-                  description: p.description || '',
-                }))
-              : [{ year: '', averagePackage: '', highestPackage: '', medianPackage: '', totalOffers: '', topRecruiters: '', description: '' }],
+              : [
+                  {
+                    rankingBody: "",
+                    year: "",
+                    rank: "",
+                    description: "",
+                  },
+                ],
 
-          courseName: college.courses?.[0]?.courseName || '',
-          specialization: college.courses?.[0]?.specialization || '',
-          duration: college.courses?.[0]?.duration || '',
-          fees: college.courses?.[0]?.fees || '',
-          eligibility: college.courses?.[0]?.eligibility || '',
+          placements:
+            college.placements?.length
+              ? college.placements.map((item) => ({
+                  year: item.year || "",
+                  averagePackage: item.averagePackage,
+                  highestPackage: item.highestPackage,
+                  medianPackage: item.medianPackage,
+                  totalOffers: item.totalOffers ,
+                  topRecruiters:
+                    item.topRecruiters?.join(", ") ,
+                  description: item.description ,
+                }))
+              : [
+                  {
+                    year: "",
+                    averagePackage: "",
+                    highestPackage: "",
+                    medianPackage: "",
+                    totalOffers: "",
+                    topRecruiters: "",
+                    description: "",
+                  },
+                ],
+
+          courseName: college.courses?.[0]?.courseName ,
+          specialization: college.courses?.[0]?.specialization ,
+          duration: college.courses?.[0]?.duration ,
+          fees: college.courses?.[0]?.fees ,
+          eligibility: college.courses?.[0]?.eligibility ,
         });
       });
   }, [id]);
@@ -126,193 +160,175 @@ const EditCollege = () => {
   const handleChange = (e) => {
     setForm({
       ...form,
-      [e.target.name]: e.target.type === 'checkbox'
-        ? e.target.checked
-        : e.target.value,
+      [e.target.name]:
+        e.target.type === "checkbox"
+          ? e.target.checked
+          : e.target.value,
     });
   };
 
-  const handleRankingChange = (index, field, value) => {
-    const updated = [...form.rankings];
+  const updateList = (list, index, field, value) => {
+    const updated = [...form[list]];
     updated[index][field] = value;
-    setForm({ ...form, rankings: updated });
-  };
 
-  const addRanking = () =>
     setForm({
       ...form,
-      rankings: [...form.rankings, { rankingBody: '', year: '', rank: '', description: '' }],
+      [list]: updated,
     });
-
-  const removeRanking = (index) => {
-    const updated = form.rankings.filter((_, i) => i !== index);
-    setForm({ ...form, rankings: updated });
   };
 
-  const handlePlacementChange = (index, field, value) => {
-    const updated = [...form.placements];
-    updated[index][field] = value;
-    setForm({ ...form, placements: updated });
-  };
-
-  const addPlacement = () =>
+  const addList = (list, item) => {
     setForm({
       ...form,
-      placements: [...form.placements, { year: '', averagePackage: '', highestPackage: '', medianPackage: '', totalOffers: '', topRecruiters: '', description: '' }],
+      [list]: [...form[list], item],
     });
-
-  const removePlacement = (index) => {
-    const updated = form.placements.filter((_, i) => i !== index);
-    setForm({ ...form, placements: updated });
   };
 
-  const handleSubmit = (e) => {
+  const removeList = (list, index) => {
+    setForm({
+      ...form,
+      [list]: form[list].filter((_, i) => i !== index),
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .put(`http://localhost:5001/api/college/${id}`, {
-        name: form.name,
-        description: form.description,
-        category: form.category,
-        collegeType: form.collegeType,
-        establishedYear: form.establishedYear,
-        status: form.status,
-        isTopCollege: form.isTopCollege,
+    await axios.put(`/api/college/${id}`, {
+      name: form.name,
+      description: form.description,
+      category: form.category,
+      collegeType: form.collegeType,
+      establishedYear: form.establishedYear,
+      status: form.status,
+      isTopCollege: form.isTopCollege,
 
-        logo: form.logo,
-        coverImage: form.coverImage,
-        images: form.images,
-        rating: form.rating,
+      logo: form.logo,
+      coverImage: form.coverImage,
+      images: form.images,
+      rating: form.rating,
+      accreditations: form.accreditations,
 
-        accreditations: form.accreditations,
+      location: {
+        city: form.city,
+        state: form.state,
+        country: form.country,
+      },
 
+      address: form.address,
+      website: form.website,
+      email: form.email,
+      phone: form.phone,
 
-        location: {
-          city: form.city,
-          state: form.state,
-          country: form.country,
+      highlights: {
+        facultyStrength: form.facultyStrength,
+        campusSize: form.campusSize,
+        totalCourses: form.totalCourses,
+      },
+
+      facilities: form.facilities,
+
+      admissions: {
+        admissionDetails: form.admissionDetails,
+        entranceExams: form.entranceExams,
+        importantDates: form.importantDates,
+      },
+
+      ranking: form.rankings
+        .filter(
+          (item) =>
+            item.rankingBody ||
+            item.year ||
+            item.rank ||
+            item.description
+        )
+        .map((item) => ({
+          rankingBody: item.rankingBody,
+          year: item.year ? Number(item.year) : undefined,
+          rank: item.rank ? Number(item.rank) : undefined,
+          description: item.description,
+        })),
+
+      placements: form.placements
+        .filter(
+          (item) =>
+            item.year ||
+            item.averagePackage ||
+            item.highestPackage ||
+            item.medianPackage ||
+            item.totalOffers ||
+            item.topRecruiters ||
+            item.description
+        )
+        .map((item) => ({
+          year: item.year ? Number(item.year) : undefined,
+          averagePackage: item.averagePackage,
+          highestPackage: item.highestPackage,
+          medianPackage: item.medianPackage,
+          totalOffers: item.totalOffers
+            ? Number(item.totalOffers)
+            : undefined,
+          topRecruiters: item.topRecruiters
+            ? item.topRecruiters
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
+            : [],
+          description: item.description,
+        })),
+
+      courses: [
+        {
+          courseName: form.courseName,
+          specialization: form.specialization,
+          duration: form.duration,
+          fees: form.fees,
+          eligibility: form.eligibility,
         },
+      ],
+    });
 
-        address: form.address,
-        website: form.website,
-        email: form.email,
-        phone: form.phone,
-
-        highlights: {
-          facultyStrength: form.facultyStrength,
-          campusSize: form.campusSize,
-          totalCourses: form.totalCourses,
-        },
-
-        facilities: form.facilities,
-
-        admissions: {
-          admissionDetails: form.admissionDetails,
-          entranceExams: form.entranceExams,
-          importantDates: form.importantDates,
-        },
-
-        ranking: form.rankings
-          .filter((r) => r.rankingBody || r.year || r.rank || r.description)
-          .map((r) => ({
-            rankingBody: r.rankingBody,
-            year: r.year ? Number(r.year) : undefined,
-            rank: r.rank ? Number(r.rank) : undefined,
-            description: r.description,
-          })),
-        placements: form.placements
-          .filter(
-            (p) =>
-              p.year ||
-              p.averagePackage ||
-              p.highestPackage ||
-              p.medianPackage ||
-              p.totalOffers ||
-              p.topRecruiters ||
-              p.description
-          )
-          .map((p) => ({
-            year: p.year ? Number(p.year) : undefined,
-            averagePackage: p.averagePackage,
-            highestPackage: p.highestPackage,
-            medianPackage: p.medianPackage,
-            totalOffers: p.totalOffers ? Number(p.totalOffers) : undefined,
-            topRecruiters: p.topRecruiters
-              ? p.topRecruiters
-                  .split(',')
-                  .map((r) => r.trim())
-                  .filter(Boolean)
-              : [],
-            description: p.description,
-          })),
-
-        courses: [
-          {
-            courseName: form.courseName,
-            specialization: form.specialization,
-            duration: form.duration,
-            fees: form.fees,
-            eligibility: form.eligibility,
-          },
-        ],
-      })
-      .then(() => {
-        navigate('/admin/college/list');
-      });
+    navigate("/admin/college/list");
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8">
+    <div className="min-h-screen bg-surface px-4 py-8">
       <div className="mx-auto max-w-4xl">
 
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              Edit College
-            </h1>
+            <h1 className="text-2xl font-bold text-ink">Edit College</h1>
 
-            <p className="mt-1 text-sm text-slate-500">
-              Update college details
-            </p>
+            <p className="mt-1 text-sm text-ink-muted">Update college details</p>
           </div>
 
           <button
             type="button"
-            onClick={() => navigate('/admin/college/list')}
-            className="rounded-lg border bg-white px-5 py-2.5 text-sm font-semibold text-slate-600"
-          >
-            Back
+            onClick={() => navigate("/admin/college/list")}
+            className="rounded-lg border bg-white px-5 py-2.5 text-sm font-semibold text-ink-muted">Back
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Basic Details */}
           <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-lg font-bold text-slate-800">
-              Basic Details
-            </h2>
+            <h2 className="mb-5 text-lg font-bold text-ink">Basic Details</h2>
 
             <div className="grid gap-5 md:grid-cols-2">
-
               <div>
-                <label className="mb-1.5 block text-sm font-semibold">
-                  College Name
-                </label>
+                <label className="mb-1.5 block text-sm font-semibold">College Name</label>
 
                 <input
                   name="name"
                   value={form.name}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
+                  className="w-full rounded-lg border px-3.5 py-2.5 text-sm"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-semibold">
-                  Category
-                </label>
+                <label className="mb-1.5 block text-sm font-semibold">Category</label>
 
                 <select
                   name="category"
@@ -328,16 +344,13 @@ const EditCollege = () => {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-semibold">
-                  College Type
-                </label>
+                <label className="mb-1.5 block text-sm font-semibold">College Type</label>
 
                 <select
                   name="collegeType"
                   value={form.collegeType}
                   onChange={handleChange}
-                  className="w-full rounded-lg border px-3.5 py-2.5 text-sm"
-                >
+                  className="w-full rounded-lg border px-3.5 py-2.5 text-sm">
                   <option>Government</option>
                   <option>Private</option>
                   <option>Autonomous</option>
@@ -345,10 +358,7 @@ const EditCollege = () => {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-semibold">
-                  Established Year
-                </label>
-
+                <label className="mb-1.5 block text-sm font-semibold">Established Year</label>
                 <input
                   type="number"
                   name="establishedYear"
@@ -359,38 +369,30 @@ const EditCollege = () => {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-semibold">
-                  Status
-                </label>
+                <label className="mb-1.5 block text-sm font-semibold">Status</label>
 
                 <select
                   name="status"
                   value={form.status}
                   onChange={handleChange}
-                  className="w-full rounded-lg border px-3.5 py-2.5 text-sm"
-                >
+                  className="w-full rounded-lg border px-3.5 py-2.5 text-sm">
                   <option>Active</option>
                   <option>Inactive</option>
                 </select>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                  <input
-                    type="checkbox"
-                    name="isTopCollege"
-                    checked={form.isTopCollege}
-                    onChange={handleChange}
-                    className="size-4 rounded border-slate-300 text-[#0F766E] focus:ring-[#0F766E]"
-                  />
-                  Show as Top College on Home Page
-                </label>
-              </div>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  name="isTopCollege"
+                  checked={form.isTopCollege}
+                  onChange={handleChange}
+                />
+                Show as Top College on Home Page
+              </label>
 
               <div className="md:col-span-2">
-                <label className="mb-1.5 block text-sm font-semibold">
-                  Description
-                </label>
+                <label className="mb-1.5 block text-sm font-semibold">Description</label>
 
                 <textarea
                   name="description"
@@ -404,11 +406,8 @@ const EditCollege = () => {
             </div>
           </div>
 
-          {/* Media */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-lg font-bold text-slate-800">
-              Media
-            </h2>
+<div className="rounded-2xl bg-white p-6 shadow-sm">
+            <h2 className="mb-5 text-lg font-bold text-ink">Media</h2>
 
             <div className="grid gap-5 md:grid-cols-2">
 
@@ -417,7 +416,7 @@ const EditCollege = () => {
                 placeholder="Logo URL"
                 value={form.logo}
                 onChange={handleChange}
-                className="w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                className="rounded-lg border px-3.5 py-2.5 text-sm"
               />
 
               <input
@@ -425,7 +424,7 @@ const EditCollege = () => {
                 placeholder="Cover Image URL"
                 value={form.coverImage}
                 onChange={handleChange}
-                className="w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                className="rounded-lg border px-3.5 py-2.5 text-sm"
               />
 
               <input
@@ -433,7 +432,7 @@ const EditCollege = () => {
                 placeholder="Gallery Images"
                 value={form.images}
                 onChange={handleChange}
-                className="w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                className="rounded-lg border px-3.5 py-2.5 text-sm"
               />
 
               <input
@@ -442,7 +441,7 @@ const EditCollege = () => {
                 placeholder="Rating"
                 value={form.rating}
                 onChange={handleChange}
-                className="w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                className="rounded-lg border px-3.5 py-2.5 text-sm"
               />
 
               <input
@@ -450,20 +449,16 @@ const EditCollege = () => {
                 placeholder="Accreditations"
                 value={form.accreditations}
                 onChange={handleChange}
-                className="w-full rounded-lg border px-3.5 py-2.5 text-sm md:col-span-2"
+                className="rounded-lg border px-3.5 py-2.5 text-sm md:col-span-2"
               />
 
             </div>
           </div>
 
-          {/* Location */}
           <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-lg font-bold text-slate-800">
-              Location & Contact
-            </h2>
+            <h2 className="mb-5 text-lg font-bold text-ink">Location & Contact</h2>
 
             <div className="grid gap-5 md:grid-cols-3">
-
               <input
                 name="city"
                 placeholder="City"
@@ -524,14 +519,10 @@ const EditCollege = () => {
             </div>
           </div>
 
-          {/* Highlights */}
           <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-lg font-bold text-slate-800">
-              Quick Highlights
-            </h2>
+            <h2 className="mb-5 text-lg font-bold text-ink">Quick Highlights</h2>
 
             <div className="grid gap-5 md:grid-cols-3">
-
               <input
                 name="facultyStrength"
                 placeholder="Faculty Strength"
@@ -567,12 +558,8 @@ const EditCollege = () => {
             </div>
           </div>
 
-          {/* Course */}
           <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-lg font-bold text-slate-800">
-              Courses & Fees
-            </h2>
-
+            <h2 className="mb-5 text-lg font-bold text-ink">Courses & Fees</h2>
             <div className="grid gap-5 md:grid-cols-2">
 
               <input
@@ -618,14 +605,10 @@ const EditCollege = () => {
             </div>
           </div>
 
-          {/* Admissions */}
           <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-lg font-bold text-slate-800">
-              Admissions
-            </h2>
+            <h2 className="mb-5 text-lg font-bold text-ink">Admissions</h2>
 
             <div className="space-y-5">
-
               <textarea
                 name="admissionDetails"
                 placeholder="Admission Details"
@@ -636,7 +619,6 @@ const EditCollege = () => {
               />
 
               <div className="grid gap-5 md:grid-cols-2">
-
                 <input
                   name="entranceExams"
                   placeholder="Entrance Exams"
@@ -652,320 +634,265 @@ const EditCollege = () => {
                   onChange={handleChange}
                   className="rounded-lg border px-3.5 py-2.5 text-sm"
                 />
-
               </div>
             </div>
           </div>
 
-           {/* Ranking Details */}
-           <div className="rounded-2xl bg-white p-6 shadow-sm">
-             <h2 className="mb-5 text-lg font-bold text-slate-800">
-               Ranking Details
-             </h2>
+<div className="rounded-2xl bg-white p-6 shadow-sm">
+            <h2 className="mb-5 text-lg font-bold text-ink">Ranking Details</h2>
 
-             {form.rankings.map((ranking, index) => (
-               <div
-                 key={index}
-                 className="mb-4 rounded-lg border border-slate-200 p-4 last:mb-0"
-               >
-                 <div className="grid gap-4 md:grid-cols-2">
-                   <div>
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Ranking Body
-                     </label>
+            {form.rankings.map((ranking, index) => (
+              <div
+                key={index}
+                className="mb-4 rounded-lg border p-4"
+              >
+                <div className="grid gap-4 md:grid-cols-2">
 
-                     <input
-                       name="rankingBody"
-                       value={ranking.rankingBody}
-                       onChange={(e) =>
-                         handleRankingChange(
-                           index,
-                           'rankingBody',
-                           e.target.value
-                         )
-                       }
-                       placeholder="NIRF, India Today, ..."
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
+                  <input
+                    placeholder="Ranking Body"
+                    value={ranking.rankingBody}
+                    onChange={(e) =>
+                      updateList(
+                        "rankings",
+                        index,
+                        "rankingBody",
+                        e.target.value
+                      )
+                    }
+                    className="rounded-lg border px-3.5 py-2.5 text-sm"
+                  />
 
-                   <div>
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Year
-                     </label>
+                  <input
+                    type="number"
+                    placeholder="Year"
+                    value={ranking.year}
+                    onChange={(e) =>
+                      updateList(
+                        "rankings",
+                        index,
+                        "year",
+                        e.target.value
+                      )
+                    }
+                    className="rounded-lg border px-3.5 py-2.5 text-sm"
+                  />
 
-                     <input
-                       type="number"
-                       name="year"
-                       value={ranking.year}
-                       onChange={(e) =>
-                         handleRankingChange(
-                           index,
-                           'year',
-                           e.target.value
-                         )
-                       }
-                       placeholder="2026"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
+                  <input
+                    type="number"
+                    placeholder="Rank"
+                    value={ranking.rank}
+                    onChange={(e) =>
+                      updateList(
+                        "rankings",
+                        index,
+                        "rank",
+                        e.target.value
+                      )
+                    }
+                    className="rounded-lg border px-3.5 py-2.5 text-sm"
+                  />
 
-                   <div>
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Rank
-                     </label>
+                  <textarea
+                    placeholder="Ranking Description"
+                    value={ranking.description}
+                    onChange={(e) =>
+                      updateList(
+                        "rankings",
+                        index,
+                        "description",
+                        e.target.value
+                      )
+                    }
+                    rows="2"
+                    className="rounded-lg border px-3.5 py-2.5 text-sm"
+                  />
+                </div>
 
-                     <input
-                       type="number"
-                       name="rank"
-                       value={ranking.rank}
-                       onChange={(e) =>
-                         handleRankingChange(
-                           index,
-                           'rank',
-                           e.target.value
-                         )
-                       }
-                       placeholder="9"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
-
-                   <div className="md:col-span-2">
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Ranking Description
-                     </label>
-
-                     <textarea
-                       name="description"
-                       value={ranking.description}
-                       onChange={(e) =>
-                         handleRankingChange(
-                           index,
-                           'description',
-                           e.target.value
-                         )
-                       }
-                       placeholder="Ranking description"
-                       rows="2"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
-                 </div>
-
-                 {form.rankings.length > 1 && (
-                   <button
-                     type="button"
-                     onClick={() => removeRanking(index)}
-                     className="mt-2 text-xs text-red-600"
-                   >
-                     Remove
-                   </button>
-                 )}
-               </div>
-             ))}
-
-             <button
-               type="button"
-               onClick={addRanking}
-               className="rounded-lg border border-[#0F766E] px-4 py-2 text-sm font-medium text-[#0F766E]"
-             >
-               + Add Ranking
-             </button>
-           </div>
-
-           {/* Placement Details */}
-           <div className="rounded-2xl bg-white p-6 shadow-sm">
-             <h2 className="mb-5 text-lg font-bold text-slate-800">
-               Placement Details
-             </h2>
-
-             {form.placements.map((placement, index) => (
-               <div
-                 key={index}
-                 className="mb-4 rounded-lg border border-slate-200 p-4 last:mb-0"
-               >
-                 <div className="grid gap-4 md:grid-cols-2">
-                   <div>
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Placement Year
-                     </label>
-
-                     <input
-                       type="number"
-                       name="year"
-                       value={placement.year}
-                       onChange={(e) =>
-                         handlePlacementChange(
-                           index,
-                           'year',
-                           e.target.value
-                         )
-                       }
-                       placeholder="2025"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
-
-                   <div>
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Average Package
-                     </label>
-
-                     <input
-                       name="averagePackage"
-                       value={placement.averagePackage}
-                       onChange={(e) =>
-                         handlePlacementChange(
-                           index,
-                           'averagePackage',
-                           e.target.value
-                         )
-                       }
-                       placeholder="₹14 LPA"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
-
-                   <div>
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Highest Package
-                     </label>
-
-                     <input
-                       name="highestPackage"
-                       value={placement.highestPackage}
-                       onChange={(e) =>
-                         handlePlacementChange(
-                           index,
-                           'highestPackage',
-                           e.target.value
-                         )
-                       }
-                       placeholder="₹42 LPA"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
-
-                   <div>
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Median Package
-                     </label>
-
-                     <input
-                       name="medianPackage"
-                       value={placement.medianPackage}
-                       onChange={(e) =>
-                         handlePlacementChange(
-                           index,
-                           'medianPackage',
-                           e.target.value
-                         )
-                       }
-                       placeholder="₹12 LPA"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
-
-                   <div>
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Total Offers
-                     </label>
-
-                     <input
-                       type="number"
-                       name="totalOffers"
-                       value={placement.totalOffers}
-                       onChange={(e) =>
-                         handlePlacementChange(
-                           index,
-                           'totalOffers',
-                           e.target.value
-                         )
-                       }
-                       placeholder="850"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
-
-                   <div className="md:col-span-2">
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Top Recruiters
-                     </label>
-
-                     <input
-                       name="topRecruiters"
-                       value={placement.topRecruiters}
-                       onChange={(e) =>
-                         handlePlacementChange(
-                           index,
-                           'topRecruiters',
-                           e.target.value
-                         )
-                       }
-                       placeholder="Google, Microsoft, Amazon"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
-
-                   <div className="md:col-span-2">
-                     <label className="mb-1.5 block text-sm font-semibold">
-                       Placement Description
-                     </label>
-
-                     <textarea
-                       name="description"
-                       value={placement.description}
-                       onChange={(e) =>
-                         handlePlacementChange(
-                           index,
-                           'description',
-                           e.target.value
-                         )
-                       }
-                       placeholder="Placement description"
-                       rows="3"
-                       className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none focus:border-teal-600"
-                     />
-                   </div>
-                 </div>
-
-                 {form.placements.length > 1 && (
-                   <button
-                     type="button"
-                     onClick={() => removePlacement(index)}
-                     className="mt-2 text-xs text-red-600"
-                   >
-                     Remove
-                   </button>
-                 )}
-               </div>
-             ))}
-
-             <button
-               type="button"
-               onClick={addPlacement}
-               className="rounded-lg border border-[#0F766E] px-4 py-2 text-sm font-medium text-[#0F766E]"
-             >
-               + Add Placement
-             </button>
-           </div>
-
-          {/* Buttons */}
-          <div className="flex justify-end gap-3 pb-8">
+                {form.rankings.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeList("rankings", index)}
+                    className="mt-2 text-xs text-red-600"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
 
             <button
               type="button"
-              onClick={() => navigate('/admin/college/list')}
-              className="rounded-lg border bg-white px-5 py-2.5 text-sm font-semibold text-slate-600"
+              onClick={() =>
+                addList("rankings", {
+                  rankingBody: "",
+                  year: "",
+                  rank: "",
+                  description: "",
+                })
+              }
+              className="rounded-lg border border-brand px-4 py-2 text-sm text-brand"
+            >
+               Add Ranking
+            </button>
+          </div>
+
+          <div className="rounded-2xl bg-white p-6 shadow-sm">
+            <h2 className="mb-5 text-lg font-bold text-ink">Placement Details
+        </h2>
+
+            {form.placements.map((placement, index) => (
+              <div
+                key={index}
+                className="mb-4 rounded-lg border p-4"
+              >
+                <div className="grid gap-4 md:grid-cols-2">
+
+                  <input
+                    type="number"
+                    placeholder="Placement Year"
+                    value={placement.year}
+                    onChange={(e) =>
+                      updateList(
+                        "placements",
+                        index,
+                        "year",
+                        e.target.value
+                      )
+                    }
+                    className="rounded-lg border px-3.5 py-2.5 text-sm"
+                  />
+
+                  <input
+                    placeholder="Average Package"
+                    value={placement.averagePackage}
+                    onChange={(e) =>
+                      updateList(
+                        "placements",
+                        index,
+                        "averagePackage",
+                        e.target.value
+                      )
+                    }
+                    className="rounded-lg border px-3.5 py-2.5 text-sm"
+                  />
+
+                  <input
+                    placeholder="Highest Package"
+                    value={placement.highestPackage}
+                    onChange={(e) =>
+                      updateList(
+                        "placements",
+                        index,
+                        "highestPackage",
+                        e.target.value
+                      )
+                    }
+                    className="rounded-lg border px-3.5 py-2.5 text-sm"
+                  />
+
+                  <input
+                    placeholder="Median Package"
+                    value={placement.medianPackage}
+                    onChange={(e) =>
+                      updateList(
+                        "placements",
+                        index,
+                        "medianPackage",
+                        e.target.value
+                      )
+                    }
+                    className="rounded-lg border px-3.5 py-2.5 text-sm"
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Total Offers"
+                    value={placement.totalOffers}
+                    onChange={(e) =>
+                      updateList(
+                        "placements",
+                        index,
+                        "totalOffers",
+                        e.target.value
+                      )
+                    }
+                    className="rounded-lg border px-3.5 py-2.5 text-sm"
+                  />
+
+                  <input
+                    placeholder="Top Recruiters"
+                    value={placement.topRecruiters}
+                    onChange={(e) =>
+                      updateList(
+                        "placements",
+                        index,
+                        "topRecruiters",
+                        e.target.value
+                      )
+                    }
+                    className="rounded-lg border px-3.5 py-2.5 text-sm md:col-span-2"
+                  />
+
+                  <textarea
+                    placeholder="Placement Description"
+                    value={placement.description}
+                    onChange={(e) =>
+                      updateList(
+                        "placements",
+                        index,
+                        "description",
+                        e.target.value
+                      )
+                    }
+                    rows="3"
+                    className="rounded-lg border px-3.5 py-2.5 text-sm md:col-span-2"
+                  />
+
+                </div>
+
+                {form.placements.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeList("placements", index)}
+                    className="mt-2 text-xs text-red-600"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={() =>
+                addList("placements", {
+                  year: "",
+                  averagePackage: "",
+                  highestPackage: "",
+                  medianPackage: "",
+                  totalOffers: "",
+                  topRecruiters: "",
+                  description: "",
+                })
+              }
+              className="rounded-lg border border-brand px-4 py-2 text-sm text-brand"
+            >
+              Add Placement
+            </button>
+          </div>
+
+          <div className="flex justify-end gap-3 pb-8">
+            <button
+              type="button"
+              onClick={() => navigate("/admin/college/list")}
+              className="rounded-lg border bg-white px-5 py-2.5 text-sm font-semibold text-ink-muted"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="rounded-lg bg-[#0F766E] px-5 py-2.5 text-sm font-semibold text-white"
-            >
+              className="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white">
               Update College
             </button>
 

@@ -9,9 +9,7 @@ const EditExamEligibility = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const token = localStorage.getItem("adminToken");
-
-    const [exams, setExams] = useState([]);
+const [exams, setExams] = useState([]);
     const [examSessions, setExamSessions] = useState([]);
 
     const [form, setForm] = useState({
@@ -30,22 +28,14 @@ const EditExamEligibility = () => {
 
     // Get Exams
     useEffect(() => {
-        axios.get("http://localhost:5001/api/exam", {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).then((res) => {
+        axios.get("/api/exam").then((res) => {
             setExams(res.data.exams);
         });
     }, []);
 
     // Get Eligibility
     useEffect(() => {
-        axios.get(`http://localhost:5001/api/exam-eligibility/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).then((res) => {
+        axios.get(`/api/exam-eligibility/${id}`).then((res) => {
             const data = res.data.examEligibility;
 
             setForm({
@@ -71,12 +61,7 @@ const EditExamEligibility = () => {
     useEffect(() => {
         if (form.exam) {
             axios.get(
-                `http://localhost:5001/api/exam-session?exam=${form.exam}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+                `/api/exam-session?exam=${form.exam}`
             ).then((res) => {
                 setExamSessions(res.data.examSessions);
             });
@@ -147,13 +132,8 @@ const EditExamEligibility = () => {
         };
 
         axios.put(
-            `http://localhost:5001/api/exam-eligibility/${id}`,
-            payload,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+            `/api/exam-eligibility/${id}`,
+            payload
         ).then(() => {
             navigate("/admin/exam-eligibility/list");
         });
@@ -449,8 +429,7 @@ const EditExamEligibility = () => {
                     </div>
                 </div>
 
-  
-                <div className="flex justify-end border-t pt-5">
+<div className="flex justify-end border-t pt-5">
 
                     <Button type="submit">
                         <Save className="mr-2 h-4 w-4" />

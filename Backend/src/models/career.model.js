@@ -78,6 +78,30 @@ const careerSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    roadmaps: [{
+      pathName: { type: String, required: true },
+      steps: [{
+        stepNumber: { type: Number, required: true },
+        name: { type: String, required: true },
+        description: { type: String, default: '' },
+        duration: { type: String, default: '' },
+        skills: { type: [String], default: [] },
+        recommendedExams: { type: [String], default: [] },
+        recommendedCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
+        relatedColleges: [{ type: mongoose.Schema.Types.ObjectId, ref: 'College' }]
+      }]
+    }],
+    mentors: [{
+      name: { type: String, required: true },
+      profilePhoto: { type: String, default: '' },
+      college: { type: String, default: '' },
+      graduationYear: { type: String, default: '' },
+      currentRole: { type: String, default: '' },
+      company: { type: String, default: '' },
+      experience: { type: String, default: '' },
+      about: { type: String, default: '' },
+      areasOfHelp: { type: [String], default: [] }
+    }],
     relatedCourses: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Course',

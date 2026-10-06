@@ -1,8 +1,6 @@
-"use client"
-
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/utils"
 
 function Table({
   className,
@@ -12,7 +10,7 @@ function Table({
     <div data-slot="table-container" className="relative w-full overflow-x-auto">
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom text-[0.8125rem]", className)}
         {...props} />
     </div>
   );
@@ -49,7 +47,7 @@ function TableFooter({
   return (
     <tfoot
       data-slot="table-footer"
-      className={cn("border-t bg-muted/50 font-medium [&>tr]:last:border-b-0", className)}
+      className={cn("border-t bg-surface font-medium [&>tr]:last:border-b-0", className)}
       {...props} />
   );
 }
@@ -62,7 +60,7 @@ function TableRow({
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b border-border transition-colors hover:bg-surface/70 has-aria-expanded:bg-surface data-[state=selected]:bg-surface",
         className
       )}
       {...props} />
@@ -77,7 +75,7 @@ function TableHead({
     <th
       data-slot="table-head"
       className={cn(
-        "h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0",
+        "h-10 border-b border-border bg-surface px-3 text-left align-middle text-[0.6875rem] font-semibold whitespace-nowrap text-muted-foreground uppercase tracking-[0.04em] [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props} />
@@ -92,7 +90,7 @@ function TableCell({
     <td
       data-slot="table-cell"
       className={cn(
-        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+        "px-3 py-2.5 align-middle text-ink-soft whitespace-nowrap [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props} />
@@ -106,7 +104,7 @@ function TableCaption({
   return (
     <caption
       data-slot="table-caption"
-      className={cn("mt-4 text-sm text-muted-foreground", className)}
+      className={cn("mt-4 text-[0.8125rem] text-muted-foreground", className)}
       {...props} />
   );
 }

@@ -1,13 +1,11 @@
-
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 
 const AddExamPreparation = () => {
     const navigate = useNavigate();
-    const token = localStorage.getItem("adminToken");
 
     const [exams, setExams] = useState([]);
     const [examSessions, setExamSessions] = useState([]);
@@ -42,11 +40,7 @@ const AddExamPreparation = () => {
 
     useEffect(() => {
         axios
-            .get("http://localhost:5001/api/exam?status=Active", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            .get("/api/exam?status=Active")
             .then((res) => {
                 setExams(res.data.exams || []);
             });
@@ -67,12 +61,7 @@ const AddExamPreparation = () => {
 
         axios
             .get(
-                `http://localhost:5001/api/exam-session?exam=${examId}&status=Active`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+                `/api/exam-session?exam=${examId}&status=Active`
             )
             .then((res) => {
                 setExamSessions(res.data.examSessions || []);
@@ -113,15 +102,10 @@ const AddExamPreparation = () => {
 
         axios
             .post(
-                "http://localhost:5001/api/exam-preparation",
+                "/api/exam-preparation",
                 {
                     ...form,
                     faqs,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
                 }
             )
             .then(() => {
@@ -130,35 +114,35 @@ const AddExamPreparation = () => {
     };
 
    const inputClass =
-    "w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600";
+    "w-full rounded-md border border-line bg-white px-2.5 py-1.5 text-xs outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600";
 
   const textareaClass =
-    "w-full resize-none rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600";
+    "w-full resize-none rounded-md border border-line bg-white px-2.5 py-1.5 text-xs outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600";
 
     return (
-        <div className="min-h-screen bg-slate-50 px-3 py-5">
+        <div className="min-h-screen bg-surface px-3 py-5">
             <div className="mx-auto">
 
                 {/* Header */}
                 <div className="mb-5">
-                    <h2 className="text-lg font-semibold text-slate-900">
+                    <h2 className="text-lg font-semibold text-ink">
                         Add Exam Preparation
                     </h2>
 
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-ink-muted">
                         Add preparation information for a specific exam session.
                     </p>
                 </div>
 
                 <form
                     onSubmit={handleSubmit}
-                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+                    className="rounded-xl border border-line bg-white p-5 shadow-sm"
                 >
 
                     {/* Exam & Session */}
-                    <div className="grid gap-4 border-b border-slate-100 pb-5 md:grid-cols-2">
+                    <div className="grid gap-4 border-b border-line pb-5 md:grid-cols-2">
 
-                        <label className="space-y-1.5 text-sm font-medium text-slate-700">
+                        <label className="space-y-1.5 text-sm font-medium text-ink">
                             Exam *
 
                             <select
@@ -183,7 +167,7 @@ const AddExamPreparation = () => {
                             </select>
                         </label>
 
-                        <label className="space-y-1.5 text-sm font-medium text-slate-700">
+                        <label className="space-y-1.5 text-sm font-medium text-ink">
                             Exam Session *
 
                             <select
@@ -194,7 +178,7 @@ const AddExamPreparation = () => {
                                 disabled={!form.exam}
                                 className={`${inputClass} ${
                                     !form.exam
-                                        ? "cursor-not-allowed bg-slate-50"
+                                        ? "cursor-not-allowed bg-surface"
                                         : ""
                                 }`}
                             >
@@ -217,8 +201,8 @@ const AddExamPreparation = () => {
                     </div>
 
                     {/* Title */}
-                    <div className="border-b border-slate-100 py-5">
-                        <label className="space-y-1.5 text-sm font-medium text-slate-700">
+                    <div className="border-b border-line py-5">
+                        <label className="space-y-1.5 text-sm font-medium text-ink">
                             Preparation Title *
 
                             <input
@@ -234,14 +218,14 @@ const AddExamPreparation = () => {
                     </div>
 
                     {/* Overview */}
-                    <div className="border-b border-slate-100 py-5">
-                        <h3 className="mb-4 text-sm font-semibold text-slate-900">
+                    <div className="border-b border-line py-5">
+                        <h3 className="mb-4 text-sm font-semibold text-ink">
                             Overview & Strategy
                         </h3>
 
                         <div className="space-y-4">
 
-                            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="block space-y-1.5 text-sm font-medium text-ink">
                                 Overview
 
                                 <textarea
@@ -254,7 +238,7 @@ const AddExamPreparation = () => {
                                 />
                             </label>
 
-                            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="block space-y-1.5 text-sm font-medium text-ink">
                                 Preparation Strategy
 
                                 <textarea
@@ -267,7 +251,7 @@ const AddExamPreparation = () => {
                                 />
                             </label>
 
-                            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="block space-y-1.5 text-sm font-medium text-ink">
                                 Subject-wise Preparation
 
                                 <textarea
@@ -280,7 +264,7 @@ const AddExamPreparation = () => {
                                 />
                             </label>
 
-                            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="block space-y-1.5 text-sm font-medium text-ink">
                                 Important Topics
 
                                 <textarea
@@ -293,7 +277,7 @@ const AddExamPreparation = () => {
                                 />
                             </label>
 
-                            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="block space-y-1.5 text-sm font-medium text-ink">
                                 Study Plan
 
                                 <textarea
@@ -310,14 +294,14 @@ const AddExamPreparation = () => {
                     </div>
 
                     {/* Resources */}
-                    <div className="border-b border-slate-100 py-5">
-                        <h3 className="mb-4 text-sm font-semibold text-slate-900">
+                    <div className="border-b border-line py-5">
+                        <h3 className="mb-4 text-sm font-semibold text-ink">
                             Study Resources
                         </h3>
 
                         <div className="space-y-4">
 
-                            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="block space-y-1.5 text-sm font-medium text-ink">
                                 Best Books
 
                                 <textarea
@@ -330,7 +314,7 @@ const AddExamPreparation = () => {
                                 />
                             </label>
 
-                            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="block space-y-1.5 text-sm font-medium text-ink">
                                 Previous Year Papers
 
                                 <textarea
@@ -343,7 +327,7 @@ const AddExamPreparation = () => {
                                 />
                             </label>
 
-                            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="block space-y-1.5 text-sm font-medium text-ink">
                                 Mock Test
 
                                 <textarea
@@ -360,14 +344,14 @@ const AddExamPreparation = () => {
                     </div>
 
                     {/* Tips */}
-                    <div className="border-b border-slate-100 py-5">
-                        <h3 className="mb-4 text-sm font-semibold text-slate-900">
+                    <div className="border-b border-line py-5">
+                        <h3 className="mb-4 text-sm font-semibold text-ink">
                             Tips & Advice
                         </h3>
 
                         <div className="grid gap-4 md:grid-cols-2">
 
-                            <label className="space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="space-y-1.5 text-sm font-medium text-ink">
                                 Time Management
 
                                 <textarea
@@ -380,7 +364,7 @@ const AddExamPreparation = () => {
                                 />
                             </label>
 
-                            <label className="space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="space-y-1.5 text-sm font-medium text-ink">
                                 Revision Strategy
 
                                 <textarea
@@ -393,7 +377,7 @@ const AddExamPreparation = () => {
                                 />
                             </label>
 
-                            <label className="space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="space-y-1.5 text-sm font-medium text-ink">
                                 Last Minute Tips
 
                                 <textarea
@@ -406,7 +390,7 @@ const AddExamPreparation = () => {
                                 />
                             </label>
 
-                            <label className="space-y-1.5 text-sm font-medium text-slate-700">
+                            <label className="space-y-1.5 text-sm font-medium text-ink">
                                 Exam Day Tips
 
                                 <textarea
@@ -421,7 +405,7 @@ const AddExamPreparation = () => {
 
                         </div>
 
-                        <label className="mt-4 block space-y-1.5 text-sm font-medium text-slate-700">
+                        <label className="mt-4 block space-y-1.5 text-sm font-medium text-ink">
                             Common Mistakes
 
                             <textarea
@@ -436,9 +420,9 @@ const AddExamPreparation = () => {
                     </div>
 
                     {/* FAQs */}
-                    <div className="border-b border-slate-100 py-5">
+                    <div className="border-b border-line py-5">
                         <div className="mb-4 flex items-center justify-between">
-                            <h3 className="text-sm font-semibold text-slate-900">
+                            <h3 className="text-sm font-semibold text-ink">
                                 Frequently Asked Questions
                             </h3>
 
@@ -456,10 +440,10 @@ const AddExamPreparation = () => {
                             {faqs.map((faq, index) => (
                                 <div
                                     key={index}
-                                    className="rounded-lg border border-slate-200 bg-slate-50 p-3"
+                                    className="rounded-lg border border-line bg-surface p-3"
                                 >
                                     <div className="mb-3 flex items-center justify-between">
-                                        <span className="text-xs font-semibold text-slate-600">
+                                        <span className="text-xs font-semibold text-ink-muted">
                                             FAQ {index + 1}
                                         </span>
 
@@ -469,7 +453,7 @@ const AddExamPreparation = () => {
                                                 onClick={() =>
                                                     removeFaq(index)
                                                 }
-                                                className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
+                                                className="rounded-md p-1.5 text-ink-muted hover:bg-red-50 hover:text-red-600"
                                             >
                                                 <Trash2 className="size-4" />
                                             </button>
@@ -513,7 +497,7 @@ const AddExamPreparation = () => {
                     {/* Status & Description */}
                     <div className="grid gap-4 py-5 md:grid-cols-2">
 
-                        <label className="space-y-1.5 text-sm font-medium text-slate-700">
+                        <label className="space-y-1.5 text-sm font-medium text-ink">
                             Status
 
                             <select
@@ -527,7 +511,7 @@ const AddExamPreparation = () => {
                             </select>
                         </label>
 
-                        <label className="space-y-1.5 text-sm font-medium text-slate-700 md:col-span-2">
+                        <label className="space-y-1.5 text-sm font-medium text-ink md:col-span-2">
                             Description
 
                             <textarea
@@ -543,7 +527,7 @@ const AddExamPreparation = () => {
                     </div>
 
                     {/* Buttons */}
-                    <div className="flex justify-end gap-3 border-t border-slate-100 pt-5">
+                    <div className="flex justify-end gap-3 border-t border-line pt-5">
 
                         <Button
                             type="button"

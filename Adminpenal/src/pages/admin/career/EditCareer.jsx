@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -36,50 +35,38 @@ export default function EditCareer() {
     workType: "Full Time",
     growthLevel: "Moderate",
     relatedCourses: [],
+    mentors: [],
     isActive: true,
   });
 
-  // Get Career and Courses
-  useEffect(() => {
+useEffect(() => {
     getCareer();
     getCourses();
   }, [id]);
 
   const getCareer = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5001/api/career/${id}`
-      );
+    const response = await axios.get(`/api/career/${id}`);
 
-      const career = response.data.data;
+    const career = response.data.data;
 
-      setForm({
-        name: career.name || "",
-        stream: career.stream || "",
-        description: career.description || "",
-        salaryMin: career.salaryMin || 0,
-        salaryMax: career.salaryMax || 0,
-        salaryUnit: career.salaryUnit || "LPA",
-        workType: career.workType || "Full Time",
-        growthLevel: career.growthLevel || "Moderate",
-        relatedCourses: career.relatedCourses || [],
-        isActive: career.isActive !== false,
-      });
-    } catch (error) {
-
-    }
+    setForm({
+      name: career.name || "",
+      stream: career.stream || "",
+      description: career.description || "",
+      salaryMin: career.salaryMin || 0,
+      salaryMax: career.salaryMax || 0,
+      salaryUnit: career.salaryUnit || "LPA",
+      workType: career.workType || "Full Time",
+      growthLevel: career.growthLevel || "Moderate",
+      relatedCourses: career.relatedCourses || [],
+      mentors: career.mentors || [],
+      isActive: career.isActive !== false,
+    });
   };
 
   const getCourses = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5001/api/course?isActive=true"
-      );
-
-      setCourses(response.data.data || []);
-    } catch (error) {
-      console.log("Courses Error:", error);
-    }
+    const response = await axios.get("/api/course?isActive=true");
+    setCourses(response.data.data || []);
   };
 
   // Handle Input
@@ -92,8 +79,7 @@ export default function EditCareer() {
     });
   };
 
-
-  const toggleCourse = (courseId) => {
+const toggleCourse = (courseId) => {
     const alreadySelected = form.relatedCourses.includes(courseId);
 
     if (alreadySelected) {
@@ -114,31 +100,26 @@ export default function EditCareer() {
     }
   };
 
-
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.put(
-        `http://localhost:5001/api/career/${id}`,
-        {
-          name: form.name,
-          stream: form.stream,
-          description: form.description,
-          salaryMin: Number(form.salaryMin),
-          salaryMax: Number(form.salaryMax),
-          salaryUnit: form.salaryUnit,
-          workType: form.workType,
-          growthLevel: form.growthLevel,
-          relatedCourses: form.relatedCourses,
-          isActive: form.isActive,
-        }
-      );
+      await axios.put(`/api/career/${id}`, {
+        name: form.name,
+        stream: form.stream,
+        description: form.description,
+        salaryMin: Number(form.salaryMin),
+        salaryMax: Number(form.salaryMax),
+        salaryUnit: form.salaryUnit,
+        workType: form.workType,
+        growthLevel: form.growthLevel,
+        relatedCourses: form.relatedCourses,
+        mentors: form.mentors,
+        isActive: form.isActive,
+      });
 
-      navigate("/admin/careers/list");
-    } catch (error) {
-
-    }
+      navigate("/admin/career/list");
+    } catch {}
   };
 
   return (
@@ -180,8 +161,7 @@ export default function EditCareer() {
           ))}
         </select>
 
-
-        <textarea
+<textarea
           name="description"
           value={form.description}
           onChange={handleChange}
@@ -190,8 +170,7 @@ export default function EditCareer() {
           rows="4"
         />
 
-
-        <div className="grid grid-cols-2 gap-3">
+<div className="grid grid-cols-2 gap-3">
           <input
             type="number"
             name="salaryMin"
@@ -223,8 +202,7 @@ export default function EditCareer() {
           </option>
         </select>
 
-
-        <select
+<select
           name="workType"
           value={form.workType}
           onChange={handleChange}
@@ -236,8 +214,7 @@ export default function EditCareer() {
           <option value="Remote">Remote</option>
         </select>
 
-
-        <select
+<select
           name="growthLevel"
           value={form.growthLevel}
           onChange={handleChange}
@@ -248,8 +225,7 @@ export default function EditCareer() {
           <option value="High">High</option>
         </select>
 
-
-        <label className="flex items-center gap-2">
+<label className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={form.isActive}
@@ -263,8 +239,7 @@ export default function EditCareer() {
           Active
         </label>
 
-
-        <div>
+<div>
           <p className="mb-2 font-medium">
             Related Courses
           </p>
@@ -291,8 +266,64 @@ export default function EditCareer() {
           </div>
         </div>
 
+        <div>
+          <p className="mb-2 font-medium">Mentors (Alumni)</p>
+          <div className="space-y-3 mb-4">
+            {form.mentors.map((mentor, index) => (
+              <div key={index} className="border p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                <div>
+                  <p className="font-semibold text-sm">{mentor.name} <span className="text-gray-500 font-normal">({mentor.currentRole} at {mentor.company})</span></p>
+                </div>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const newMentors = [...form.mentors];
+                    newMentors.splice(index, 1);
+                    setForm({...form, mentors: newMentors});
+                  }}
+                  className="text-red-500 text-xs font-semibold hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            {form.mentors.length === 0 && <p className="text-sm text-gray-500 italic">No mentors added yet.</p>}
+          </div>
 
-        <button
+          <div className="p-4 border border-dashed border-gray-300 rounded-lg bg-gray-50/50">
+            <p className="font-semibold text-sm mb-3 text-gray-700">Quick Add Mentor</p>
+            <div className="grid grid-cols-2 gap-3">
+              <input type="text" id="newMentorName" placeholder="Full Name *" className="border p-2 rounded text-sm w-full bg-white" />
+              <input type="text" id="newMentorRole" placeholder="Role (e.g. Data Scientist)" className="border p-2 rounded text-sm w-full bg-white" />
+              <input type="text" id="newMentorCompany" placeholder="Company (e.g. Google)" className="border p-2 rounded text-sm w-full bg-white" />
+              <input type="text" id="newMentorCollege" placeholder="College (e.g. IIT Bombay)" className="border p-2 rounded text-sm w-full bg-white" />
+            </div>
+            <button 
+              type="button" 
+              onClick={() => {
+                const name = document.getElementById('newMentorName').value;
+                const role = document.getElementById('newMentorRole').value;
+                const company = document.getElementById('newMentorCompany').value;
+                const college = document.getElementById('newMentorCollege').value;
+                if(!name) return alert('Name is required');
+                setForm({
+                  ...form, 
+                  mentors: [...form.mentors, { name, currentRole: role, company, college, profilePhoto: '' }]
+                });
+                document.getElementById('newMentorName').value = '';
+                document.getElementById('newMentorRole').value = '';
+                document.getElementById('newMentorCompany').value = '';
+                document.getElementById('newMentorCollege').value = '';
+              }}
+              className="mt-3 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-4 py-2 rounded-md text-sm font-semibold"
+            >
+              + Add Mentor
+            </button>
+            <p className="text-xs text-gray-400 mt-2">Added mentors will be saved when you submit the career form.</p>
+          </div>
+        </div>
+
+<button
           type="submit"
           className="rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700"
         >

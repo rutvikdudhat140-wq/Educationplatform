@@ -92,37 +92,37 @@ export default function RankPredictor() {
 
 
             <section className="border-b bg-gradient-to-b from-slate-50 to-white">
-                <div className="max-w-6xl mx-auto px-4 py-14 md:py-20">
-                 <div className="grid lg:grid-cols-2 gap-10 items-center">
+                <div className="max-w-6xl mx-auto px-4 py-10 md:py-14">
+                 <div className="grid lg:grid-cols-2 gap-8 md:gap-10 items-center">
                         <div>
                             <Badge
                                 variant="outline"
-                                className="mb-5 border-[#087F70]/20 bg-[#087F70]/5 text-[#087F7]">
+                                className="mb-4 border-[#2563EB]/20 bg-[#2563EB]/5 text-brand">
                                 <Target className="w-3.5 h-3.5 mr-1.5" />
                                 Smart Admission Tool
                             </Badge>
 
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 leading-tight">
+                            <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-ink leading-tight">
                                 Predict Your
-                                <span className="text-[#087F70]">
+                                <span className="text-[#2563EB]">
                                     {" "}Exam Rank
                                 </span>
                             </h1>
 
-                            <p className="mt-5 text-base md:text-lg text-slate-600 leading-7 max-w-xl">
+                            <p className="mt-4 text-sm md:text-base text-ink-muted leading-6 max-w-xl">
                                 Get an estimated All India Rank based on your
                                 expected percentile or marks and take the next
                                 step towards finding the right college.
                             </p>
 
-                            <div className="flex flex-wrap gap-3 mt-7">
+                            <div className="flex flex-wrap gap-2.5 mt-5">
 
                                 <Button
                                     onClick={() =>
                                         document
                                             .getElementById("rank-form")
                                     }
-                                    className="bg-[#087F70] hover:bg-[#06695d]"
+                                    className="bg-[#172554] hover:bg-[#0F172A] text-white"
                                 >
                                     Predict My Rank
                                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -139,20 +139,20 @@ export default function RankPredictor() {
                                 </Button>
 
                             </div>
-                            <div className="flex flex-wrap gap-5 mt-8">
+                            <div className="flex flex-wrap gap-4 mt-6">
 
-                                <div className="flex items-center gap-2 text-sm text-slate-600">
-                                    <CheckCircle2 className="w-4 h-4 text-[#087F70]" />
+                                <div className="flex items-center gap-2 text-sm text-ink-muted">
+                                    <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
                                     Percentile Based
                                 </div>
 
-                                <div className="flex items-center gap-2 text-sm text-slate-600">
-                                    <CheckCircle2 className="w-4 h-4 text-[#087F70]" />
+                                <div className="flex items-center gap-2 text-sm text-ink-muted">
+                                    <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
                                     Marks Based
                                 </div>
 
-                                <div className="flex items-center gap-2 text-sm text-slate-600">
-                                    <CheckCircle2 className="w-4 h-4 text-[#087F70]" />
+                                <div className="flex items-center gap-2 text-sm text-ink-muted">
+                                    <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
                                     College Discovery
                                 </div>
 
@@ -162,23 +162,23 @@ export default function RankPredictor() {
 
                         <div className="lg:pl-8">
 
-                            <Card className="border-slate-200 shadow-sm overflow-hidden">
+                            <Card className="border-line shadow-none md:shadow-sm overflow-hidden">
 
-                                <div className="h-1 bg-[#087F70]" />
+                                <div className="h-1 bg-[#2563EB]" />
 
-                                <CardContent className="p-7">
+                                <CardContent className="p-4 md:p-6">
 
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-3">
 
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#087F70]/10">
-                                            <Award className="h-6 w-6 text-[#087F70]" />
+                                        <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-md bg-[#2563EB]/10">
+                                            <Award className="h-5 w-5 text-[#2563EB]" />
                                         </div>
 
                                         <div>
-                                            <p className="text-sm text-slate-500">Your estimated result
+                                            <p className="text-sm text-ink-muted">Your estimated result
                                             </p>
 
-                                            <p className="text-xl font-bold text-slate-900">
+                                            <p className="text-lg font-bold text-ink">
                                                 Rank Prediction
                                             </p>
                                         </div>
@@ -186,40 +186,40 @@ export default function RankPredictor() {
                                     </div>
 
 
-                                    <div className="mt-7 rounded-xl border bg-slate-50 p-5">
+                                    <div className="mt-5 rounded-md border bg-surface p-4">
 
-                                        <p className="text-xs uppercase tracking-wide text-slate-500">
+                                        <p className="text-xs uppercase tracking-wide text-ink-muted">
                                             Expected Rank Range
                                         </p>
 
-                                        <p className="text-3xl font-bold text-slate-900 mt-2">
+                                        <p className="text-2xl font-bold text-ink mt-2">
                                             12,450 - 13,820
                                         </p>
 
-                                        <div className="flex items-center gap-2 mt-3 text-xs text-slate-500">
-                                            <TrendingUp className="w-4 h-4 text-[#087F70]" />
+                                        <div className="flex items-center gap-2 mt-3 text-xs text-ink-muted">
+                                            <TrendingUp className="w-4 h-4 text-[#2563EB]" />
                                             Based on your exam performance
                                         </div>
 
                                     </div>
 
 
-                                    <div className="grid grid-cols-2 gap-3 mt-4">
+                                    <div className="grid grid-cols-2 gap-3 mt-3">
 
-                                        <div className="rounded-lg border p-3">
-                                            <p className="text-xs text-slate-500">
+                                        <div className="rounded-md border p-2.5">
+                                            <p className="text-xs text-ink-muted">
                                                 Prediction
                                             </p>
-                                            <p className="font-semibold text-slate-900 mt-1">
+                                            <p className="font-semibold text-ink mt-1">
                                                 Rank Range
                                             </p>
                                         </div>
 
-                                        <div className="rounded-lg border p-3">
-                                            <p className="text-xs text-slate-500">
+                                        <div className="rounded-md border p-2.5">
+                                            <p className="text-xs text-ink-muted">
                                                 Next Step
                                             </p>
-                                            <p className="font-semibold text-slate-900 mt-1">
+                                            <p className="font-semibold text-ink mt-1">
                                                 Find Colleges
                                             </p>
                                         </div>
@@ -241,31 +241,31 @@ export default function RankPredictor() {
             {/* PREDICTOR FORM */}
             <section
                 id="rank-form"
-                className="bg-slate-50 border-b"
+                className="bg-surface border-b"
             >
-                <div className="max-w-5xl mx-auto px-4 py-12 md:py-16">
+                <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
 
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-6">
 
                         <Badge
                             variant="outline"
-                            className="border-slate-200 bg-white text-slate-600 mb-3"
+                            className="border-line bg-white text-ink-muted mb-3"
                         >
                             Rank Calculator
                         </Badge>
 
-                        <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
+                        <h2 className="text-2xl md:text-3xl font-bold text-ink">
                             Calculate Your Predicted Rank
                         </h2>
 
-                        <p className="text-sm text-slate-500 mt-2">
+                        <p className="text-sm text-ink-muted mt-2">
                             Enter your exam details to get your estimated rank.
                         </p>
 
                     </div>
 
 
-                    <Card className="border-slate-200 shadow-sm">
+                    <Card className="border-line shadow-none md:shadow-sm">
 
                         <CardHeader>
                             <CardTitle className="text-lg">
@@ -282,14 +282,14 @@ export default function RankPredictor() {
 
                             <form
                                 onSubmit={handleSubmit}
-                                className="space-y-5"
+                                className="space-y-4 md:space-y-5"
                             >
 
                                 {/* Exam */}
-                                <div className="grid md:grid-cols-2 gap-4">
+                                <div className="grid md:grid-cols-2 gap-3 md:gap-4">
 
                                     <div>
-                                        <label className="text-sm font-medium text-slate-700">
+                                        <label className="text-[13px] md:text-sm font-medium text-ink">
                                             Select Exam
                                         </label>
 
@@ -297,7 +297,7 @@ export default function RankPredictor() {
                                             name="examId"
                                             value={form.examId}
                                             onChange={handleChange}
-                                            className="mt-1.5 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none focus:border-[#087F70] focus:ring-1 focus:ring-[#087F70]"
+                                            className="mt-1.5 h-10 md:h-11 w-full rounded-md border border-line bg-white px-3 text-sm outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]"
                                         >
                                             <option value="">
                                                 Select an exam
@@ -316,7 +316,7 @@ export default function RankPredictor() {
 
 
                                     <div>
-                                        <label className="text-sm font-medium text-slate-700">
+                                        <label className="text-[13px] md:text-sm font-medium text-ink">
                                             Exam Session
                                         </label>
 
@@ -325,7 +325,7 @@ export default function RankPredictor() {
                                             value={form.examSessionId}
                                             onChange={handleChange}
                                             disabled={!form.examId}
-                                            className="mt-1.5 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none disabled:bg-slate-100 disabled:text-slate-400 focus:border-[#087F70] focus:ring-1 focus:ring-[#087F70]"
+                                            className="mt-1.5 h-10 md:h-11 w-full rounded-md border border-line bg-white px-3 text-sm outline-none disabled:bg-brand-softest disabled:text-ink-muted focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]"
                                         >
                                             <option value="">
                                                 Select session
@@ -347,10 +347,10 @@ export default function RankPredictor() {
 
 
                                 {/* Method + Category */}
-                                <div className="grid md:grid-cols-2 gap-4">
+                                <div className="grid md:grid-cols-2 gap-3 md:gap-4">
 
                                     <div>
-                                        <label className="text-sm font-medium text-slate-700">
+                                        <label className="text-[13px] md:text-sm font-medium text-ink">
                                             Prediction Based On
                                         </label>
 
@@ -358,7 +358,7 @@ export default function RankPredictor() {
                                             name="predictionMethod"
                                             value={form.predictionMethod}
                                             onChange={handleChange}
-                                            className="mt-1.5 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none focus:border-[#087F70] focus:ring-1 focus:ring-[#087F70]"
+                                            className="mt-1.5 h-10 md:h-11 w-full rounded-md border border-line bg-white px-3 text-sm outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]"
                                         >
                                             <option value="percentile">
                                                 Percentile
@@ -372,7 +372,7 @@ export default function RankPredictor() {
 
 
                                     <div>
-                                        <label className="text-sm font-medium text-slate-700">
+                                        <label className="text-[13px] md:text-sm font-medium text-ink">
                                             Category
                                         </label>
 
@@ -380,7 +380,7 @@ export default function RankPredictor() {
                                             name="category"
                                             value={form.category}
                                             onChange={handleChange}
-                                            className="mt-1.5 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none focus:border-[#087F70] focus:ring-1 focus:ring-[#087F70]"
+                                            className="mt-1.5 h-10 md:h-11 w-full rounded-md border border-line bg-white px-3 text-sm outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]"
                                         >
                                             <option value="ALL">
                                                 All Categories
@@ -414,7 +414,7 @@ export default function RankPredictor() {
                                 {/* Input */}
                                 <div>
 
-                                    <label className="text-sm font-medium text-slate-700">
+                                    <label className="text-[13px] md:text-sm font-medium text-ink">
                                         Your{" "}
                                         {form.predictionMethod === "percentile"
                                             ? "Percentile"
@@ -423,7 +423,7 @@ export default function RankPredictor() {
 
                                     <div className="relative mt-1.5">
 
-                                        <Calculator className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <Calculator className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" />
 
                                         <input
                                             type="number"
@@ -437,7 +437,7 @@ export default function RankPredictor() {
                                                     ? "Example: 98.5"
                                                     : "Example: 150"
                                             }
-                                            className="h-11 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none focus:border-[#087F70] focus:ring-1 focus:ring-[#087F70]"
+                                            className="h-10 md:h-11 w-full rounded-md border border-line bg-white pl-9 pr-3 text-sm outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]"
                                         />
 
                                     </div>
@@ -447,7 +447,7 @@ export default function RankPredictor() {
 
                                 <Button
                                     type="submit"
-                                    className="w-full h-11 bg-[#087F70] hover:bg-[#06695d]"
+                                    className="w-full h-10 md:h-11 bg-[#172554] hover:bg-[#0F172A] text-white"
                                 >
                                     <Award className="w-4 h-4 mr-2" />
                                     Predict My Rank
@@ -468,23 +468,23 @@ export default function RankPredictor() {
             {result && (
                 <section className="bg-white">
 
-                    <div className="max-w-5xl mx-auto px-4 py-10">
+                    <div className="max-w-5xl mx-auto px-4 py-6 md:py-10">
 
-                        <Card className="border-[#087F70]/20 shadow-sm overflow-hidden">
+                        <Card className="border-[#2563EB]/20 shadow-none md:shadow-sm overflow-hidden">
 
-                            <div className="bg-[#087F70]/5 border-b border-[#087F70]/10">
+                            <div className="bg-[#2563EB]/5 border-b border-[#2563EB]/10">
 
-                                <CardContent className="py-8 text-center">
+                                <CardContent className="py-6 text-center">
 
-                                    <p className="text-xs uppercase tracking-wider text-slate-500">
+                                    <p className="text-xs uppercase tracking-wider text-ink-muted">
                                         Estimated All India Rank
                                     </p>
 
-                                    <p className="text-sm font-medium text-[#087F70] mt-2">
+                                    <p className="text-sm font-medium text-[#2563EB] mt-2">
                                         Your Rank Range
                                     </p>
 
-                                    <p className="text-3xl md:text-4xl font-bold text-slate-900 mt-1">
+                                    <p className="text-2xl md:text-4xl font-bold text-ink mt-1">
                                         {result.expectedRankFrom?.toLocaleString()}
                                         {" - "}
                                         {result.expectedRankTo?.toLocaleString()}
@@ -495,16 +495,16 @@ export default function RankPredictor() {
                             </div>
 
 
-                            <CardContent className="p-6">
+                            <CardContent className="p-4 md:p-6">
 
-                                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+                                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
                                     <div>
-                                        <h3 className="font-semibold text-slate-900">
+                                        <h3 className="font-semibold text-ink">
                                             Ready to find your college?
                                         </h3>
 
-                                        <p className="text-sm text-slate-500 mt-1">
+                                        <p className="text-sm text-ink-muted mt-1">
                                             Explore colleges based on your predicted
                                             rank and category.
                                         </p>
@@ -539,37 +539,37 @@ export default function RankPredictor() {
             {/* HOW IT WORKS */}
             <section
                 id="how-it-works"
-                className="border-t bg-slate-50"
+                className="border-t bg-surface"
             >
-                <div className="max-w-6xl mx-auto px-4 py-12 md:py-16">
+                <div className="max-w-6xl mx-auto px-4 py-8 md:py-12">
 
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-6">
 
-                        <p className="text-sm font-medium text-[#087F70]">
+                        <p className="text-sm font-medium text-[#2563EB]">
                             Simple Process
                         </p>
 
-                        <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mt-1">
+                        <h2 className="text-2xl md:text-3xl font-bold text-ink mt-1">
                             How Rank Predictor Works
                         </h2>
 
                     </div>
 
 
-                    <div className="grid md:grid-cols-3 gap-4">
+                    <div className="grid md:grid-cols-3 gap-3 md:gap-4">
 
-                        <Card className="border-slate-200 shadow-sm">
-                            <CardContent className="p-5">
+                        <Card className="border-line shadow-none md:shadow-sm">
+                            <CardContent className="p-4">
 
-                                <div className="h-10 w-10 rounded-lg bg-[#087F70]/10 flex items-center justify-center">
-                                    <GraduationCap className="h-5 w-5 text-[#087F70]" />
+                                <div className="h-9 w-9 md:h-10 md:w-10 rounded-md bg-[#2563EB]/10 flex items-center justify-center">
+                                    <GraduationCap className="h-4 w-4 md:h-5 md:w-5 text-[#2563EB]" />
                                 </div>
 
-                                <h3 className="font-semibold mt-4 text-slate-900">
+                                <h3 className="font-semibold mt-3 text-ink">
                                     01. Select Exam
                                 </h3>
 
-                                <p className="text-sm text-slate-500 mt-1.5 leading-5">
+                                <p className="text-sm text-ink-muted mt-1.5 leading-5">
                                     Choose your exam and the relevant exam session.
                                 </p>
 
@@ -577,18 +577,18 @@ export default function RankPredictor() {
                         </Card>
 
 
-                        <Card className="border-slate-200 shadow-sm">
-                            <CardContent className="p-5">
+                        <Card className="border-line shadow-none md:shadow-sm">
+                            <CardContent className="p-4">
 
-                                <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                                    <Calculator className="h-5 w-5 text-blue-600" />
+                                <div className="h-9 w-9 md:h-10 md:w-10 rounded-md bg-blue-50 flex items-center justify-center">
+                                    <Calculator className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
                                 </div>
 
-                                <h3 className="font-semibold mt-4 text-slate-900">
+                                <h3 className="font-semibold mt-3 text-ink">
                                     02. Enter Score
                                 </h3>
 
-                                <p className="text-sm text-slate-500 mt-1.5 leading-5">
+                                <p className="text-sm text-ink-muted mt-1.5 leading-5">
                                     Enter your expected percentile or marks and category.
                                 </p>
 
@@ -596,18 +596,18 @@ export default function RankPredictor() {
                         </Card>
 
 
-                        <Card className="border-slate-200 shadow-sm">
-                            <CardContent className="p-5">
+                        <Card className="border-line shadow-none md:shadow-sm">
+                            <CardContent className="p-4">
 
-                                <div className="h-10 w-10 rounded-lg bg-violet-50 flex items-center justify-center">
-                                    <Award className="h-5 w-5 text-violet-600" />
+                                <div className="h-9 w-9 md:h-10 md:w-10 rounded-md bg-violet-50 flex items-center justify-center">
+                                    <Award className="h-4 w-4 md:h-5 md:w-5 text-violet-600" />
                                 </div>
 
-                                <h3 className="font-semibold mt-4 text-slate-900">
+                                <h3 className="font-semibold mt-3 text-ink">
                                     03. Get Your Rank
                                 </h3>
 
-                                <p className="text-sm text-slate-500 mt-1.5 leading-5">
+                                <p className="text-sm text-ink-muted mt-1.5 leading-5">
                                     View your estimated rank range and explore colleges.
                                 </p>
 

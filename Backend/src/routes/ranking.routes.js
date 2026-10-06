@@ -6,7 +6,8 @@ import {
   updateRanking,
   deleteRanking,
   getUserRankings,
-  getRankingsByCollege
+  getRankingsByCollege,
+  getTopRatedColleges
 } from '../controllers/ranking.controller.js';
 import authMiddleware from '../middleware/auth.middleware.js';
 
@@ -20,6 +21,7 @@ router.put('/admin/update/:id', authMiddleware, updateRanking);
 router.delete('/admin/delete/:id', authMiddleware, deleteRanking);
 
 // User routes (public)
+router.get('/top-colleges', getTopRatedColleges);
 router.get('/college/:collegeId', getRankingsByCollege);
 router.get('/', getUserRankings);
 

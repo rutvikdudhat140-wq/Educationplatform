@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save } from 'lucide-react';
@@ -8,7 +8,6 @@ import { ArrowLeft, Save } from 'lucide-react';
 const EditExamDate = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const token = localStorage.getItem('adminToken');
     const [exams, setExams] = useState([]);
     const [examSessions, setExamSessions] = useState([]);
 
@@ -34,11 +33,7 @@ const EditExamDate = () => {
 
     useEffect(() => {
         axios
-            .get('http://localhost:5001/api/exam', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            .get('/api/exam')
             .then((res) => {
                 setExams(res.data.exams);
             });
@@ -46,11 +41,7 @@ const EditExamDate = () => {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:5001/api/exam-date/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            .get(`/api/exam-date/${id}`)
             .then((res) => {
                 const data = res.data.examDate;
 
@@ -72,17 +63,11 @@ const EditExamDate = () => {
             });
     }, [id]);
 
-    // Get Sessions when Exam changes
-    useEffect(() => {
+useEffect(() => {
         if (form.exam) {
             axios
                 .get(
-                    `http://localhost:5001/api/exam-session?exam=${form.exam}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
+                    `/api/exam-session?exam=${form.exam}`
                 )
                 .then((res) => {
                     setExamSessions(res.data.examSessions);
@@ -124,13 +109,8 @@ const EditExamDate = () => {
         };
 
         await axios.put(
-            `http://localhost:5001/api/exam-date/${id}`,
-            data,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+            `/api/exam-date/${id}`,
+            data
         );
 
         navigate('/admin/exam-date/list');

@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Building } from "lucide-react";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+  AdminCard,
+  AddButton,
+  StatusBadge,
+  EmptyRow,
+} from "@/components/layout/AdminUI";
+
 import {
   Table,
   TableBody,
@@ -12,147 +17,170 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
+import { Button } from "@base-ui/react";
 
 const CollegeList = () => {
   const navigate = useNavigate();
   const [colleges, setColleges] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 12;
 
-  const getColleges = async () => {
-    const response = await axios.get(
-      'http://localhost:5001/api/college'
-    );
+  const getColleges = async (pageNum) => {
+    const response = await axios.get(`/api/college?page=${pageNum}&limit=${limit}`);
 
     setColleges(response.data.colleges || []);
+    setTotalPages(response.data.totalPages || 1);
   };
 
   const deleteCollege = async (id) => {
-    await axios.delete(
-      `http://localhost:5001/api/college/${id}`
-    );
+    await axios.delete(`/api/college/${id}`);
 
-    getColleges();
+    getColleges(page);
   };
 
   useEffect(() => {
-    getColleges();
-  }, []);
+    getColleges(page);
+  }, [page]);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">
+<div className="flex items-center justify-between">
+        <h2 className="text-[22px] font-bold text-ink flex items-center gap-2">
+          <Building className="text-pink-500" />
           College List
         </h2>
-
-        <Button onClick={() => navigate('/admin/college/add')}>
-          Add College
-        </Button>
       </div>
 
-      <Card className="py-0">
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>City</TableHead>
-                <TableHead>Top College</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
+      <AdminCard>
 
-            <TableBody>
-              {colleges.map((college) => (
+        {/* Add Button */}
+        <div className="p-4 flex justify-end">
+          <AddButton
+            onClick={() => navigate("/admin/college/add")}
+            label="Add College"
+          />
+        </div>
+
+        {/* Table */}
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>COLLEGE NAME</TableHead>
+              <TableHead>CATEGORY</TableHead>
+              <TableHead>TYPE</TableHead>
+              <TableHead>CITY</TableHead>
+              <TableHead>TOP COLLEGE</TableHead>
+              <TableHead>STATUS</TableHead>
+              <TableHead className="text-right pr-6">
+                ACTIONS
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {colleges.length === 0 ? (
+              <EmptyRow
+                colSpan={7}
+                message="No colleges found."
+              />
+            ) : (
+              colleges.map((college) => (
                 <TableRow key={college._id}>
 
-                  <TableCell className="font-medium">
-                    {college.name}
+                  <TableCell>
+                    <span className="font-bold text-ink">
+                      {college.name}
+                    </span>
                   </TableCell>
 
-                  <TableCell>
+                  <TableCell className="text-ink-muted">
                     {college.category}
                   </TableCell>
 
-                  <TableCell>
+                  <TableCell className="text-ink-muted">
                     {college.collegeType}
                   </TableCell>
 
-                  <TableCell>
+                  <TableCell className="text-ink-muted">
                     {college.location?.city}
                   </TableCell>
 
                   <TableCell>
-                    <Badge
-                      variant={college.isTopCollege ? 'default' : 'outline'}
-                    >
-                      {college.isTopCollege ? 'Yes' : 'No'}
-                    </Badge>
+                    {college.isTopCollege ? (
+                      <span className="text-amber-500 font-bold text-[11px] bg-amber-50 px-2 rounded-sm border border-amber-200">
+                        YES
+                      </span>
+                    ) : (
+                      <span className="text-ink-muted font-medium text-[11px]">
+                        NO
+                      </span>
+                    )}
                   </TableCell>
 
                   <TableCell>
-                    <Badge
-                      variant={
-                        college.status === 'Active'
-                          ? 'secondary'
-                          : 'outline'
-                      }
-                    >
-                      {college.status}
-                    </Badge>
+                    <StatusBadge
+                      status={college.status || "Inactive"}
+                    />
                   </TableCell>
 
-                  <TableCell>
-                    <div className="flex gap-2">
+                  <TableCell className="text-right pr-6">
+                    <div className="flex items-center justify-end gap-1.5">
 
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          navigate(
-                            `/admin/college/edit/${college._id}`
-                          )
-                        }
-                      >
-                        Edit
-                      </Button>
+<Button onClick={() =>
+                        navigate(
+                          `/admin/college/edit/${college._id}`
+                        )
+                      } className="border py-1 px-5">Edit</Button>
 
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          navigate(
-                            `/admin/college/${college._id}/applications`
-                          )
-                        }
-                      >
-                        View Applications
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => deleteCollege(college._id)}
-                      >
-                        Delete
-                      </Button>
-
+<Button onClick={() => deleteCollege(college._id)} className="border py-1 px-5">Delete</Button>
                     </div>
                   </TableCell>
 
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </AdminCard>
 
+      {/* Pagination */}
+      <div className="flex justify-center items-center gap-2 mt-4">
+        <button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={page === 1}
+          className="px-3 py-1 text-[12px] border border-line rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pNum) => (
+          <button
+            key={pNum}
+            onClick={() => setPage(pNum)}
+            className={`px-3 py-1 text-[12px] border border-line rounded ${
+              pNum === page
+                ? "bg-brand text-white"
+                : "hover:bg-brand-softest"
+            }`}
+          >
+            {pNum}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+          disabled={page === totalPages}
+          className="px-3 py-1 text-[12px] border border-line rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
 
 export default CollegeList;
+

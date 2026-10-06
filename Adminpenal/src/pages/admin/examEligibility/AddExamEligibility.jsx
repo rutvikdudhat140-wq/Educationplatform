@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
+import axios from "axios";
 
 const AddExamEligibility = () => {
     const navigate = useNavigate();
-    const token = localStorage.getItem('adminToken');
 
     const [exams, setExams] = useState([]);
     const [examSessions, setExamSessions] = useState([]);
@@ -26,11 +25,7 @@ const AddExamEligibility = () => {
 
     useEffect(() => {
         axios
-            .get('http://localhost:5001/api/exam', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            .get('/api/exam')
             .then((res) => {
                 setExams(res.data.exams || []);
             });
@@ -53,12 +48,7 @@ const AddExamEligibility = () => {
 
             axios
                 .get(
-                    `http://localhost:5001/api/exam-session?exam=${value}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
+                    `/api/exam-session?exam=${value}`
                 )
                 .then((res) => {
                     setExamSessions(res.data.examSessions || []);
@@ -99,13 +89,8 @@ const AddExamEligibility = () => {
 
         axios
             .post(
-                'http://localhost:5001/api/exam-eligibility',
-                data,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+                '/api/exam-eligibility',
+                data
             )
             .then(() => {
                 navigate('/admin/exam-eligibility/list');

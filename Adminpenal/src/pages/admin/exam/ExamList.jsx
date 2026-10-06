@@ -1,22 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 export default function ExamList() {
     const navigate = useNavigate();
     const [exams, setExams] = useState([]);
-    const token = localStorage.getItem('adminToken');
 
     const loadExams = async () => {
         const response = await axios.get(
-            'http://localhost:5001/api/exam',
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
+            '/api/exam'
         );
 
         setExams(response.data.exams);
@@ -28,14 +22,9 @@ export default function ExamList() {
 
     const toggleStatus = async (exam) => {
         await axios.put(
-            `http://localhost:5001/api/exam/${exam._id}`,
+            `/api/exam/${exam._id}`,
             {
                 status: exam.status === 'Active' ? 'Inactive' : 'Active'
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
             }
         );
         loadExams();
@@ -43,12 +32,7 @@ export default function ExamList() {
 
     const deleteExam = async (id) => {
         await axios.delete(
-            `http://localhost:5001/api/exam/${id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
+            `/api/exam/${id}`
         );
 
         loadExams();

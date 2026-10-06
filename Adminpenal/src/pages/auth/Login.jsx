@@ -1,15 +1,20 @@
-import LoginForm from '../../components/auth/LoginForm';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+﻿import LoginForm from '../../components/auth/LoginForm';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export default function Login() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl font-semibold tracking-tight">Admin Login</CardTitle>
+    <div className="flex min-h-screen items-center justify-center bg-surface p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="edu-h1">Admin Login</CardTitle>
+
+          <CardDescription>
+            Sign in to the admin console to continue.
+          </CardDescription>
         </CardHeader>
+
         <CardContent>
-        <LoginForm />
+          <LoginForm />
         </CardContent>
       </Card>
     </div>

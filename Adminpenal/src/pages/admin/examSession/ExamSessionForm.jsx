@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from "axios";
 import { Button } from '@/components/ui/button';
 
 export default function ExamSessionForm({
@@ -16,16 +16,9 @@ export default function ExamSessionForm({
     });
     const [exams, setExams] = useState([]);
 
-    const token = localStorage.getItem('adminToken');
-
-    useEffect(() => {
+useEffect(() => {
         axios.get(
-            'http://localhost:5001/api/exam?status=Active',
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+            '/api/exam?status=Active'
         ).then((response) => {
             setExams(response.data.exams || []);
         });

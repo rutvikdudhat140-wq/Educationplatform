@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import University from "../models/university.model.js";
 
 
@@ -21,11 +22,23 @@ export const createUniversity = async (req, res) => {
 
 export const getUniversities = async (req, res) => {
   try {
-    const universities = await University.find().sort({ createdAt: -1 });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
+
+    const total = await University.countDocuments();
+    const universities = await University.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
       count: universities.length,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+      limit,
       data: universities,
     });
   } catch (error) {
@@ -39,7 +52,13 @@ export const getUniversities = async (req, res) => {
 
 export const getUniversity = async (req, res) => {
   try {
-    const university = await University.findById(req.params.id);
+    const idOrName = req.params.id;
+    let university;
+    if (mongoose.isValidObjectId(idOrName)) {
+      university = await University.findById(idOrName);
+    } else {
+      university = await University.findOne({ name: idOrName });
+    }
 
     if (!university) {
       return res.status(404).json({

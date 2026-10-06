@@ -1,9 +1,11 @@
+import MobileHome from "./MobileHome";
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { createApiUrl } from '@/lib/api';
 import {
   Search,
   MapPin,
   BookOpen,
+  Star,
   FileText,
   GraduationCap,
   Building2,
@@ -12,52 +14,92 @@ import {
   Scale,
   Settings2,
   BriefcaseBusiness,
+  ChevronRight,
+  Clock3,
+  IndianRupee,
+  MessagesSquare,
+  Award,
+  Compass,
+  ArrowRight,
+  Sparkles,
+  CheckCircle2,
+  TrendingUp,
+  ShieldCheck,
+  Users,
+  BadgeCheck,
+  Zap
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import UpcomingExamsSection from '../Exams/UpcomingExamsSection';
+import { useNavigate, Link } from 'react-router-dom';
+import UpcomingExamsSection from '../exams/UpcomingExamsSection';
+import RecommendedForYouSection from '@/components/Recommendations/RecommendedForYouSection';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { SafeImage } from '@/components/ui/safe-image';
+
+import LocationSelector, { getLocation } from '@/components/common/LocationSelector';
+import CollegeMatcherWizard from '@/components/Home/CollegeMatcherWizard';
+import HomeExtras from '@/components/Home/HomeExtras';
+import HomeHero from '@/components/Home/HomeHero';
 
 export default function Home() {
   const navigate = useNavigate();
 
   const [colleges, setColleges] = useState([]);
+  const [topColleges, setTopColleges] = useState([]);
   const [popularCourses, setPopularCourses] = useState([]);
+  const [activeSearchTab, setActiveSearchTab] = useState('colleges');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState(() => getLocation());
+  const [selectedCourse, setSelectedCourse] = useState('');
+  const [selectedExam, setSelectedExam] = useState('');
 
+  useEffect(() => {
+    const handleLocationChange = (e) => {
+      setSelectedLocation(e.detail?.city || '');
+    };
+
+    window.addEventListener('user_location_changed', handleLocationChange);
+    return () => {
+      window.removeEventListener('user_location_changed', handleLocationChange);
+    };
+  }, []);
 
   useEffect(() => {
     const loadHomeData = async () => {
-
-
       try {
-        const [collegeResponse, courseResponse] = await Promise.all([
-          axios.get('http://localhost:5001/api/college?status=Active'),
-          axios.get('http://localhost:5001/api/course/popular'),
-        ]);
+        const [collegeResponse, topCollegeResponse, courseResponse] =
+          await Promise.all([
+            fetch(createApiUrl('/college?status=Active')).then(r => r.json()),
+            fetch(createApiUrl('/college?status=Active&isTopCollege=true')).then(r => r.json()),
+            fetch(createApiUrl('/course/popular')).then(r => r.json()),
+          ]);
 
         const collegeData =
           collegeResponse.data?.colleges ||
           collegeResponse.data?.data ||
+          [];
+        const topCollegeData =
+          topCollegeResponse.data?.colleges ||
+          topCollegeResponse.data?.data ||
           [];
         const courseData =
           courseResponse.data?.data ||
           courseResponse.data?.courses ||
           [];
 
-        setColleges(
-          Array.isArray(collegeData)
-            ? collegeData.filter((college) => college.status !== 'Inactive')
-            : []
-        );
+        const validColleges = Array.isArray(collegeData)
+          ? collegeData.filter((college) => college.status !== 'Inactive')
+          : [];
+        setColleges(validColleges);
+
+        const validTop = Array.isArray(topCollegeData) && topCollegeData.length > 0
+          ? topCollegeData.filter((college) => college.status !== 'Inactive')
+          : validColleges.slice(0, 8);
+        setTopColleges(validTop.length > 0 ? validTop : validColleges.slice(0, 8));
         setPopularCourses(Array.isArray(courseData) ? courseData : []);
       } catch {
-
+        // silent
       }
     };
 
@@ -65,22 +107,18 @@ export default function Home() {
   }, []);
 
   const locations = [];
-
   colleges.forEach((college) => {
     const city = college.location?.city;
-
     if (city && !locations.includes(city)) {
       locations.push(city);
     }
   });
-
   locations.sort();
 
   const matchingColleges = colleges
     .filter((college) => {
-      const name = college.name?.toLowerCase();
+      const name = (college.name || college.collegeName || '').toLowerCase();
       const city = college.location?.city;
-
       return (
         name.includes(searchTerm.toLowerCase()) &&
         (!selectedLocation || city === selectedLocation)
@@ -88,552 +126,355 @@ export default function Home() {
     })
     .slice(0, 8);
 
+  const fieldClass =
+    'h-10 w-full appearance-none rounded-[5px] border border-[#E5E7EB] bg-white pl-8 pr-7 text-[0.8125rem] font-medium text-slate-700 outline-none transition-[border-color,box-shadow] duration-150 focus:border-[#2563EB] focus:ring-[2px] focus:ring-[#2563EB]/20';
+
+  const quickNavBlocks = [
+    { label: 'Colleges', desc: '500+ Top universities', path: '/colleges/all-colleges', icon: Building2, count: '500+' },
+    { label: 'Courses', desc: 'Degrees & specializations', path: '/courses', icon: BookOpen, count: '1,200+' },
+    { label: 'Career Guidance', desc: '7-Stage visual roadmaps', path: '/careers', icon: Compass, count: '50+ Paths' },
+    { label: 'Scholarships', desc: 'Govt & private funding', path: '/scholarships', icon: Award, count: '₹25Cr+' },
+    { label: 'Exams', desc: 'Dates, registration & cutoffs', path: '/exams', icon: GraduationCap, count: '80+ Exams' },
+    { label: 'Counselling', desc: '1-on-1 Certified guidance', path: '/counselling', icon: MessagesSquare, count: 'Free' },
+  ];
+
+  
+
+  const searchTabs = [
+    { id: 'colleges', label: 'Colleges & Universities', icon: Building2, placeholder: 'Search colleges by name, city, NIRF rank, stream...' },
+    { id: 'courses', label: 'Degrees & Courses', icon: BookOpen, placeholder: 'Search courses (e.g., B.Tech, MBA, Data Science, MBBS)...' },
+    { id: 'exams', label: 'Entrance Exams', icon: GraduationCap, placeholder: 'Search exams (e.g., JEE Main, NEET, CAT, CUET)...' },
+    { id: 'scholarships', label: 'Scholarships', icon: Award, placeholder: 'Search merit, need-based, and govt scholarships...' },
+  ];
+
+  const handleSearchSubmit = () => {
+    if (activeSearchTab === 'courses') {
+      navigate(`/courses?search=${encodeURIComponent(searchTerm)}`);
+      return;
+    }
+    if (activeSearchTab === 'exams') {
+      navigate(`/exams?search=${encodeURIComponent(searchTerm)}`);
+      return;
+    }
+    if (activeSearchTab === 'scholarships') {
+      navigate(`/scholarships?search=${encodeURIComponent(searchTerm)}`);
+      return;
+    }
+
+    if (matchingColleges.length > 0) {
+      navigate(`/colleges/${matchingColleges[0]._id}`);
+    } else if (searchTerm.trim()) {
+      navigate(`/colleges?search=${(searchTerm)}`);
+    } else if (selectedLocation) {
+      navigate(`/colleges?city=${(selectedLocation)}`);
+    } else {
+      navigate('/colleges/all-colleges');
+    }
+  };
+
+  const getPlaceholder = () => {
+    const tab = searchTabs.find(t => t.id === activeSearchTab);
+    return tab ? tab.placeholder : 'Search colleges, courses, exams, scholarships...';
+  };
+
   return (
-    <div className="min-h-screen overflow-hidden bg-white text-[#17233C]">
+    <>
+      <div className="min-h-screen bg-white text-[#111827]">
+        {/* Mobile View */}
+        <MobileHome topColleges={topColleges} popularCourses={popularCourses} />
 
-      <main>
+        {/* Desktop View */}
+        <div className="hidden md:block">
+          <main>
+            <HomeHero />
 
-        <section className="relative min-h-[770px] overflow-hidden bg-gradient-to-b from-[#F4FBF9] via-[#F8FCFB] to-white">
+            {/* 30-SECOND AI COLLEGE MATCHER WIZARD */}
+            <section className="edu-container pt-8 pb-2">
+              <CollegeMatcherWizard />
+            </section>
 
-          <div className="relative mx-auto max-w-[1180px] px-5 pt-[60px] sm:px-8 lg:px-0">
-
-            <div className="grid items-center gap-5 lg:grid-cols-[0.95fr_1.05fr]">
-
-              <div className="relative z-20 pt-2 lg:pt-5">
-
-                <Badge className="mb-5 rounded-full border-0 bg-[#DDF8EA] px-4 py-2 text-[13px] font-semibold text-[#087F70] shadow-none">
-                  <span className="mr-2 text-[16px]">☆</span>
-                  Your College Discovery Platform
-                </Badge>
-
-                <h1 className="max-w-[620px] text-[43px] font-bold leading-[1.12] tracking-[-1.8px] text-[#142039] sm:text-[50px] lg:text-[52px]">
-
-                  Discover the Right College
-
-                  <span className="block text-[#087F70]">
-                    for Your Future.
-                  </span>
-
-                </h1>
-
-                <p className="mt-5 max-w-[570px] text-[16px] leading-7 text-[#5F6674] sm:text-[17px]">
-                  Explore colleges, compare courses, check entrance exams
-                  and discover admission opportunities.
-                </p>
-
-              </div>
-
-              <div className="relative h-[310px] sm:h-[360px] lg:h-[390px]">
-
-                <img
-                  src="./college-building.png"
-                  alt="College"
-                  className="absolute bottom-[-12px] left-1/2 z-10 w-[650px] max-w-none -translate-x-1/2 object-contain sm:w-[720px] lg:left-[48%] lg:w-[730px]"
-                />
-
-              </div>
-
-            </div>
-
-            {/* SEARCH CARD */}
-            <Card className="relative z-40 mx-auto mt-[-12px] max-w-[780px] rounded-[12px] border border-[#DFE9E7] bg-white shadow-[0_8px_24px_rgba(25,71,64,0.08)]">
-
-              <CardContent className="p-4">
-
-                <div className="mb-3 flex items-center gap-2">
-
-                  <Search className="size-[18px] text-[#087F70]" />
-
-                  <h2 className="text-[16px] font-bold text-[#17233C]">
-                    Search for Colleges
-                  </h2>
-
-                </div>
-
-                {/* COLLEGE SEARCH */}
-                <div className="relative">
-
-                  <Search className="absolute left-3 top-1/2 z-10 size-[16px] -translate-y-1/2 text-[#89919D]" />
-
-                  <Input
-                    type="text"
-                    placeholder="Search by college name..."
-                    value={searchTerm}
-                    autoComplete="off"
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="h-[38px] rounded-[7px] border-[#CDD5DC] bg-white pl-9 text-[13px] shadow-none focus-visible:ring-[#0F766E]"
-                  />
-
-                  {searchTerm && (
-                    <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-[10px] border bg-white shadow-xl">
-
-                      {matchingColleges.length > 0 ? (
-
-                        <div className="max-h-72 overflow-y-auto p-1">
-
-                          {matchingColleges.map((college) => (
-
-                            <button
-                              key={college._id}
-                              type="button"
-                              onClick={() =>
-                                navigate(`/colleges/${college._id}`)
-                              }
-                              className="w-full rounded-lg px-4 py-3 text-left hover:bg-[#ECFDF5]"
-                            >
-
-                              <p className="text-sm font-semibold text-slate-900">
-                                {college.name}
-                              </p>
-
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {college.location?.city}
-                                {college.location?.state &&
-                                  `, ${college.location.state}`}
-                              </p>
-
-                            </button>
-
-                          ))}
-
-                        </div>
-
-                      ) : (
-
-                        <p className="px-4 py-4 text-sm text-muted-foreground">
-                          No matching colleges found.
-                        </p>
-
-                      )}
-
+            {/* TOP COLLEGES SECTION */}
+            {topColleges.length > 0 && (
+              <section className="edu-container edu-section">
+                <div className="edu-section-head">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 text-[0.6875rem] font-bold uppercase tracking-wider text-[#2563EB] mb-1">
+                      <BadgeCheck size={14} /> NIRF &amp; NAAC Verified
                     </div>
-                  )}
-
-                </div>
-
-                {/* FILTERS */}
-                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
-
-                  {/* LOCATION */}
-                  <div className="space-y-2">
-
-                    <Label className="text-[12px] font-semibold text-[#17233C]">
-                      Location
-                    </Label>
-
-                    <div className="relative">
-
-                      <MapPin className="absolute left-3 top-1/2 size-[16px] -translate-y-1/2 text-[#7D8792]" />
-
-                      <select
-                        value={selectedLocation}
-                        onChange={(e) =>
-                          setSelectedLocation(e.target.value)
-                        }
-                        className="h-[38px] w-full appearance-none rounded-[7px] border border-[#CDD5DC] bg-white pl-9 pr-8 text-[12px] text-[#5D6672] outline-none focus:border-[#0F766E]"
-                      >
-
-                        <option value="">
-                          Select Location
-                        </option>
-
-                        {locations.map((location) => (
-                          <option key={location} value={location}>
-                            {location}
-                          </option>
-                        ))}
-
-                      </select>
-
-                      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[12px]">
-                        ▾
-                      </span>
-
-                    </div>
-
+                    <h2 className="edu-section-title">Top Ranked Colleges &amp; Universities</h2>
+                    <p className="edu-section-sub">
+                      Institutions evaluated on academic excellence, faculty credentials, and verified placements
+                    </p>
                   </div>
-
-
-                  <div className="space-y-2">
-
-                    <Label className="text-[12px] font-semibold text-[#17233C]">
-                      Course
-                    </Label>
-
-                    <div className="relative">
-
-                      <BookOpen className="absolute left-3 top-1/2 size-[16px] -translate-y-1/2 text-[#7D8792]" />
-
-                      <select className="h-[38px] w-full appearance-none rounded-[7px] border border-[#CDD5DC] bg-white pl-9 pr-8 text-[12px] text-[#5D6672] outline-none focus:border-[#0F766E]">
-
-                        <option>Select Course</option>
-                        <option>B.Tech</option>
-                        <option>MBA</option>
-                        <option>MBBS</option>
-                        <option>LLB</option>
-
-                      </select>
-
-                      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[12px]">
-                        ▾
-                      </span>
-
-                    </div>
-
-                  </div>
-
-
-                  <div className="space-y-2">
-
-                    <Label className="text-[12px] font-semibold text-[#17233C]">
-                      Entrance Exam
-                    </Label>
-
-                    <div className="relative">
-
-                      <FileText className="absolute left-3 top-1/2 size-[16px] -translate-y-1/2 text-[#7D8792]" />
-
-                      <select className="h-[38px] w-full appearance-none rounded-[7px] border border-[#CDD5DC] bg-white pl-9 pr-8 text-[12px] text-[#5D6672] outline-none focus:border-[#0F766E]">
-
-                        <option>Select Exam</option>
-                        <option>JEE Main</option>
-                        <option>CAT</option>
-                        <option>NEET</option>
-                        <option>GATE</option>
-
-                      </select>
-
-                      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[12px]">
-                        ▾
-                      </span>
-
-                    </div>
-
-                  </div>
-
+                  <Link
+                    to="/colleges/all-colleges"
+                    className="inline-flex items-center gap-1 text-[0.8125rem] font-semibold text-[#2563EB] hover:text-[#1D4ED8]"
+                  >
+                    View All Colleges &rarr;
+                  </Link>
                 </div>
 
-                <Button
-                  type="button"
-                  onClick={() => {
-                    if (matchingColleges.length > 0) {
-                      navigate(`/colleges/${matchingColleges[0]._id}`);
-                    }
-                  }}
-                  className="mt-3 h-[40px] w-full rounded-[7px] bg-[#078675] text-[13px] font-semibold shadow-none hover:bg-[#086F63]"
-                >
-                  <Search className="mr-2 size-[16px]" />
-                  Search Colleges
-                </Button>
-
-
-
-              </CardContent>
-
-            </Card>
-
-
-
-
-
-            <div className="relative z-30 mt-4 flex flex-wrap justify-center gap-3">
-
-              <Button
-                type="button"
-                onClick={() => navigate('/colleges/all-colleges')}
-                className="h-[42px] rounded-[8px] bg-[#087F70] px-6 text-[14px] font-semibold shadow-sm hover:bg-[#086F63]"
-              >
-                <Building2 className="mr-2 size-[17px]" />
-                Explore Colleges
-              </Button>
-              <Button
-                type="button"
-                onClick={() => navigate("/predictors")}
-                className="h-[42px] rounded-[8px] bg-[#087F70] px-6 text-[14px] font-semibold shadow-sm hover:bg-[#086F63]"
-              >
-                <Building2 className="mr-2 size-[17px]" />
-                Predictor
-              </Button>
-            </div>
-
-
-            <div className="relative z-30 mt-2">
-
-              <p className="mb-3 text-center text-[13px] font-medium text-[#636B75]">
-                Popular Searches
-              </p>
-
-              <div className="flex flex-wrap justify-center gap-2">
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-[37px] rounded-full border-[#75BDB2] bg-white px-4 text-[12px] font-medium text-[#087F70] hover:bg-[#ECFDF5]"
-                >
-                  <Settings2 className="mr-2 size-[15px]" />
-                  Engineering
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-[37px] rounded-full border-[#75BDB2] bg-white px-4 text-[12px] font-medium text-[#087F70] hover:bg-[#ECFDF5]"
-                >
-                  <BriefcaseBusiness className="mr-2 size-[15px]" />
-                  MBA
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-[37px] rounded-full border-[#75BDB2] bg-white px-4 text-[12px] font-medium text-[#087F70] hover:bg-[#ECFDF5]"
-                >
-                  <Stethoscope className="mr-2 size-[15px]" />
-                  Medical
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-[37px] rounded-full border-[#75BDB2] bg-white px-4 text-[12px] font-medium text-[#087F70] hover:bg-[#ECFDF5]"
-                >
-                  <Scale className="mr-2 size-[15px]" />
-                  Law
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-[37px] rounded-full border-[#75BDB2] bg-white px-4 text-[12px] font-medium text-[#087F70] hover:bg-[#ECFDF5]"
-                >
-                  <GraduationCap className="mr-2 size-[15px]" />
-                  B.Tech
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-[37px] rounded-full border-[#75BDB2] bg-white px-4 text-[12px] font-medium text-[#087F70] hover:bg-[#ECFDF5]"
-                >
-                  <FileText className="mr-2 size-[15px]" />
-                  JEE Main
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-[37px] rounded-full border-[#75BDB2] bg-white px-4 text-[12px] font-medium text-[#087F70] hover:bg-[#ECFDF5]"
-                >
-                  <BarChart3 className="mr-2 size-[15px]" />
-                  CAT
-                </Button>
-
-              </div>
-
-            </div>
-            {colleges.length > 0 && (
-              <section className="relative z-30 mt-12 px-5">
-                <div className="mb-5 text-center">
-                  <h2 className="text-[20px] font-bold tracking-[-0.4px] text-[#17233C] sm:text-[28px]">
-                    Top Colleges
-                  </h2>
-                  <p className="mt-1 text-[12px] text-[#636B75] sm:text-[13px]">
-                    Explore all active colleges to find your perfect fit
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                  {colleges.map((college) => {
-                    const location = [
+                <div className="grid grid-cols-1 gap-4.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {topColleges.map((college) => {
+                    const collegeId = college._id || college.id;
+                    const locationStr = [
                       college.location?.city,
                       college.location?.state,
-                    ]
-                      .filter(Boolean)
-                      .join(', ');
+                    ].filter(Boolean).join(', ');
+
                     const courseCount =
                       college.courses?.length ||
                       college.highlights?.totalCourses ||
-                      'N/A';
+                      '—';
+
+                    const avgPkg =
+                      college.placements?.[0]?.averagePackage ||
+                      college.highlights?.averagePackage ||
+                      college.averagePackage ||
+                      '—';
+
+                    const highestPkg =
+                      college.placements?.[0]?.highestPackage ||
+                      college.highlights?.highestPackage ||
+                      college.highestPackage ||
+                      '—';
+
+                    const rankOrAccreditation =
+                      college.highlights?.nirfRank ? `NIRF #${college.highlights.nirfRank}` :
+                      (college.ranking ? `Rank #${college.ranking}` :
+                      (college.accreditations?.[0] || college.accreditation || 'Verified'));
 
                     return (
-                      <div
-                        key={college._id}
-                        onClick={() => navigate(`/colleges/${college._id}`)}
-                        className="flex h-full cursor-pointer flex-col overflow-hidden rounded-[16px] border border-[#DDE7E5] bg-white shadow-sm transition hover:-translate-y-1 hover:border-[#A7D9CB] hover:shadow-md"
+                      <article
+                        key={collegeId}
+                        onClick={(e) => {
+                          if (!e.target.closest('button') && !e.target.closest('a')) {
+                            navigate(`/colleges/${collegeId}`);
+                          }
+                        }}
+                        className="group flex flex-col rounded-md border border-[#E5E7EB] bg-white overflow-hidden transition-all duration-150 hover:border-[#93C5FD] hover:shadow-[0_4px_16px_rgba(37,99,235,0.06)] cursor-pointer"
                       >
-                        <div className="h-40 overflow-hidden bg-[#EAF5F1]">
-                          {college.coverImage ||
-                            college.images?.[0] ||
-                            college.logo ? (
-                            <img
-                              src={
-                                college.coverImage ||
-                                college.images?.[0] ||
-                                college.logo
-                              }
-                              alt={college.name}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-full items-center justify-center text-[#087F70]">
-                              <Building2 className="size-12" />
-                            </div>
-                          )}
-                        </div>
+                        {/* College Cover Image */}
+                        <Link to={`/colleges/${collegeId}`} className="block relative h-38 w-full overflow-hidden bg-[#F8FAFC]">
+                          <SafeImage
+                            entity={college}
+                            alt={college.collegeName || college.name || ''}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-103"
+                            fallback={
+                              <div className="flex h-full w-full items-center justify-center bg-[#F8FAFC] text-slate-300">
+                                <Building2 size={32} />
+                              </div>
+                            }
+                            fallbackClassName="h-full w-full"
+                          />
 
-                        <div className="flex flex-1 flex-col p-4">
-                          <Badge className="w-fit rounded-full bg-[#DDF8EA] text-[10px] font-semibold text-[#087F70] shadow-none">
-                            {college.category || 'College'}
-                          </Badge>
+                          {/* Gradient overlay on image bottom */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
-                          <h3 className="mt-3 line-clamp-2 min-h-[36px] text-[15px] font-bold leading-5 text-[#17233C]">
-                            {college.name}
-                          </h3>
+                          {/* Category Tag */}
+                          <span className="absolute left-2.5 top-2.5 rounded-[4px] border border-white/40 bg-white/95 px-2 py-0.5 text-[0.625rem] font-bold text-[#172554] shadow-sm">
+                            {college.category || college.collegeType || 'Autonomous'}
+                          </span>
 
-                          <p className="mt-2 flex items-center gap-1 text-[11px] text-[#636B75]">
-                            <MapPin className="size-3 shrink-0" />
-                            <span className="line-clamp-1">
-                              {location || 'Location not available'}
+                          {/* Rating Pill */}
+                          {college.rating && (
+                            <span className="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-[4px] bg-white/95 px-2 py-0.5 text-[0.6875rem] font-bold text-slate-800 shadow-sm">
+                              <Star className="size-3 fill-amber-400 text-amber-400" />
+                              {Number(college.rating).toFixed(1)}
                             </span>
-                          </p>
+                          )}
 
-                          <div className="mt-4 grid grid-cols-2 gap-2">
-                            <div className="rounded-lg bg-[#F7FBFA] px-3 py-2">
-                              <p className="text-[10px] text-[#7A8391]">
-                                Rating
-                              </p>
-                              <p className="mt-1 text-[13px] font-bold text-[#17233C]">
-                                {Number(college.rating || 0).toFixed(1)}
-                              </p>
+                          {/* NIRF / NAAC Badge */}
+                          {rankOrAccreditation && (
+                            <span className="absolute right-2.5 bottom-2 rounded-[3px] bg-[#172554]/90 px-1.5 py-0.5 text-[0.625rem] font-bold text-white backdrop-blur-xs">
+                              {rankOrAccreditation}
+                            </span>
+                          )}
+                        </Link>
+
+                        {/* Content */}
+                        <div className="flex flex-1 flex-col p-3.5">
+                          <Link to={`/colleges/${collegeId}`}>
+                            <h3 className="line-clamp-1 text-[0.90625rem] font-bold text-[#172554] group-hover:text-[#2563EB] transition-colors">
+                              {college.name || college.collegeName}
+                            </h3>
+                          </Link>
+
+                          <div className="mt-1 flex items-center gap-1 text-[0.75rem] text-[#64748B]">
+                            <MapPin className="size-3 shrink-0 text-slate-400" />
+                            <span className="truncate">{locationStr || 'India'}</span>
+                          </div>
+
+                          {/* Key Metrics Grid */}
+                          <div className="mt-3 grid grid-cols-2 gap-2 rounded border border-[#E5E7EB] bg-[#F8FAFC] p-2 text-[0.6875rem]">
+                            <div>
+                              <span className="text-[#64748B] block text-[0.625rem] uppercase tracking-wider font-semibold">Avg Package</span>
+                              <span className="font-bold text-[#172554] truncate block">{avgPkg}</span>
                             </div>
-                            <div className="rounded-lg bg-[#F7FBFA] px-3 py-2">
-                              <p className="text-[10px] text-[#7A8391]">
-                                Courses
-                              </p>
-                              <p className="mt-1 text-[13px] font-bold text-[#17233C]">
-                                {courseCount}
-                              </p>
+                            <div className="border-l border-[#E5E7EB] pl-2">
+                              <span className="text-[#64748B] block text-[0.625rem] uppercase tracking-wider font-semibold">Highest</span>
+                              <span className="font-bold text-[#16A34A] truncate block">{highestPkg}</span>
                             </div>
                           </div>
 
-                          <div className="mt-auto flex items-center justify-between border-t border-[#DDE7E5] pt-3 text-[11px] font-semibold text-[#087F70]">
-                            <span>View Details</span>
-                            <span aria-hidden="true">→</span>
+                          {/* Action Buttons */}
+                          <div className="mt-3.5 grid grid-cols-2 gap-2 border-t border-[#E5E7EB] pt-3">
+                            <Link
+                              to={`/apply?collegeId=${collegeId}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center justify-center h-8.5 rounded-[4px] bg-[#172554] text-white hover:bg-[#0F172A] text-[0.75rem] font-semibold shadow-none transition-colors"
+                            >
+                              Apply Now
+                            </Link>
+                            <Link
+                              to={`/colleges/${collegeId}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center justify-center h-8.5 rounded-[4px] border border-[#E5E7EB] bg-white text-[#172554] hover:bg-[#F8FAFC] text-[0.75rem] font-medium shadow-none transition-colors"
+                            >
+                              View Details
+                            </Link>
                           </div>
                         </div>
-                      </div>
+                      </article>
                     );
                   })}
                 </div>
               </section>
             )}
 
-
-            {popularCourses.length > 0 && (
-              <section className="z-30 mt-12  px-5 ">
-                <div className="mb-5 text-center">
-                  <h2 className="text-[20px] font-bold tracking-[-0.4px] text-[#17233C] sm:text-[28px]">
-                    Popular Courses
-                  </h2>
-
-                  <p className="mt-1 text-[12px] text-[#636B75] sm:text-[13px]">
-                    Most sought-after programs across universities
-                  </p>
-
-                  {/* <button
-                    type="button"
-                    onClick={() => navigate('/courses')}
-                    className="mt-2 inline-flex items-center gap-2 text-[12px] font-semibold text-[#087F70] transition hover:text-[#086F63] sm:text-[13px]"
-                  >
-                    View All Courses
-                  </button> */}
-                </div>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  {popularCourses.slice(0, 6).map((course) => (
-                    <div
-                      key={course._id}
-                      className="flex h-full cursor-pointer flex-col rounded-[16px] border border-[#DDE7E5] bg-[#F7FBFA] p-4 transition hover:-translate-y-0.5 hover:border-[#A7D9CB] hover:shadow-sm"
-                      onClick={() => navigate(`/courses/${course._id}`)}
-                    >
-
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#B7E2D6] bg-[#DFF5EE] text-[#0A7D69]">
-                          <GraduationCap className="size-4" />
-                        </div>
-
-                        <span className="text-[10px] font-medium text-[#0A7D69]">
-                          {course.stream || 'General'}
-                        </span>
-                      </div>
-
-                      <div className="mt-3 min-h-[24px] text-[15px] font-bold text-[#17233C] sm:text-[16px]">
-                        {course.name}
-                      </div>
-
-
-                      <div className="mt-1 min-h-[36px] text-[11px] leading-5 text-[#636B75] sm:text-[12px]">
-                        {course.fullName || "Bachelor's degree"}
-                      </div>
-
-
-                      <div className="mt-3 flex items-center gap-2 text-[10px] text-[#636B75] sm:text-[11px]">
-                        <span className="rounded-full bg-white px-2.5 py-1 text-[#2C374A]">
-                          {course.duration}
-                        </span>
-
-                        <span className="rounded-full bg-white px-2.5 py-1 text-[#2C374A]">
-                          {course.level}
-                        </span>
-                      </div>
-
-                      <div className="mt-3 rounded-xl border border-[#E2ECE9] bg-white px-3 py-2.5">
-                        <div className="text-[10px] text-[#7A8391]">
-                          Fees
-                        </div>
-
-                        <div className="mt-1 text-[14px] font-semibold text-[#17233C]">
-                          ₹{Number(course.fees || 0).toLocaleString('en-IN')}
-                        </div>
-                      </div>
-
-                      <div className="mt-auto pt-4">
-                        <div className="flex items-center justify-between border-t border-[#DDE7E5] pt-3 text-[11px] font-medium text-[#0A7D69] sm:text-[12px]">
-                          <span>View Details</span>
-                        </div>
-                      </div>
+            {/* LIVE COUNSELLOR CONNECT BANNER */}
+            <section className="edu-container py-4">
+              <div className="rounded-md border border-[#BFDBFE] bg-gradient-to-r from-[#EFF6FF] via-white to-[#EFF6FF] p-6 flex flex-col md:flex-row items-center justify-between gap-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-md bg-[#2563EB] text-white">
+                    <MessagesSquare size={22} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1 text-[0.6875rem] font-bold text-[#16A34A] bg-[#DCFCE7] px-2 py-0.5 rounded-[3px]">
+                        <span className="size-1.5 rounded-full bg-[#16A34A] animate-pulse"></span>
+                        Counsellors Available Now
+                      </span>
                     </div>
-                  ))}
+                    <h3 className="mt-1 text-[1.125rem] font-bold text-[#172554]">
+                      Need help selecting the best college or course for your rank?
+                    </h3>
+                    <p className="text-[0.8125rem] text-[#64748B] mt-0.5">
+                      Get unbiased guidance on eligibility, cutoffs, fee structures, and scholarship criteria from certified experts.
+                    </p>
+                  </div>
                 </div>
-              </section>
-            )}
-            <section className="z-30 mt-12  px-5 pb-16">
-              <div className="mb-5 text-center">
-                <h2 className="text-[20px] font-bold tracking-[-0.4px] text-[#17233C] sm:text-[28px]">
-                  Upcoming <span className="text-[#0F766E]">Exams</span>
-                </h2>
-                <p className="mt-1 text-[12px] text-[#636B75] sm:text-[13px]">
-                  Stay updated with the latest exam schedules
-                </p>
-              </div>
 
-              <div className="mx-auto max-w-[1140px]">
-                <UpcomingExamsSection view="upcoming" compact={true} />
+                <div className="flex items-center gap-3 shrink-0">
+                  <Button
+                    type="button"
+                    onClick={() => navigate('/counselling')}
+                    className="bg-[#172554] hover:bg-[#1E3A8A] text-white font-semibold text-[0.8125rem] h-10 px-5 rounded-[4px] shadow-none"
+                  >
+                    Request Free Counselling &rarr;
+                  </Button>
+                </div>
               </div>
             </section>
 
-          </div>
+            {/* RECOMMENDED FOR YOU */}
+            <RecommendedForYouSection />
 
-        </section>
+            {/* POPULAR COURSES SECTION */}
+            {popularCourses.length > 0 && (
+              <section className="border-t border-[#E5E7EB] bg-[#F8FAFC] py-14">
+                <div className="edu-container">
+                  <div className="edu-section-head">
+                    <div>
+                      <div className="inline-flex items-center gap-1.5 text-[0.6875rem] font-bold uppercase tracking-wider text-[#2563EB] mb-1">
+                        <Sparkles size={14} /> High Growth Careers
+                      </div>
+                      <h2 className="edu-section-title">In-Demand Courses &amp; Programs</h2>
+                      <p className="edu-section-sub">
+                        Explore popular undergraduate and postgraduate degrees with high industry placement demand
+                      </p>
+                    </div>
+                    <Link
+                      to="/courses"
+                      className="inline-flex items-center gap-1 text-[0.8125rem] font-semibold text-[#2563EB] hover:text-[#1D4ED8]"
+                    >
+                      Browse All Courses &rarr;
+                    </Link>
+                  </div>
 
-      </main>
+                  <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+                    {popularCourses.slice(0, 6).map((course) => (
+                      <article
+                        key={course._id}
+                        onClick={() => navigate(`/courses/${course._id}`)}
+                        className="group flex flex-col rounded-md border border-[#E5E7EB] bg-white p-4.5 cursor-pointer hover:border-[#93C5FD] hover:shadow-[0_4px_16px_rgba(37,99,235,0.05)] transition-all"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="rounded-[4px] border border-[#BFDBFE] bg-[#EFF6FF] px-2 py-0.5 text-[0.6875rem] font-bold text-[#1E40AF]">
+                            {course.stream || 'General'}
+                          </span>
+                          <span className="text-[0.6875rem] font-semibold text-[#64748B] bg-[#F1F5F9] px-2 py-0.5 rounded-[3px]">
+                            {course.level || 'Undergraduate'}
+                          </span>
+                        </div>
 
-    </div>
+                        <h3 className="mt-3.5 text-[0.9375rem] font-bold text-[#172554] group-hover:text-[#2563EB] transition-colors line-clamp-1">
+                          {course.name}
+                        </h3>
+
+                        <p className="mt-1 text-[0.78125rem] text-[#64748B] line-clamp-1">
+                          {course.fullName || course.name}
+                        </p>
+
+                        <div className="mt-3.5 flex items-center justify-between rounded border border-[#E5E7EB] bg-[#F8FAFC] px-2.5 py-1.5 text-[0.75rem]">
+                          <span className="flex items-center gap-1 text-[#64748B]">
+                            <Clock3 size={13} className="text-slate-400" />
+                            {course.duration || '3-4 Years'}
+                          </span>
+                          <span className="flex items-center gap-1 font-bold text-[#172554]">
+                            <IndianRupee size={13} className="text-slate-400" />
+                            {course.fees ? `₹${Number(course.fees).toLocaleString('en-IN')}` : 'Check Eligibility'}
+                          </span>
+                        </div>
+
+                        <div className="mt-3.5 flex items-center justify-between border-t border-[#E5E7EB] pt-2.5 text-[0.75rem] font-semibold text-[#2563EB]">
+                          <span>Curriculum &amp; Career Outcomes</span>
+                          <ChevronRight size={14} />
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* UPCOMING EXAMS SECTION */}
+            <section className="edu-container edu-section">
+              <div className="edu-section-head">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-[0.6875rem] font-bold uppercase tracking-wider text-[#F97316] mb-1">
+                    <Zap size={14} /> Deadlines &amp; Schedules
+                  </div>
+                  <h2 className="edu-section-title">National &amp; State Entrance Exams</h2>
+                  <p className="edu-section-sub">
+                    Track registration deadlines, admit cards, eligibility criteria, and examination schedules
+                  </p>
+                </div>
+                <Link
+                  to="/exams"
+                  className="inline-flex items-center gap-1 text-[0.8125rem] font-semibold text-[#2563EB] hover:text-[#1D4ED8]"
+                >
+                  View All Exams &rarr;
+                </Link>
+              </div>
+
+              <UpcomingExamsSection view="upcoming" compact={true} />
+            </section>
+          </main>
+        </div>
+
+        <HomeExtras />
+      </div>
+    </>
   );
 }

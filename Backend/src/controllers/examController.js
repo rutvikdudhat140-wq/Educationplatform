@@ -41,13 +41,7 @@ export const getExams = async (req, res) => {
 export const getExam = async (req, res) => {
     try {
         const id = req.params.id;
-        const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
-        const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const query = isObjectId 
-            ? { _id: id } 
-            : { name: new RegExp('^' + escapeRegex(id) + '$', 'i') };
-
-        const exam = await Exam.findOne(query)
+        const exam = await Exam.findOne({ _id: id })
             .populate(examRelations);
 
         if (!exam) {
@@ -90,7 +84,7 @@ export const updateExam = async (req, res) => {
         const exam = await Exam.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true }
+          
         );
 
         if (!exam) {

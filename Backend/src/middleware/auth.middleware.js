@@ -27,4 +27,20 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
+/**
+ * `authMiddleware` only proves the token is genuine - a signed-in student token
+ * passes it too. Anything under /api/admin must additionally carry the admin
+ * role, otherwise any user could read every issued certificate.
+ */
+const adminMiddleware = (req, res, next) => {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({
+      message: 'Admin access required'
+    });
+  }
+
+  next();
+};
+
+export { adminMiddleware };
 export default authMiddleware;

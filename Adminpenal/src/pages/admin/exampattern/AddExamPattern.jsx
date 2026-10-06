@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "axios";
 import { useNavigate, Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -13,9 +13,7 @@ export default function AddExamPattern() {
     const [subjects, setSubjects] = useState([]);
     const [newSubject, setNewSubject] = useState('');
 
-    const token = localStorage.getItem('adminToken');
-
-    const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
         exam: '',
         examSession: '',
         paperName: '',
@@ -30,11 +28,7 @@ export default function AddExamPattern() {
     });
 
     useEffect(() => {
-        axios.get('http://localhost:5001/api/exam?status=Active', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).then((res) => {
+        axios.get('/api/exam?status=Active').then((res) => {
             setExams(res.data.exams || res.data.data || []);
         });
     }, []);
@@ -49,11 +43,7 @@ export default function AddExamPattern() {
         });
 
         if (examId) {
-            axios.get(`http://localhost:5001/api/exam-session?exam=${examId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }).then((res) => {
+            axios.get(`/api/exam-session?exam=${examId}`).then((res) => {
                 setSessions(res.data.examSessions || res.data.data || []);
             });
         } else {
@@ -90,13 +80,8 @@ export default function AddExamPattern() {
         };
 
         await axios.post(
-            'http://localhost:5001/api/exam-pattern',
-            payload,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+            '/api/exam-pattern',
+            payload
         );
 
         navigate('/admin/exam-pattern/list');

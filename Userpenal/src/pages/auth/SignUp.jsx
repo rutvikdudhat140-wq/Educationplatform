@@ -1,18 +1,19 @@
 import SignUpForm from '../../components/auth/SignUpForm';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AuthShell from '../../components/auth/AuthShell';
 
- function SignUp() {
+function SignUp() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl font-semibold tracking-tight">User Sign Up</CardTitle>
-        </CardHeader>
-        <CardContent>
-        <SignUpForm />
-        </CardContent>
-      </Card>
-    </div>
+    <AuthShell
+      wide
+      badge="Candidate Registration"
+      headline="Build your personalized college admission profile."
+      sub="Join thousands of students getting accurate rank predictors, verified college data, and expert career roadmaps."
+      title="Stay Connected with Us"
+      subtitle="Enhance your experience with some insights about you."
+    >
+      <SignUpForm />
+    </AuthShell>
   );
 }
-export default SignUp
+
+export default SignUp;

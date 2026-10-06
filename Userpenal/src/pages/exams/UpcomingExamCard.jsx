@@ -12,7 +12,7 @@ const formatDate = (value) => {
 
     return date.toLocaleDateString("en-IN", {
         day: "numeric",
-        month: "long",
+        month: "short",
         year: "numeric",
     });
 };
@@ -30,9 +30,9 @@ const getRegistrationStatus = (registrationStartDate, registrationEndDate) => {
 };
 
 const statusBadge = {
-    Upcoming: "bg-teal-50 text-teal-700",
-    Ongoing: "bg-amber-50 text-amber-700",
-    Completed: "bg-slate-100 text-slate-600",
+    Upcoming: "border-brand-border bg-brand-softest text-brand-dark",
+    Ongoing: "border-[#F5D9A8] bg-[#FEF6E7] text-[#8A5A08]",
+    Completed: "border-line-strong bg-surface text-ink-soft",
 };
 
 export default function UpcomingExamCard({ examDate, status = "Upcoming", compact = false }) {
@@ -48,67 +48,65 @@ export default function UpcomingExamCard({ examDate, status = "Upcoming", compac
     const badgeClass = statusBadge[status] || statusBadge.Upcoming;
 
     return (
-        <div className={`flex h-full flex-col rounded-lg border bg-white ${compact ? 'p-3' : 'p-4'} transition hover:border-primary/40 hover:shadow-md`}>
+        <div className={`edu-card edu-card-hover flex h-full flex-col ${compact ? 'p-3' : 'p-4'}`}>
 
-            <div className={`mb-2 flex flex-wrap items-center gap-2 ${compact ? 'text-[10px]' : 'text-xs'}`}>
-                <span className={`rounded-full px-2 py-0.5 font-semibold ${badgeClass}`}>
+            <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                <span className={`inline-flex h-[1.375rem] items-center rounded-md border px-2 text-[0.6875rem] font-semibold ${badgeClass}`}>
                     {status}
                 </span>
 
                 {registrationStatus && (
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5 font-medium text-slate-600">
+                    <span className="edu-tag">
                         {registrationStatus}
                     </span>
                 )}
             </div>
 
-            <div className="flex items-start justify-between gap-3">
-                <div>
-                    <h2 className={`${compact ? 'text-sm' : 'text-base'} font-semibold text-slate-900`}>
-                        {exam?.name || "Exam"}
-                    </h2>
-
-                    {exam?.shortName && !compact && (
-                        <p className="text-sm text-muted-foreground">
-                            {exam.shortName}
-                        </p>
-                    )}
-                </div>
+            <div className="flex items-start justify-between gap-2">
+                <h2 className={`line-clamp-2 font-semibold leading-5 text-ink ${compact ? 'text-[0.875rem]' : 'text-[0.9375rem]'}`}>
+                    {exam?.name || "Exam"}
+                </h2>
 
                 {exam?.examType && (
-                    <span className={`font-medium text-slate-500 ${compact ? 'text-[10px]' : 'text-xs'}`}>
+                    <span className="mt-0.5 shrink-0 text-[0.6875rem] font-medium text-ink-muted">
                         {exam.examType}
                     </span>
                 )}
             </div>
 
+            {exam?.shortName && !compact && (
+                <p className="mt-1 text-[0.8125rem] text-ink-soft">
+                    {exam.shortName}
+                </p>
+            )}
+
             {!compact && (
                 <>
-                    <div className="mt-2 space-y-1 text-sm text-slate-600">
+                    <div className="mt-2.5 space-y-1 text-[0.8125rem] text-ink-soft">
                         {exam?.conductingBody && (
                             <p>
-                                <span className="font-medium">Conducting Body:</span>{" "}
+                                <span className="font-medium text-ink">Conducting Body:</span>{" "}
                                 {exam.conductingBody}
                             </p>
                         )}
 
                         {exam?.stream && (
                             <p>
-                                <span className="font-medium">Stream:</span>{" "}
+                                <span className="font-medium text-ink">Stream:</span>{" "}
                                 {exam.stream}
                             </p>
                         )}
 
                         {exam?.level && (
                             <p>
-                                <span className="font-medium">Level:</span>{" "}
+                                <span className="font-medium text-ink">Level:</span>{" "}
                                 {exam.level}
                             </p>
                         )}
                     </div>
 
                     {examSession && (
-                        <p className="mt-2 text-xs text-slate-500">
+                        <p className="mt-2 text-[0.75rem] text-ink-muted">
                             Session: {examSession.sessionName}{" "}
                             {examSession.academicYear
                                 ? `(${examSession.academicYear})`
@@ -118,32 +116,39 @@ export default function UpcomingExamCard({ examDate, status = "Upcoming", compac
                 </>
             )}
 
-            <div className={`mt-3 flex items-center gap-2 text-slate-600 ${compact ? 'text-xs' : 'text-sm'}`}>
-                <CalendarDays className={`${compact ? 'size-3.5' : 'size-4'} text-[#0F766E]`} />
-
-                <span>
-                    {formatDate(examDate?.examStartDate)} -{" "}
-                    {formatDate(examDate?.examEndDate)}
-                </span>
-            </div>
-
-            {registrationStatus && (
-                <div className={`mt-1 flex items-center gap-2 text-slate-500 ${compact ? 'text-[11px]' : 'text-xs'}`}>
-                    <Clock3 className={`${compact ? 'size-3.5' : 'size-4'} text-[#0F766E]`} />
+            <div className={`mt-3 space-y-1.5 border-t border-line pt-3 text-ink-soft ${compact ? 'text-[0.75rem]' : 'text-[0.8125rem]'}`}>
+                <p className="flex items-start gap-1.5">
+                    <CalendarDays className={`mt-0.5 size-3.5 shrink-0 text-brand ${compact ? 'size-3.5' : ''}`} />
 
                     <span>
-                        Apply: {formatDate(examDate?.registrationStartDate)} -{" "}
-                        {formatDate(examDate?.registrationEndDate)}
+                        {formatDate(examDate?.examStartDate)} -{" "}
+                        {formatDate(examDate?.examEndDate)}
                     </span>
-                </div>
-            )}
+                </p>
 
-            <div className={`mt-auto ${compact ? 'pt-3' : 'pt-4'}`}>
-                <Button
-                    size={compact ? "sm" : "default"}
-                    className="w-full text-xs"
-                    onClick={() => navigate(`/exams/${exam?._id}`)}>
+                {registrationStatus && (
+                    <p className="flex items-start gap-1.5 text-ink-muted">
+                        <Clock3 className="mt-0.5 size-3.5 shrink-0 text-brand" />
+
+                        <span>
+                            Apply: {formatDate(examDate?.registrationStartDate)} -{" "}
+                            {formatDate(examDate?.registrationEndDate)}
+                        </span>
+                    </p>
+                )}
+            </div>
+
+            <div className={`mt-auto flex items-center justify-between border-t border-line ${compact ? 'pt-2.5' : 'pt-3'}`}>
+                <span className="text-[0.75rem] font-semibold text-brand">
                     View Details
+                </span>
+
+                <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 px-2 text-[0.75rem]"
+                    onClick={() => navigate(`/exams/${exam?._id}`)}>
+                    Open
                 </Button>
             </div>
 

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useSearchParams, useNavigate, createSearchParams } from "react-router-dom";
-import { Building2, Search } from "lucide-react";
+import { Building2, Search, ArrowRight, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function CollegePredictor() {
     const [searchParams] = useSearchParams();
@@ -25,11 +26,11 @@ export default function CollegePredictor() {
 
     useEffect(() => {
         axios.get("http://localhost:5001/api/exam").then((response) => {
-            setExams(response.data.exams);
+            setExams(response.data.exams || []);
         });
 
         axios.get("http://localhost:5001/api/course").then((response) => {
-            setCourses(response.data.courses);
+            setCourses(response.data.courses || []);
         });
     }, []);
 
@@ -40,7 +41,7 @@ export default function CollegePredictor() {
                     `http://localhost:5001/api/predictor-exam-sessions?examId=${form.examId}`
                 )
                 .then((response) => {
-                    setSessions(response.data.examSessions);
+                    setSessions(response.data.examSessions || []);
                 });
         }
     }, [form.examId]);
@@ -51,21 +52,15 @@ export default function CollegePredictor() {
         setForm({
             ...form,
             [name]: value,
-        });
-
-        if (name === "examId") {
-            setForm({
-                ...form,
-                examId: value,
+            ...(name === "examId" && {
                 examSessionId: "",
-            });
-        }
-
+            }),
+        });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         const params = {};
         for (const key in form) {
             if (form[key]) {
@@ -80,52 +75,47 @@ export default function CollegePredictor() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20">
-
-            {/* Hero */}
-            <div className="bg-[#1e1b4b] text-white py-16 px-4">
-                <div className="max-w-4xl mx-auto text-center">
-
-                    <div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-6">
-                        <Building2 className="w-8 h-8" />
+        <div className="min-h-screen bg-surface pb-16 text-ink">
+            {/* Header Banner */}
+            <div className="border-b border-line bg-white">
+                <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                    <div className="max-w-3xl">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-blue-50 text-brand text-xs font-semibold mb-2.5">
+                            <Building2 size={13} /> College Admission Predictor
+                        </div>
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-ink">
+                            Predict Eligible Colleges
+                        </h1>
+                        <p className="mt-2 text-xs sm:text-sm text-ink-muted leading-relaxed">
+                            Discover institutions and branches you can secure based on your entrance rank, category, quota and location preferences.
+                        </p>
                     </div>
-
-                    <h1 className="text-4xl font-bold mb-4">
-                        College Predictor
-                    </h1>
-
-                    <p className="text-lg text-indigo-100">
-                        Find the best colleges you can get based on your exam rank.
-                    </p>
-
                 </div>
             </div>
 
-            <main className="max-w-5xl mx-auto px-4 -mt-8">
+            <main className="max-w-5xl mx-auto px-4 py-8">
+                {/* Form Card */}
+                <div className="rounded-md border border-line bg-white p-5 sm:p-8 shadow-none mb-8">
+                    <div className="border-b border-line pb-3 mb-6">
+                        <h2 className="text-base font-bold text-ink">Enter Rank & Preference Parameters</h2>
+                        <p className="text-xs text-ink-muted mt-0.5">Parameters are evaluated against previous year closing ranks.</p>
+                    </div>
 
-                {/* Form */}
-                <div className="bg-white rounded-2xl shadow-xl border p-6 md:p-8 mb-12">
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-
-                        <div className="grid md:grid-cols-4 gap-4">
-
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                             {/* Exam */}
                             <div>
-                                <label className="text-sm font-semibold">
-                                    Exam
+                                <label className="text-xs font-bold uppercase tracking-wider text-ink-muted block mb-1.5">
+                                    Exam *
                                 </label>
-
                                 <select
+                                    required
                                     name="examId"
                                     value={form.examId}
                                     onChange={handleChange}
-                                    className="w-full mt-2 rounded-xl border p-3"
+                                    className="w-full rounded-md border border-line bg-white px-3 py-2 text-xs text-ink focus:border-brand focus:outline-none"
                                 >
-                                    <option value="">
-                                        Select Exam
-                                    </option>
-
+                                    <option value="">Select Exam</option>
                                     {exams.map((exam) => (
                                         <option key={exam._id} value={exam._id}>
                                             {exam.name}
@@ -136,27 +126,19 @@ export default function CollegePredictor() {
 
                             {/* Session */}
                             <div>
-                                <label className="text-sm font-semibold">
+                                <label className="text-xs font-bold uppercase tracking-wider text-ink-muted block mb-1.5">
                                     Session
                                 </label>
-
                                 <select
                                     name="examSessionId"
                                     value={form.examSessionId}
                                     onChange={handleChange}
-                                    className="w-full mt-2 rounded-xl border p-3"
+                                    className="w-full rounded-md border border-line bg-white px-3 py-2 text-xs text-ink focus:border-brand focus:outline-none"
                                 >
-                                    <option value="">
-                                        Select Session
-                                    </option>
-
+                                    <option value="">Select Session</option>
                                     {sessions.map((session) => (
-                                        <option
-                                            key={session._id}
-                                            value={session._id}
-                                        >
-                                            {session.academicYear} -{" "}
-                                            {session.sessionName}
+                                        <option key={session._id} value={session._id}>
+                                            {session.academicYear} - {session.sessionName}
                                         </option>
                                     ))}
                                 </select>
@@ -164,162 +146,120 @@ export default function CollegePredictor() {
 
                             {/* Rank */}
                             <div>
-                                <label className="text-sm font-semibold">
-                                    Your Rank
+                                <label className="text-xs font-bold uppercase tracking-wider text-ink-muted block mb-1.5">
+                                    Your Rank *
                                 </label>
-
                                 <input
+                                    required
                                     type="number"
                                     name="rank"
                                     value={form.rank}
                                     onChange={handleChange}
                                     placeholder="e.g. 5000"
-                                    className="w-full mt-2 rounded-xl border p-3"
+                                    className="w-full rounded-md border border-line bg-white px-3 py-2 text-xs text-ink focus:border-brand focus:outline-none"
                                 />
                             </div>
 
                             {/* Category */}
                             <div>
-                                <label className="text-sm font-semibold">
+                                <label className="text-xs font-bold uppercase tracking-wider text-ink-muted block mb-1.5">
                                     Category
                                 </label>
-
                                 <select
                                     name="category"
                                     value={form.category}
                                     onChange={handleChange}
-                                    className="w-full mt-2 rounded-xl border p-3"
+                                    className="w-full rounded-md border border-line bg-white px-3 py-2 text-xs text-ink focus:border-brand focus:outline-none"
                                 >
-                                    <option value="OPEN">OPEN</option>
+                                    <option value="OPEN">OPEN / General</option>
                                     <option value="OBC">OBC</option>
                                     <option value="SC">SC</option>
                                     <option value="ST">ST</option>
                                     <option value="EWS">EWS</option>
                                 </select>
                             </div>
+                        </div>
 
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                             {/* Gender */}
                             <div>
-                                <label className="text-sm font-semibold">
-                                    Gender
+                                <label className="text-xs font-bold uppercase tracking-wider text-ink-muted block mb-1.5">
+                                    Gender Pool
                                 </label>
-
                                 <select
                                     name="gender"
                                     value={form.gender}
                                     onChange={handleChange}
-                                    className="w-full mt-2 rounded-xl border p-3"
+                                    className="w-full rounded-md border border-line bg-white px-3 py-2 text-xs text-ink focus:border-brand focus:outline-none"
                                 >
-                                    <option value="ALL">All</option>
-                                    <option value="MALE">Male</option>
-                                    <option value="FEMALE">Female</option>
+                                    <option value="ALL">Gender Neutral / All</option>
+                                    <option value="FEMALE">Female Only</option>
                                 </select>
                             </div>
 
                             {/* Quota */}
                             <div>
-                                <label className="text-sm font-semibold">
+                                <label className="text-xs font-bold uppercase tracking-wider text-ink-muted block mb-1.5">
                                     Quota
                                 </label>
-
                                 <select
                                     name="quota"
                                     value={form.quota}
                                     onChange={handleChange}
-                                    className="w-full mt-2 rounded-xl border p-3"
+                                    className="w-full rounded-md border border-line bg-white px-3 py-2 text-xs text-ink focus:border-brand focus:outline-none"
                                 >
-                                    <option value="HOME_STATE">
-                                        Home State
-                                    </option>
-
-                                    <option value="OUTSIDE_STATE">
-                                        Outside State
-                                    </option>
-
-                                    <option value="ALL">
-                                        All
-                                    </option>
+                                    <option value="HOME_STATE">Home State (HS)</option>
+                                    <option value="OUTSIDE_STATE">Outside State (OS)</option>
+                                    <option value="ALL">All India (AI)</option>
                                 </select>
                             </div>
 
-                        </div>
-
-                        <div className="grid md:grid-cols-3 gap-4">
-
-                          
+                            {/* Preferred Course */}
                             <div>
-                                <label className="text-sm font-semibold">
+                                <label className="text-xs font-bold uppercase tracking-wider text-ink-muted block mb-1.5">
                                     Preferred Course
                                 </label>
-
                                 <select
                                     name="courseIds"
                                     value={form.courseIds}
                                     onChange={handleChange}
-                                    className="w-full mt-2 rounded-xl border p-3"
+                                    className="w-full rounded-md border border-line bg-white px-3 py-2 text-xs text-ink focus:border-brand focus:outline-none"
                                 >
-                                    <option value="">
-                                        All Courses
-                                    </option>
-
+                                    <option value="">All Programs</option>
                                     {courses.map((course) => (
-                                        <option
-                                            key={course._id}
-                                            value={course._id}
-                                        >
+                                        <option key={course._id} value={course._id}>
                                             {course.name}
                                         </option>
                                     ))}
                                 </select>
                             </div>
 
-
+                            {/* Preferred State */}
                             <div>
-                                <label className="text-sm font-semibold">
-                                    Preferred City
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={form.city}
-                                    onChange={handleChange}
-                                    placeholder="e.g. Mumbai"
-                                    className="w-full mt-2 rounded-xl border p-3"
-                                />
-                            </div>
-
-
-                            <div>
-                                <label className="text-sm font-semibold">
+                                <label className="text-xs font-bold uppercase tracking-wider text-ink-muted block mb-1.5">
                                     Preferred State
                                 </label>
-
                                 <input
                                     type="text"
                                     name="state"
                                     value={form.state}
                                     onChange={handleChange}
                                     placeholder="e.g. Maharashtra"
-                                    className="w-full mt-2 rounded-xl border p-3"
+                                    className="w-full rounded-md border border-line bg-white px-3 py-2 text-xs text-ink focus:border-brand focus:outline-none"
                                 />
                             </div>
-
                         </div>
 
-                        <button
-                            type="submit"
-                            className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-8 py-4 font-bold text-white hover:bg-indigo-700"
-                        >
-                            <Search className="w-5 h-5" />
-                            Predict My College
-                        </button>
-
+                        <div className="pt-2">
+                            <Button
+                                type="submit"
+                                className="w-full rounded-md bg-brand hover:bg-brand-dark text-white text-xs font-semibold h-11 shadow-none flex items-center justify-center gap-2"
+                            >
+                                <Search size={15} /> Find Matching Colleges & Cutoffs
+                            </Button>
+                        </div>
                     </form>
-
                 </div>
-
-
             </main>
         </div>
     );

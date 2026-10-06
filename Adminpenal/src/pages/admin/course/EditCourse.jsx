@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 
 const STREAM_OPTIONS = [
   'Engineering',
@@ -43,9 +42,7 @@ const EditCourse = () => {
 
   useEffect(() => {
     const getCourse = async () => {
-      const response = await axios.get(
-        `http://localhost:5001/api/course/id/${id}`
-      );
+      const response = await axios.get(`/api/course/id/${id}`);
 
       const course = response.data.data || response.data.course || {};
 
@@ -83,7 +80,7 @@ const EditCourse = () => {
     e.preventDefault();
 
     axios
-      .put(`http://localhost:5001/api/course/${id}`, {
+      .put(`/api/course/${id}`, {
         name: form.name,
         fullName: form.fullName,
         stream: form.stream,
@@ -106,16 +103,16 @@ const EditCourse = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8">
+    <div className="min-h-screen bg-surface px-4 py-8">
       <div className="mx-auto max-w-4xl">
 
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-ink">
               Edit Course
             </h1>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-ink-muted">
               Update course information
             </p>
           </div>
@@ -123,7 +120,7 @@ const EditCourse = () => {
           <button
             type="button"
             onClick={() => navigate('/admin/course/list')}
-            className="rounded-lg border bg-white px-4 py-2 text-sm font-medium text-slate-600"
+            className="rounded-lg border bg-white px-4 py-2 text-sm font-medium text-ink-muted"
           >
             Back
           </button>
@@ -363,7 +360,7 @@ const EditCourse = () => {
 
             <button
               type="submit"
-              className="rounded-lg bg-[#0F766E] px-5 py-2.5 text-sm font-semibold text-white">Update Course</button>
+              className="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white">Update Course</button>
           </div>
         </form>
       </div>

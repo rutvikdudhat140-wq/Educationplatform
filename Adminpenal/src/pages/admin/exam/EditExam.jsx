@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 
 import { Button } from '@/components/ui/button';
 import ExamForm from './ExamForm';
@@ -27,21 +27,13 @@ export default function EditExam() {
     const [exam, setExam] = useState(null);
 
     useEffect(() => {
-        axios.get(`http://localhost:5001/api/exam/${id}`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('adminToken')}`
-            }
-        }).then((response) => {
+        axios.get(`/api/exam/${id}`).then((response) => {
             setExam(response.data.exam);
         });
     }, [id]);
 
     const updateExam = async (form) => {
-        await axios.put(`http://localhost:5001/api/exam/${id}`, form, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('adminToken')}`
-            }
-        });
+        await axios.put(`/api/exam/${id}`, form);
 
         navigate('/admin/exam/list');
     };

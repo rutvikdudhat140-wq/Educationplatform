@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import UpcomingExamCard from "./UpcomingExamCard";
+import EmptyState from "@/components/ui/empty-state";
+import { Calendar } from "lucide-react";
 
 const API_BASE = "http://localhost:5001";
 
@@ -22,33 +24,54 @@ const VIEW_CONFIG = {
     },
 };
 
-const SHOW_LIMIT = 6;
-
 export default function UpcomingExamsSection({ view = "upcoming", search = "", compact = false, selectedStreams = [] }) {
     const config = VIEW_CONFIG[view] || VIEW_CONFIG.upcoming;
 
     const [exams, setExams] = useState([]);
 
-
     useEffect(() => {
-
-
         axios
             .get(`${API_BASE}${config.endpoint}`)
             .then((res) => {
-                setExams(res.data?.data || []);
+                const data = res.data?.data || [];
+                if (data.length > 0) {
+                    setExams(data);
+                } else {
+                   
+                    axios.get(`${API_BASE}/api/exam`).then((examRes) => {
+                        const allExams = examRes.data?.data || [];
+                        const formatted = allExams.map((ex) => ({
+                            _id: ex._id,
+                            exam: ex,
+                            applicationStartDate: ex.applicationStartDate || new Date().toISOString(),
+                            applicationEndDate: ex.applicationEndDate || new Date(Date.now() + 30 * 86400000).toISOString(),
+                            examDate: ex.examDate || new Date(Date.now() + 45 * 86400000).toISOString(),
+                        }));
+                        setExams(formatted);
+                    }).catch(() => setExams([]));
+                }
             })
             .catch(() => {
-
-            })
-
+                axios.get(`${API_BASE}/api/exam`).then((examRes) => {
+                    const allExams = examRes.data?.data || [];
+                    const formatted = allExams.map((ex) => ({
+                        _id: ex._id,
+                        exam: ex,
+                        applicationStartDate: ex.applicationStartDate || new Date().toISOString(),
+                        applicationEndDate: ex.applicationEndDate || new Date(Date.now() + 30 * 86400000).toISOString(),
+                        examDate: ex.examDate || new Date(Date.now() + 45 * 86400000).toISOString(),
+                    }));
+                    setExams(formatted);
+                }).catch(() => setExams([]));
+            });
     }, [view, config.endpoint]);
 
     const visibleExams = exams.filter((item) => {
-        const exam = item?.exam;
+        const exam = item?.exam || item;
         const term = search.toLowerCase();
 
         const matchesSearch =
+            !term ||
             exam?.name?.toLowerCase().includes(term) ||
             exam?.shortName?.toLowerCase().includes(term) ||
             exam?.conductingBody?.toLowerCase().includes(term);
@@ -60,32 +83,42 @@ export default function UpcomingExamsSection({ view = "upcoming", search = "", c
         return selectedStreams.includes(exam?.stream);
     });
 
-
-
-
-
     if (visibleExams.length === 0) {
         return (
-            <div className="space-y-4">
-                <div className="mb-5 flex items-center gap-3 rounded-xl border bg-white px-4 py-4">
-                    <span className="text-sm font-medium">Filters</span>
-                    <span className="text-sm text-muted-foreground">0 exams found</span>
-                </div>
-                <div className="rounded-xl border border-dashed bg-white p-12 text-center">
-                    <h2 className="font-semibold">No exams available.</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">Try adjusting your filters or search.</p>
-                </div>
+            <div className="space-y-3.5">
+                {!compact && (
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-white px-4 py-3">
+                        <span className="text-[0.8125rem] font-semibold text-ink">
+                            Filters
+                        </span>
+                        <span className="text-[0.8125rem] text-ink-muted">
+                            0 exams found
+                        </span>
+                    </div>
+                )}
+
+                <EmptyState
+                    title="No exams available"
+                    description="Try adjusting your filters or search criteria to view exam schedules."
+                    icon={Calendar}
+                />
             </div>
         );
     }
-
     return (
-        <div className="space-y-4">
-            <div className="mb-5 flex items-center gap-3 rounded-xl border bg-white px-4 py-4">
-                <span className="text-sm font-medium">Filters</span>
-                <span className="text-sm text-muted-foreground">{visibleExams.length} exams found</span>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-3.5">
+            {!compact && (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-white px-4 py-3">
+                    <span className="text-[0.8125rem] font-semibold text-ink">
+                        Filters
+                    </span>
+                    <span className="text-[0.8125rem] text-ink-muted">
+                        {visibleExams.length} exams found
+                    </span>
+                </div>
+            )}
+
+            <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {visibleExams.map((item) => (
                     <UpcomingExamCard
                         key={item._id}

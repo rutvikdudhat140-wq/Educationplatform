@@ -77,8 +77,7 @@ export default function ExamForm({
                         </select>
                     </label>
 
-
-                    <label className="space-y-2 text-sm font-medium">
+<label className="space-y-2 text-sm font-medium">
                         Exam Name *
                         <input
                             name="name"
@@ -90,8 +89,7 @@ export default function ExamForm({
                         />
                     </label>
 
-
-                    <label className="space-y-2 text-sm font-medium">
+<label className="space-y-2 text-sm font-medium">
                         Short Name
                         <input
                             name="shortName"
@@ -102,8 +100,7 @@ export default function ExamForm({
                         />
                     </label>
 
-
-                    <label className="space-y-2 text-sm font-medium">
+<label className="space-y-2 text-sm font-medium">
                         Conducting Body
                         <input
                             name="conductingBody"
@@ -114,8 +111,7 @@ export default function ExamForm({
                         />
                     </label>
 
-
-                    <label className="space-y-2 text-sm font-medium">
+<label className="space-y-2 text-sm font-medium">
                         Level *
                         <select
                             name="level"
@@ -134,8 +130,7 @@ export default function ExamForm({
                         </select>
                     </label>
 
-
-                    <label className="space-y-2 text-sm font-medium">
+<label className="space-y-2 text-sm font-medium">
                         Exam Type
                         <select
                             name="examType"

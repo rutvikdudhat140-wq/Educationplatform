@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,26 +17,26 @@ import {
 const UniversityList = () => {
   const navigate = useNavigate();
   const [universities, setUniversities] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 12;
 
-  const getUniversities = async () => {
-    const response = await axios.get(
-      'http://localhost:5001/api/university'
-    );
+  const getUniversities = async (pageNum) => {
+    const response = await axios.get(`/api/university?page=${pageNum}&limit=${limit}`);
 
     setUniversities(response.data.data || []);
+    setTotalPages(response.data.totalPages || 1);
   };
 
   const deleteUniversity = async (id) => {
-    await axios.delete(
-      `http://localhost:5001/api/university/${id}`
-    );
+    await axios.delete(`/api/university/${id}`);
 
-    getUniversities();
+    getUniversities(page);
   };
 
   useEffect(() => {
-    getUniversities();
-  }, []);
+    getUniversities(page);
+  }, [page]);
 
   return (
     <div className="space-y-5">
@@ -149,6 +149,38 @@ const UniversityList = () => {
 
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      <div className="flex justify-center items-center gap-2 mt-4">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={page === 1}
+        >
+          Previous
+        </Button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pNum) => (
+          <Button
+            key={pNum}
+            size="sm"
+            variant={pNum === page ? "default" : "outline"}
+            onClick={() => setPage(pNum)}
+          >
+            {pNum}
+          </Button>
+        ))}
+
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+          disabled={page === totalPages}
+        >
+          Next
+        </Button>
+      </div>
 
     </div>
   );

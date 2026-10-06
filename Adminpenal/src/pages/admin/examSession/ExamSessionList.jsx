@@ -1,97 +1,127 @@
 import { useEffect, useState } from 'react';
+import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Search, List, LayoutGrid, Clock } from 'lucide-react';
+import {
+  AdminCard,
+  FilterBar,
+  AddButton,
+  EditBtn,
+  DeleteBtn,
+  StatusBadge,
+  EmptyRow,
+} from '@/components/layout/AdminUI';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 export default function ExamSessionList() {
-    const navigate = useNavigate();
-    const [sessions, setSessions] = useState([]);
-    const token = localStorage.getItem('adminToken');
+  const [sessions, setSessions] = useState([]);
+  const [search, setSearch] = useState('');
+  const navigate = useNavigate();
 
-    const loadSessions = async () => {
-        const response = await axios.get(
-            'http://localhost:5001/api/exam-session',
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-        setSessions(response.data.examSessions || []);
-    };
+  const fetchSessions = async () => {
 
-    useEffect(() => {
-        loadSessions();
-    }, []);
+      const res = await axios.get('/api/exam-session');
+      setSessions(res.data.examSessions || []);
 
-    const deleteSession = async (id) => {
-        await axios.delete(
-            `http://localhost:5001/api/exam-session/${id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-        loadSessions();
-    };
+  };
 
+  useEffect(() => {
+    fetchSessions();
+  }, []);
+
+  const handleDelete = async (id) => {
+
+      await axios.delete(`/api/exam-session/${id}`);
+      setSessions((prev) => prev.filter((s) => s._id !== id));
+
+  };
+
+  const filtered = sessions.filter((s) => {
+    const q = search.toLowerCase();
     return (
-        <div className="space-y-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                    <h2 className="text-2xl font-semibold">Exam Sessions</h2>
-                    <p className="text-sm text-muted-foreground">Manage yearly exam sessions</p>
-                </div>
-                <Button onClick={() => navigate('/admin/exam-session/add')}>Add Exam Session</Button>
-            </div>
-
-            <div className="overflow-x-auto rounded-xl border bg-white shadow-sm">
-                <table className="w-full min-w-200 text-left text-sm">
-                    <thead>
-                        <tr className="border-b bg-muted/30">
-                            <th className="px-4 py-3">Exam</th>
-                            <th>Academic Year</th>
-                            <th>Session</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th className="px-4">Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {sessions.map((item) => (
-                            <tr
-                                key={item._id}
-                                className="border-b last:border-0">
-                                <td className="px-4 py-3 font-medium">
-                                    {item.exam?.name || item.exam?.shortName}
-                                </td>
-                                <td>{item.academicYear}</td>
-                                <td>{item.sessionName}</td>
-                                <td className="max-w-xs truncate">{item.description}</td>
-                                <td>
-                                    <Badge
-                                        variant={
-                                            item.status === 'Active'
-                                                ? 'secondary'
-                                                : 'outline'}>
-                                        {item.status}
-                                    </Badge>
-                                </td>
-                                <td className="px-4">
-                                    <div className="flex gap-2">
-                                        <Button variant="outline" onClick={() => navigate(`/admin/exam-session/edit/${item._id}`)}>Edit</Button>
-                                        <Button variant="destructive" onClick={() => deleteSession(item._id)}>Delete</Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+      s.exam?.name?.toLowerCase().includes(q) ||
+      s.sessionName?.toLowerCase().includes(q) ||
+      String(s.year).includes(q)
     );
+  });
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-[22px] font-bold text-ink flex items-center gap-2">
+         Exam Sessions
+        </h2>
+      </div>
+
+      <AdminCard>
+        <FilterBar>
+
+<div className="flex  items-center gap-3 w-full ">
+
+            <div className="ml-2">
+              <AddButton onClick={() => navigate('/admin/exam-session/add')} label="Add Exam Session" />
+            </div>
+          </div>
+        </FilterBar>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+
+              <TableHead>EXAM</TableHead>
+              <TableHead>SESSION NAME</TableHead>
+              <TableHead>YEAR</TableHead>
+              <TableHead>STATUS</TableHead>
+              <TableHead className="text-right pr-6">ACTIONS</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filtered.length === 0 ? (
+              <EmptyRow colSpan={6} message="No exam sessions found." />
+            ) : (
+              filtered.map((session) => (
+                <TableRow key={session._id}>
+
+                  <TableCell className="font-bold text-ink">
+                    {session.exam?.name }
+                  </TableCell>
+                  <TableCell className="text-ink-muted font-medium">
+                    {session.sessionName }
+                  </TableCell>
+                  <TableCell className="text-ink-muted">
+                    {session.year}
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge status={session.status || 'Active'} />
+                  </TableCell>
+                  <TableCell className="text-right pr-6">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <EditBtn onClick={() => navigate(`/admin/exam-session/edit/${session._id}`)} />
+                      <DeleteBtn onClick={() => handleDelete(session._id)} />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+
+        <div className="p-4 border-t border-line flex items-center justify-between text-[13px] text-ink-muted">
+          <div>Showing 1 to {filtered.length} of {filtered.length} exam sessions</div>
+          <div className="flex items-center gap-1">
+            <button className="px-3 py-1.5 border border-line rounded-md hover:bg-surface text-ink-muted">&lt;</button>
+            <button className="px-3 py-1.5 bg-blue-600 text-white rounded-md font-medium shadow-sm">1</button>
+            <button className="px-3 py-1.5 border border-line rounded-md hover:bg-surface text-ink-muted">&gt;</button>
+          </div>
+        </div>
+      </AdminCard>
+    </div>
+  );
 }

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -36,7 +35,6 @@ const AddCollege = () => {
     totalCourses: "",
 
     facilities: "",
-
     courseName: "",
     specialization: "",
     duration: "",
@@ -190,7 +188,7 @@ const AddCollege = () => {
     };
 
     await axios.post(
-      "http://localhost:5001/api/college",
+      "/api/college",
       payload
     );
 
@@ -211,21 +209,14 @@ const AddCollege = () => {
       <div className="mx-auto max-w-4xl">
 
         <div className="mb-4">
-          <h1 className="text-xl font-semibold text-gray-800">
-            Add College
-          </h1>
-          <p className="mt-1 text-xs text-gray-500">
-            Add college information and placement details
-          </p>
+          <h1 className="text-xl font-semibold text-gray-800">Add College</h1>
+          <p className="mt-1 text-xs text-gray-500">Add college information and placement details</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
-          {/* Basic Details */}
           <div className="rounded-lg bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-sm font-semibold text-gray-800">
-              Basic Details
-            </h2>
+            <h2 className="mb-3 text-sm font-semibold text-gray-800">Basic Details</h2>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 
@@ -247,8 +238,7 @@ const AddCollege = () => {
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  className={inputClass}
-                >
+                  className={inputClass}>
                   <option>Engineering</option>
                   <option>MBA</option>
                   <option>Medical</option>
@@ -262,8 +252,7 @@ const AddCollege = () => {
                   name="collegeType"
                   value={form.collegeType}
                   onChange={handleChange}
-                  className={inputClass}
-                >
+                  className={inputClass}>
                   <option>Government</option>
                   <option>Private</option>
                   <option>Autonomous</option>
@@ -325,21 +314,15 @@ const AddCollege = () => {
                   onChange={handleChange}
                   className="h-4 w-4"
                 />
-                <label className="text-sm text-gray-700">
-                  Mark as Top College
-                </label>
+                <label className="text-sm text-gray-700">Mark as Top College</label>
               </div>
             </div>
           </div>
 
-          {/* Media */}
           <div className="rounded-lg bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-sm font-semibold text-gray-800">
-              Media
-            </h2>
+            <h2 className="mb-3 text-sm font-semibold text-gray-800">Media</h2>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-
               <div>
                 <label className={labelClass}>Logo URL</label>
                 <input
@@ -363,9 +346,7 @@ const AddCollege = () => {
               </div>
 
               <div>
-                <label className={labelClass}>
-                  Images
-                </label>
+                <label className={labelClass}>Images</label>
                 <input
                   name="images"
                   value={form.images}
@@ -377,14 +358,10 @@ const AddCollege = () => {
             </div>
           </div>
 
-          {/* Location & Contact */}
-          <div className="rounded-lg bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-sm font-semibold text-gray-800">
-              Location & Contact
-            </h2>
+<div className="rounded-lg bg-white p-4 shadow-sm">
+            <h2 className="mb-3 text-sm font-semibold text-gray-800">Location & Contact</h2>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-
               <div>
                 <label className={labelClass}>City</label>
                 <input
@@ -464,18 +441,12 @@ const AddCollege = () => {
             </div>
           </div>
 
-          {/* Highlights */}
           <div className="rounded-lg bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-sm font-semibold text-gray-800">
-              Quick Highlights
-            </h2>
+            <h2 className="mb-3 text-sm font-semibold text-gray-800">Quick Highlights</h2>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-
               <div>
-                <label className={labelClass}>
-                  Faculty Strength
-                </label>
+                <label className={labelClass}>Faculty Strength</label>
                 <input
                   name="facultyStrength"
                   value={form.facultyStrength}
@@ -486,9 +457,7 @@ const AddCollege = () => {
               </div>
 
               <div>
-                <label className={labelClass}>
-                  Campus Size
-                </label>
+                <label className={labelClass}>Campus Size</label>
                 <input
                   name="campusSize"
                   value={form.campusSize}
@@ -499,9 +468,7 @@ const AddCollege = () => {
               </div>
 
               <div>
-                <label className={labelClass}>
-                  Total Courses
-                </label>
+                <label className={labelClass}>Total Courses</label>
                 <input
                   name="totalCourses"
                   value={form.totalCourses}

@@ -29,12 +29,12 @@ const courseSchema = new mongoose.Schema(
       default: '',
     },
     fees: {
-      type: String,
-      default: '0'
-    },
-    fees: {
       type: Number,
       default: 0,
+    },
+    careerOptions: {
+      type: String,
+      default: '',
     },
     collegeCount: {
       type: Number,
@@ -84,5 +84,34 @@ const courseSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+const applyLegacyAliases = (doc) => {
+  if (!doc) {
+    return doc;
+  }
+
+  if (!doc.name && doc.courseName) {
+    doc.name = doc.courseName;
+  }
+
+  if (!doc.fullName && doc.fullCourseName) {
+    doc.fullName = doc.fullCourseName;
+  }
+
+  if (typeof doc.isActive !== 'boolean') {
+    doc.isActive = true;
+  }
+
+  return doc;
+};
+
+courseSchema.post('find', function (docs) {
+  docs.forEach(applyLegacyAliases);
+  return docs;
+});
+
+courseSchema.post('findOne', function (doc) {
+  return applyLegacyAliases(doc);
+});
 
 export default mongoose.model('Course', courseSchema);

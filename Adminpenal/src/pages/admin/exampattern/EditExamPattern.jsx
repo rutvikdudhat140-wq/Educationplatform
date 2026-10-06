@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "axios";
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
@@ -11,7 +11,6 @@ export default function EditExamPattern() {
     const [sessions, setSessions] = useState([]);
     const [subjects, setSubjects] = useState([]);
     const [newSubject, setNewSubject] = useState('');
-    const token = localStorage.getItem('adminToken');
 
     const [formData, setFormData] = useState({
         exam: '',
@@ -27,17 +26,12 @@ export default function EditExamPattern() {
         status: 'Active',
     });
 
-
-    useEffect(() => {
-        axios.get('http://localhost:5001/api/exam?status=Active', {
-            headers: { Authorization: `Bearer ${token}` },
-        }).then((res) => {
+useEffect(() => {
+        axios.get('/api/exam?status=Active').then((res) => {
             setExams(res.data.exams || res.data.data || []);
         });
 
-        axios.get(`http://localhost:5001/api/exam-pattern/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        }).then((res) => {
+        axios.get(`/api/exam-pattern/${id}`).then((res) => {
             const data = res.data.data;
             setFormData({
                 exam: data.exam?._id || data.exam || '',
@@ -61,9 +55,7 @@ export default function EditExamPattern() {
         setFormData({ ...formData, exam: examId, examSession: '' });
 
         if (examId) {
-            axios.get(`http://localhost:5001/api/exam-session?exam=${examId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            }).then((res) => {
+            axios.get(`/api/exam-session?exam=${examId}`).then((res) => {
                 setSessions(res.data.examSessions || res.data.data || []);
             }).catch(() => {
                 setSessions([]);
@@ -96,15 +88,9 @@ export default function EditExamPattern() {
                 totalQuestions: formData.totalQuestions !== '' ? Number(formData.totalQuestions) : 0,
                 totalMarks: formData.totalMarks !== '' ? Number(formData.totalMarks) : 0,
             };
-            await axios.put(
-                `http://localhost:5001/api/exam-pattern/${id}`,
-                payload,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await axios.put(`/api/exam-pattern/${id}`, payload);
             navigate('/admin/exam-pattern/list');
-        } catch (error) {
-
-        }
+        } catch {}
     };
 
     return (
@@ -236,8 +222,7 @@ export default function EditExamPattern() {
                         />
                     </div>
 
-
-                    <div className="space-y-2">
+<div className="space-y-2">
                         <lable className="text-sm font-medium">Status</lable>
                         <select name='status' value={formData.status} onChange={handleChange} className='flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm'>
                             <option value="Active">Active</option>

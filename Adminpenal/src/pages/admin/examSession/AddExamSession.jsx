@@ -1,7 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 
 import { Button } from '@/components/ui/button';
 import ExamSessionForm from './ExamSessionForm';
@@ -18,16 +18,9 @@ export default function AddExamSession() {
     const navigate = useNavigate();
     const [exams, setExams] = useState([]);
 
-    const token = localStorage.getItem('adminToken');
-
-    useEffect(() => {
+useEffect(() => {
         axios.get(
-            'http://localhost:5001/api/exam?status=Active',
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+            '/api/exam?status=Active'
         ).then((response) => {
             setExams(response.data.exams);
         });
@@ -35,13 +28,8 @@ export default function AddExamSession() {
 
     const saveSession = async (form) => {
         await axios.post(
-            'http://localhost:5001/api/exam-session',
-            form,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+            '/api/exam-session',
+            form
         );
 
         navigate('/admin/exam-session/list');

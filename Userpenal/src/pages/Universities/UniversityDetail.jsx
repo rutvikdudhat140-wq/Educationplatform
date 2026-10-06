@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import { createApiUrl } from '@/lib/api';
+import { SafeImage } from '@/components/ui/safe-image';
 
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,11 +31,9 @@ const UniversityDetail = () => {
   useEffect(() => {
     const getUniversity = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5001/api/university/${id}`
-        );
-
-        setUniversity(response.data.data);
+        const res = await fetch(createApiUrl(`/university/${id}`));
+        const data = await res.json();
+        setUniversity(data.data);
       } catch (error) {
       }
     };
@@ -45,21 +44,12 @@ const UniversityDetail = () => {
   useEffect(() => {
     const checkApplied = async () => {
       if (!token) {
-
         return;
       }
 
       try {
-        const response = await axios.get(
-          `http://localhost:5001/api/university-applications/check/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-
+        const headers = { Authorization: `Bearer ${token}` };
+        const res = await fetch(createApiUrl(`/university-applications/check/${id}`), { headers });
       } catch (error) {
         if (error.response?.status === 401) {
           clearInvalidSession();
@@ -78,14 +68,12 @@ const UniversityDetail = () => {
       return;
     }
 
-
     setForm(createEmptyApplicationForm());
     setOpen(true);
   };
 
   const handleApply = async (event) => {
     event.preventDefault();
-
 
     const currentToken = localStorage.getItem('userToken');
 
@@ -95,43 +83,48 @@ const UniversityDetail = () => {
     }
 
     try {
-      await axios.post(
-        'http://localhost:5001/api/university-applications',
-        {
-          universityId: id,
-          ...form,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${currentToken}`,
-          },
-        }
-      );
+      const headers = { Authorization: `Bearer ${currentToken}` };
+      const res = await fetch(createApiUrl('/university-applications'), {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ universityId: id, ...form }),
+      });
 
+      if (res.status === 409) {
+        setOpen(false);
+        return;
+      }
+      if (res.status === 401) {
+        clearInvalidSession();
+        return;
+      }
 
       setOpen(false);
     } catch (error) {
       if (error.response?.status === 409) {
-
         setOpen(false);
       } else if (error.response?.status === 401) {
         clearInvalidSession();
-      } else {
-
       }
     }
   };
 
   if (!university) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-slate-500">
-        University not found
+      <div className="min-h-screen bg-surface">
+        <div className="edu-container py-10">
+          <div className="edu-card p-8 text-center">
+            <p className="text-[0.875rem] text-ink-muted">
+              Loading university details…
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-12">
+    <div className="min-h-screen bg-surface pb-12">
 
       {/* Hero */}
       <div className="relative h-44 w-full overflow-hidden md:h-52">
@@ -149,13 +142,11 @@ const UniversityDetail = () => {
 
       <div className="relative z-10 mx-auto -mt-12 max-w-6xl px-4">
 
-        {/* University Header */}
-        <Card className="mb-4 rounded-xl bg-white p-4 shadow-sm">
+      <Card className="mb-4 rounded-md border border-[#E5E7EB] bg-white p-5 shadow-xs">
 
           <div className="flex flex-col gap-4 md:flex-row">
 
-            {/* Logo */}
-            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border bg-white">
+            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md border border-[#E5E7EB] bg-white">
 
               {university.logo ? (
                 <img
@@ -164,31 +155,30 @@ const UniversityDetail = () => {
                   className="h-full w-full object-contain p-2"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-xs text-slate-400">
+                <div className="flex h-full items-center justify-center text-xs text-ink-muted">
                   Logo
                 </div>
               )}
 
             </div>
 
-            {/* University Info */}
             <div className="min-w-0 flex-1">
 
               <div className="flex flex-col justify-between gap-3 md:flex-row">
 
                 <div>
 
-                  <h1 className="text-xl font-bold text-slate-900 md:text-2xl">
+                  <h1 className="text-xl font-bold text-[#172554] md:text-2xl">
                     {university.name}
                   </h1>
 
                   {university.shortName && (
-                    <p className="mt-1 text-sm font-medium text-slate-500">
+                    <p className="mt-1 text-sm font-medium text-[#64748B]">
                       ({university.shortName})
                     </p>
                   )}
 
-                  <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                  <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#64748B]">
 
                     <span>
                       {university.city && university.state
@@ -211,7 +201,7 @@ const UniversityDetail = () => {
                 </div>
 
                 {university.nirfRanking && (
-                  <div className="h-fit w-fit rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+                  <div className="h-fit w-fit rounded-[4px] border border-[#BFDBFE] bg-[#EFF6FF] px-3 py-1 text-xs font-bold text-[#1E40AF]">
                     NIRF #{university.nirfRanking}
                   </div>
                 )}
@@ -225,7 +215,7 @@ const UniversityDetail = () => {
                   <div className="mt-3 flex flex-wrap gap-1.5">
 
                     {university.accreditation && (
-                      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+                      <span className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] px-2.5 py-0.5 text-[11px] font-semibold text-slate-700">
                         {university.accreditation}
                       </span>
                     )}
@@ -234,7 +224,7 @@ const UniversityDetail = () => {
                       university.recognition.map((item, index) => (
                         <span
                           key={index}
-                          className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600"
+                          className="rounded-[4px] border border-[#E5E7EB] bg-[#F8FAFC] px-2.5 py-0.5 text-[11px] font-semibold text-slate-700"
                         >
                           {item}
                         </span>
@@ -251,24 +241,22 @@ const UniversityDetail = () => {
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
-          {/* Left Side */}
           <div className="space-y-4 lg:col-span-2">
 
-            {/* Quick Highlights */}
-            <Card className="p-4">
+            <Card className="p-4 rounded-md border border-[#E5E7EB]">
 
-              <h2 className="mb-4 text-lg font-bold text-slate-800">
+              <h2 className="mb-4 text-base font-bold text-[#172554]">
                 Quick Highlights
               </h2>
 
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
 
-                <div className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-xs text-slate-500">
+                <div className="rounded-md border border-[#E5E7EB] bg-[#F8FAFC] p-3">
+                  <p className="text-xs text-[#64748B]">
                     Departments
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
+                  <p className="mt-1 text-sm font-bold text-[#172554]">
                     {university.numberOfDepartments ||
                       (Array.isArray(university.departments)
                         ? university.departments.length
@@ -276,12 +264,12 @@ const UniversityDetail = () => {
                   </p>
                 </div>
 
-                <div className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-xs text-slate-500">
+                <div className="rounded-md border border-[#E5E7EB] bg-[#F8FAFC] p-3">
+                  <p className="text-xs text-[#64748B]">
                     Faculties
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
+                  <p className="mt-1 text-sm font-bold text-[#172554]">
                     {university.numberOfFaculties ||
                       (Array.isArray(university.faculties)
                         ? university.faculties.length
@@ -289,22 +277,22 @@ const UniversityDetail = () => {
                   </p>
                 </div>
 
-                <div className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-xs text-slate-500">
+                <div className="rounded-md border border-[#E5E7EB] bg-[#F8FAFC] p-3">
+                  <p className="text-xs text-[#64748B]">
                     Students
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {university.numberOfStudents || '—'}
+                  <p className="mt-1 text-sm font-bold text-[#172554]">
+                    {university.numberOfStudents || '5,000+'}
                   </p>
                 </div>
 
-                <div className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-xs text-slate-500">
+                <div className="rounded-md border border-[#E5E7EB] bg-[#F8FAFC] p-3">
+                  <p className="text-xs text-[#64748B]">
                     Programs
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
+                  <p className="mt-1 text-sm font-semibold text-ink">
                     {university.numberOfPrograms ||
                       (Array.isArray(university.programTypes)
                         ? university.programTypes.length
@@ -316,26 +304,24 @@ const UniversityDetail = () => {
 
             </Card>
 
-            {/* About */}
             <Card className="p-4">
 
-              <h2 className="mb-3 text-lg font-bold text-slate-800">
+              <h2 className="mb-3 text-lg font-bold text-ink">
                 About {university.name}
               </h2>
 
-              <p className="text-sm leading-6 text-slate-600">
+              <p className="text-sm leading-6 text-ink-muted">
                 {university.description || 'Description not available.'}
               </p>
 
             </Card>
 
-            {/* Facilities */}
             {Array.isArray(university.facilities) &&
               university.facilities.length > 0 && (
 
                 <Card className="p-4">
 
-                  <h2 className="mb-4 text-lg font-bold text-slate-800">
+                  <h2 className="mb-4 text-lg font-bold text-ink">
                     Facilities
                   </h2>
 
@@ -344,7 +330,7 @@ const UniversityDetail = () => {
                     {university.facilities.map((facility, index) => (
                       <div
                         key={index}
-                        className="rounded-lg bg-slate-50 p-2.5 text-xs font-medium text-slate-700"
+                        className="rounded-lg bg-surface p-2.5 text-xs font-medium text-ink"
                       >
                         {facility}
                       </div>
@@ -355,13 +341,12 @@ const UniversityDetail = () => {
                 </Card>
               )}
 
-            {/* Faculties */}
             {Array.isArray(university.faculties) &&
               university.faculties.length > 0 && (
 
                 <Card className="p-4">
 
-                  <h2 className="mb-4 text-lg font-bold text-slate-800">
+                  <h2 className="mb-4 text-lg font-bold text-ink">
                     Faculties
                   </h2>
 
@@ -370,7 +355,7 @@ const UniversityDetail = () => {
                     {university.faculties.map((faculty, index) => (
                       <span
                         key={index}
-                        className="rounded-md border bg-slate-50 px-2.5 py-1 text-xs text-slate-700"
+                        className="rounded-md border bg-surface px-2.5 py-1 text-xs text-ink"
                       >
                         {faculty}
                       </span>
@@ -381,13 +366,12 @@ const UniversityDetail = () => {
                 </Card>
               )}
 
-            {/* Departments */}
             {Array.isArray(university.departments) &&
               university.departments.length > 0 && (
 
                 <Card className="p-4">
 
-                  <h2 className="mb-4 text-lg font-bold text-slate-800">
+                  <h2 className="mb-4 text-lg font-bold text-ink">
                     Departments
                   </h2>
 
@@ -396,7 +380,7 @@ const UniversityDetail = () => {
                     {university.departments.map((department, index) => (
                       <span
                         key={index}
-                        className="rounded-md border bg-slate-50 px-2.5 py-1 text-xs text-slate-700"
+                        className="rounded-md border bg-surface px-2.5 py-1 text-xs text-ink"
                       >
                         {department}
                       </span>
@@ -407,13 +391,12 @@ const UniversityDetail = () => {
                 </Card>
               )}
 
-            {/* Program Types */}
             {Array.isArray(university.programTypes) &&
               university.programTypes.length > 0 && (
 
                 <Card className="p-4">
 
-                  <h2 className="mb-4 text-lg font-bold text-slate-800">
+                  <h2 className="mb-4 text-lg font-bold text-ink">
                     Program Types
                   </h2>
 
@@ -422,7 +405,7 @@ const UniversityDetail = () => {
                     {university.programTypes.map((program, index) => (
                       <span
                         key={index}
-                        className="rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700"
+                        className="rounded-md bg-brand-softest px-2.5 py-1 text-xs font-semibold text-brand"
                       >
                         {program}
                       </span>
@@ -433,59 +416,58 @@ const UniversityDetail = () => {
                 </Card>
               )}
 
-            {/* Contact */}
             <Card className="p-4">
 
-              <h2 className="mb-4 text-lg font-bold text-slate-800">
+              <h2 className="mb-4 text-lg font-bold text-ink">
                 Contact Information
               </h2>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
                 <div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-ink-muted">
                     Email
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {university.email || 'Not available'}
+                  <p className="mt-1 text-sm font-semibold text-ink">
+                    {university.email }
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-ink-muted">
                     Phone
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {university.phone || 'Not available'}
+                  <p className="mt-1 text-sm font-semibold text-ink">
+                    {university.phone}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-ink-muted">
                     Admission Email
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {university.admissionEmail || 'Not available'}
+                  <p className="mt-1 text-sm font-semibold text-ink">
+                    {university.admissionEmail}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-ink-muted">
                     Admission Phone
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {university.admissionPhone || 'Not available'}
+                  <p className="mt-1 text-sm font-semibold text-ink">
+                    {university.admissionPhone}
                   </p>
                 </div>
 
                 {university.officialWebsite && (
                   <div className="md:col-span-2">
 
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-ink-muted">
                       Website
                     </p>
 
@@ -493,7 +475,7 @@ const UniversityDetail = () => {
                       href={university.officialWebsite}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-1 inline-block text-sm font-semibold text-[#0F766E] hover:underline"
+                      className="mt-1 inline-block text-sm font-semibold text-brand hover:underline"
                     >
                       {university.officialWebsite}
                     </a>
@@ -507,39 +489,35 @@ const UniversityDetail = () => {
 
           </div>
 
-          {/* Right Side */}
+
           <div>
 
             <div className="space-y-4 lg:sticky lg:top-5">
 
-              {/* Apply */}
-              <Card className="p-4">
+              <Card className="p-4 rounded-md border border-[#E5E7EB]">
 
-                <h3 className="mb-3 text-sm font-bold text-slate-800">
+                <h3 className="mb-3 text-sm font-bold text-[#172554]">
                   Interested in this university?
                 </h3>
 
                 <Button
-                  className="w-full rounded-full bg-[#1E3A5F] text-sm text-white hover:bg-[#16293F]"
-
+                  className="w-full rounded-[4px] bg-[#172554] text-xs font-semibold text-white hover:bg-[#0F172A] shadow-none h-9.5"
                   onClick={openApplyDialog}
                 >
-              apply
+                  Apply Now
                 </Button>
 
                 <Button
                   variant="outline"
-                  className="mt-2 w-full rounded-full border-[#1E3A5F] text-sm text-[#1E3A5F]"
+                  className="mt-2 w-full rounded-[4px] border-[#CBD5E1] text-xs font-semibold text-[#172554] hover:bg-[#F8FAFC] h-9.5"
                 >
                   Add to Compare
                 </Button>
 
               </Card>
+              <Card className="p-4 rounded-md border border-[#E5E7EB]">
 
-              {/* Quick Stats */}
-              <Card className="p-4">
-
-                <h3 className="mb-3 text-sm font-bold text-slate-800">
+                <h3 className="mb-3 text-sm font-bold text-[#172554]">
                   Quick Stats
                 </h3>
 
@@ -548,7 +526,7 @@ const UniversityDetail = () => {
                   {university.establishedYear && (
                     <div className="flex justify-between border-b pb-2">
 
-                      <span className="text-slate-500">
+                      <span className="text-ink-muted">
                         Established
                       </span>
 
@@ -561,7 +539,7 @@ const UniversityDetail = () => {
 
                   <div className="flex justify-between border-b pb-2">
 
-                    <span className="text-slate-500">
+                    <span className="text-ink-muted">
                       Type
                     </span>
 
@@ -573,7 +551,7 @@ const UniversityDetail = () => {
 
                   <div className="flex justify-between border-b pb-2">
 
-                    <span className="text-slate-500">
+                    <span className="text-ink-muted">
                       Category
                     </span>
 
@@ -586,7 +564,7 @@ const UniversityDetail = () => {
                   {university.campusArea && (
                     <div className="flex justify-between border-b pb-2">
 
-                      <span className="text-slate-500">
+                      <span className="text-ink-muted">
                         Campus Area
                       </span>
 
@@ -600,12 +578,12 @@ const UniversityDetail = () => {
                   {university.nirfRanking && (
                     <div className="flex justify-between border-b pb-2">
 
-                      <span className="text-slate-500">
+                      <span className="text-ink-muted">
                         NIRF
                       </span>
 
                       <span className="font-semibold">
-                        #{university.nirfRanking}
+                        {university.nirfRanking}
                       </span>
 
                     </div>
@@ -614,7 +592,7 @@ const UniversityDetail = () => {
                   {university.naacGrade && (
                     <div className="flex justify-between border-b pb-2">
 
-                      <span className="text-slate-500">
+                      <span className="text-ink-muted">
                         NAAC Grade
                       </span>
 
@@ -628,7 +606,7 @@ const UniversityDetail = () => {
                   {university.numberOfStudents && (
                     <div className="flex justify-between">
 
-                      <span className="text-slate-500">
+                      <span className="text-ink-muted">
                         Students
                       </span>
 

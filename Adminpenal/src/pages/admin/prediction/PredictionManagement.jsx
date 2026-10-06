@@ -50,23 +50,17 @@ export default function PredictionManagement() {
   const [showCutoffForm, setShowCutoffForm] = useState(false);
   const [showRuleForm, setShowRuleForm] = useState(false);
 
-  const adminToken = localStorage.getItem("adminToken");
-
-  const headers = {
-    Authorization: `Bearer ${adminToken}`,
-  };
-
   useEffect(() => {
     axios
-      .get("http://localhost:5001/api/exam")
+      .get("/api/exam")
       .then((res) => setExams(res.data.exams || []));
 
     axios
-      .get("http://localhost:5001/api/college")
+      .get("/api/college")
       .then((res) => setColleges(res.data.colleges || []));
 
     axios
-      .get("http://localhost:5001/api/course")
+      .get("/api/course")
       .then((res) => setCourses(res.data.courses || []));
 
     loadCutoffs();
@@ -77,8 +71,7 @@ export default function PredictionManagement() {
     if (cutoff.examId) {
       axios
         .get(
-          `http://localhost:5001/api/exam-session?exam=${cutoff.examId}`,
-          { headers }
+          `/api/exam-session?exam=${cutoff.examId}`
         )
         .then((res) => {
           setSessions(res.data.examSessions || []);
@@ -92,8 +85,7 @@ export default function PredictionManagement() {
     if (rule.examId) {
       axios
         .get(
-          `http://localhost:5001/api/exam-session?exam=${rule.examId}`,
-          { headers }
+          `/api/exam-session?exam=${rule.examId}`
         )
         .then((res) => {
           setRuleSessions(res.data.examSessions || []);
@@ -105,7 +97,7 @@ export default function PredictionManagement() {
 
   const loadCutoffs = () => {
     axios
-      .get("http://localhost:5001/api/admin/cutoffs", { headers })
+      .get("/api/admin/cutoffs")
       .then((res) => {
         setCutoffs(res.data.cutoffs || []);
       });
@@ -113,9 +105,7 @@ export default function PredictionManagement() {
 
   const loadRules = () => {
     axios
-      .get("http://localhost:5001/api/admin/rank-prediction-rules", {
-        headers,
-      })
+      .get("/api/admin/rank-prediction-rules")
       .then((res) => {
         setRules(res.data.rules || []);
       });
@@ -127,16 +117,16 @@ export default function PredictionManagement() {
 
     const exam = exams.find((item) => item._id === examId);
 
-    return exam?.name || "";
+    return exam?.name ;
   };
 
-  // Get College Name
+
   const getCollegeName = (id) => {
     const collegeId = id?._id || id;
 
     const college = colleges.find((item) => item._id === collegeId);
 
-    return college?.name || "";
+    return college?.name ;
   };
 
   // Get Course Name
@@ -223,15 +213,13 @@ export default function PredictionManagement() {
 
     if (editingCutoffId) {
       await axios.put(
-        `http://localhost:5001/api/admin/cutoffs/${editingCutoffId}`,
-        data,
-        { headers }
+        `/api/admin/cutoffs/${editingCutoffId}`,
+        data
       );
     } else {
       await axios.post(
-        "http://localhost:5001/api/admin/cutoffs",
-        data,
-        { headers }
+        "/api/admin/cutoffs",
+        data
       );
     }
 
@@ -253,15 +241,13 @@ export default function PredictionManagement() {
 
     if (editingRuleId) {
       await axios.put(
-        `http://localhost:5001/api/admin/rank-prediction-rules/${editingRuleId}`,
-        data,
-        { headers }
+        `/api/admin/rank-prediction-rules/${editingRuleId}`,
+        data
       );
     } else {
       await axios.post(
-        "http://localhost:5001/api/admin/rank-prediction-rules",
-        data,
-        { headers }
+        "/api/admin/rank-prediction-rules",
+        data
       );
     }
 
@@ -312,8 +298,7 @@ export default function PredictionManagement() {
 
   const removeCutoff = async (id) => {
     await axios.delete(
-      `http://localhost:5001/api/admin/cutoffs/${id}`,
-      { headers }
+      `/api/admin/cutoffs/${id}`
     );
 
     setCutoffs(
@@ -323,8 +308,7 @@ export default function PredictionManagement() {
 
   const removeRule = async (id) => {
     await axios.delete(
-      `http://localhost:5001/api/admin/rank-prediction-rules/${id}`,
-      { headers }
+      `/api/admin/rank-prediction-rules/${id}`
     );
 
     setRules(

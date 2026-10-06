@@ -1,122 +1,136 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const RankingList = () => {
   const navigate = useNavigate();
+
   const [rankings, setRankings] = useState([]);
-  const [colleges, setColleges] = useState([]);
-  const [filters, setFilters] = useState({ collegeId: '', rankingBody: '', category: '', year: '', status: '' });
-  const token = localStorage.getItem('adminToken');
 
   const fetchRankings = async () => {
-    const params = {};
-    if (filters.collegeId) params.collegeId = filters.collegeId;
-    if (filters.rankingBody) params.rankingBody = filters.rankingBody;
-    if (filters.category) params.category = filters.category;
-    if (filters.year) params.year = filters.year;
-    if (filters.status) params.status = filters.status;
-    const res = await axios.get('http://localhost:5001/api/rankings/admin/list', {
-      headers: { Authorization: `Bearer ${token}` },
-      params
-    });
+    const res = await axios.get("/api/rankings/admin/list");
+
     setRankings(res.data.rankings || []);
   };
 
-  const fetchColleges = async () => {
-    const res = await axios.get('http://localhost:5001/api/college');
-    setColleges(res.data.colleges || []);
-  };
-
   const deleteRanking = async (id) => {
-    await axios.delete(`http://localhost:5001/api/rankings/admin/delete/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+
+    await axios.delete(`/api/rankings/admin/delete/${id}`);
+
     fetchRankings();
   };
 
-  useEffect(() => { fetchColleges(); }, []);
-  useEffect(() => { fetchRankings(); }, [filters]);
-
-  const displayRank = (r) => {
-    if (r.rankType === 'Range') return `${r.rankFrom || ''}-${r.rankTo || ''}`;
-    return r.rank !== undefined && r.rank !== null ? `#${r.rank}` : '—';
-  };
+  useEffect(() => {
+    fetchRankings();
+  }, []);
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Ranking List</h2>
-        <Button onClick={() => navigate('/admin/ranking/add')}>Add Ranking</Button>
+    <div className="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
+
+<div className="p-4 flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-ink">
+            Rankings
+          </h2>
+          <p className="text-xs text-ink-muted">
+            Manage college rankings
+          </p>
+        </div>
+
+        <button
+          onClick={() => navigate("/admin/ranking/add")}
+          className="bg-brand hover:bg-brand-dark text-white text-sm px-4 py-2 rounded-md flex items-center gap-2"
+        >
+          Add Ranking
+        </button>
       </div>
 
-      <Card className="p-4">
-        <div className="flex flex-wrap gap-3">
-          <select className="rounded border px-3 py-2 text-sm" value={filters.collegeId} onChange={e => setFilters({ ...filters, collegeId: e.target.value })}>
-            <option value="">All Colleges</option>
-            {colleges.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-          </select>
-          <input className="rounded border px-3 py-2 text-sm" placeholder="Ranking Body" value={filters.rankingBody} onChange={e => setFilters({ ...filters, rankingBody: e.target.value })} />
-          <input className="rounded border px-3 py-2 text-sm" placeholder="Category" value={filters.category} onChange={e => setFilters({ ...filters, category: e.target.value })} />
-          <input className="rounded border px-3 py-2 text-sm" placeholder="Year" value={filters.year} onChange={e => setFilters({ ...filters, year: e.target.value })} />
-          <select className="rounded border px-3 py-2 text-sm" value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })}>
-            <option value="">All Status</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-        </div>
-      </Card>
+<Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>COLLEGE</TableHead>
+            <TableHead>RANKING BODY</TableHead>
+            <TableHead>CATEGORY</TableHead>
+            <TableHead>YEAR</TableHead>
+            <TableHead>RANK</TableHead>
+            <TableHead>STATUS</TableHead>
+            <TableHead className="text-right">ACTIONS</TableHead>
+          </TableRow>
+        </TableHeader>
 
-      <Card className="py-0">
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>College</TableHead>
-                <TableHead>Ranking Body</TableHead>
-                <TableHead>Ranking Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Year</TableHead>
-                <TableHead>Rank</TableHead>
-                <TableHead>Score</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rankings.map(r => (
-                <TableRow key={r._id}>
-                  <TableCell className="font-medium">{r.collegeId?.name || '—'}</TableCell>
-                  <TableCell>{r.rankingBody}</TableCell>
-                  <TableCell>{r.rankingName}</TableCell>
-                  <TableCell>{r.category}</TableCell>
-                  <TableCell>{r.year}</TableCell>
-                  <TableCell>{displayRank(r)}</TableCell>
-                  <TableCell>{r.score !== undefined && r.score !== null ? r.score : '—'}</TableCell>
-                  <TableCell>
-                    <Badge variant={r.status === 'Active' ? 'default' : 'secondary'}>{r.status}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => navigate(`/admin/ranking/edit/${r._id}`)}>Edit</Button>
-                      <Button size="sm" variant="destructive" onClick={() => deleteRanking(r._id)}>Delete</Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {rankings.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={9} className="text-center text-slate-400">No rankings found.</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        <TableBody>
+          {rankings.map((ranking) => (
+            <TableRow key={ranking._id}>
+
+              <TableCell>
+                <span className="font-medium text-ink">
+                  {ranking.collegeId?.name}
+                </span>
+              </TableCell>
+
+              <TableCell>
+                {ranking.rankingBody}
+              </TableCell>
+
+              <TableCell>
+                {ranking.category}
+              </TableCell>
+
+              <TableCell>
+                {ranking.year}
+              </TableCell>
+
+              <TableCell className="font-semibold">
+                {ranking.rank}
+              </TableCell>
+
+              <TableCell>
+                <span
+                  className={`px-2 py-1 rounded text-[11px] font-medium ${ranking.status === "Active"
+                      ? "bg-green-100 text-brand"
+                      : "bg-gray-100 text-gray-500"
+                  }`}
+                >
+                  {ranking.status || "Inactive"}
+                </span>
+              </TableCell>
+
+              <TableCell>
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() =>
+                      navigate(`/admin/ranking/edit/${ranking._id}`)
+                    }
+                    className="py-1 px-5 border"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => deleteRanking(ranking._id)}
+                    className="border py-1 px-5"
+                  >
+                    Delete
+                  </button>
+
+                </div>
+              </TableCell>
+
+            </TableRow>
+          ))}
+
+        </TableBody>
+      </Table>
+
     </div>
   );
 };

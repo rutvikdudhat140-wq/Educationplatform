@@ -16,7 +16,6 @@ export const getExamSessions = async (req, res) => {
             .populate('exam', 'name shortName stream')
             .sort({ academicYear: -1, sessionName: 1 });
 
-
         return res.status(200).json({
             success: true,
             examSessions,
@@ -45,7 +44,6 @@ export const getExamSession = async (req, res) => {
     });
 };
 
-
 export const createExamSession = async (req, res) => {
     const {
         exam,
@@ -63,7 +61,6 @@ export const createExamSession = async (req, res) => {
     }
 
     const examExists = await Exam.findById(exam);
-
     const examSession = await ExamSession.create({
         exam,
         academicYear,

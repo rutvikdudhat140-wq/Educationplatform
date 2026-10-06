@@ -91,7 +91,7 @@ export const updateExamPreparation = async (req, res) => {
         const examPreparation = await ExamPreparation.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         );
 
         if (!examPreparation) {

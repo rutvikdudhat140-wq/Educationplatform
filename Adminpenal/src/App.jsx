@@ -6,7 +6,8 @@ import Dashboard from './pages/admin/Dashboard';
 import AddCollege from './pages/admin/college/AddCollege';
 import CollegeList from './pages/admin/college/CollegeList';
 import EditCollege from './pages/admin/college/EditCollege';
-import CollegeApplications from './pages/admin/college/CollegeApplications';
+import AdminAdmissionList from './pages/admin/admissions/AdminAdmissionList';
+import AdminAdmissionDetail from './pages/admin/admissions/AdminAdmissionDetail';
 import CollegeReviews from './pages/admin/college/CollegeReviews';
 import AddUniversity from './pages/admin/univercity/AddUniversity';
 import UniversityList from './pages/admin/univercity/UniversityList';
@@ -18,6 +19,7 @@ import EditCourse from './pages/admin/course/EditCourse';
 import CareerList from './pages/admin/career/CareerList';
 import AddCareer from './pages/admin/career/AddCareer';
 import EditCareer from './pages/admin/career/EditCareer';
+import MentorshipRequests from './pages/admin/career/MentorshipRequests';
 import ExamList from './pages/admin/exam/ExamList';
 import AddExam from './pages/admin/exam/AddExam';
 import EditExam from './pages/admin/exam/EditExam';
@@ -33,36 +35,42 @@ import EditExamEligibility from './pages/admin/examEligibility/EditExamEligibili
 import ExamPreparationList from './pages/admin/examPreparation/ExamPreparationList';
 import AddExamPreparation from './pages/admin/examPreparation/AddExamPreparation';
 import EditExamPreparation from './pages/admin/examPreparation/EditExamPreparation';
-import { Toaster } from '@/components/ui/sonner';
 import PredictionManagement from './pages/admin/prediction/PredictionManagement';
+import UpcomingExamsHome from './pages/admin/upcomingExams/UpcomingExamsHome';
+import UpcomingExamList from './pages/admin/upcomingExams/UpcomingExamList';
 import ExamPatternList from './pages/admin/exampattern/ExamPatternList';
 import AddExamPattern from './pages/admin/exampattern/AddExamPattern';
 import EditExamPattern from './pages/admin/exampattern/EditExamPattern';
-import ExamSyllabusList from './pages/admin/examsyllabus/ExamSyllabusList';
-import AddExamSyllabus from './pages/admin/examsyllabus/AddExamSyllabus';
-import EditExamSyllabus from './pages/admin/examsyllabus/EditExamSyllabus';
-import ExamSamplePaperList from './pages/admin/examsamplepaper/ExamSamplePaperList';
-import AddExamSamplePaper from './pages/admin/examsamplepaper/AddExamSamplePaper';
-import EditExamSamplePaper from './pages/admin/examsamplepaper/EditExamSamplePaper';
-import ExamMockTestList from './pages/admin/exammocktest/ExamMockTestList';
-import AddExamMockTest from './pages/admin/exammocktest/AddExamMockTest';
-import EditExamMockTest from './pages/admin/exammocktest/EditExamMockTest';
-import ExamFaqList from './pages/admin/examfaq/ExamFaqList';
-import AddExamFaq from './pages/admin/examfaq/AddExamFaq';
-import EditExamFaq from './pages/admin/examfaq/EditExamFaq';
 import RankingList from './pages/admin/ranking/RankingList';
 import AddRanking from './pages/admin/ranking/AddRanking';
 import EditRanking from './pages/admin/ranking/EditRanking';
+import AdminCounsellingList from './pages/Counselling/AdminCounsellingList';
+import AdminCounsellingDetail from './pages/Counselling/AdminCounsellingDetail';
+import GuidancePersonList from './pages/Counselling/GuidancePersonList';
+import ScholarshipList from './pages/admin/scholarships/ScholarshipList';
+import ScholarshipForm from './pages/admin/scholarships/ScholarshipForm';
+import ScholarshipApplications from './pages/admin/scholarships/ScholarshipApplications';
+import ScholarshipApplicationDetail from './pages/admin/scholarships/ScholarshipApplicationDetail';
+import AdminEducationLoanList from './pages/admin/educationLoans/AdminEducationLoanList';
+import AdminEducationLoanForm from './pages/admin/educationLoans/AdminEducationLoanForm';
+import OnlineCourseList from './pages/admin/onlineCourses/OnlineCourseList';
+import OnlineCourseForm from './pages/admin/onlineCourses/OnlineCourseForm';
+import OnlineCourseEnrollments from './pages/admin/onlineCourses/OnlineCourseEnrollments';
+import OnlineCourseCertificates from './pages/admin/onlineCourses/OnlineCourseCertificates';
+import EducationUpdateList from './pages/admin/educationUpdates/EducationUpdateList';
+import EducationUpdateForm from './pages/admin/educationUpdates/EducationUpdateForm';
+import EducationAlertList from './pages/admin/educationUpdates/EducationAlertList';
+import QAQuestionList from './pages/admin/qa/QAQuestionList';
+
+
 
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('adminToken');
-  return token ? children : <Navigate to="/login" />;
+  return localStorage.getItem("adminToken") ? children : <Navigate to="/login" />;
 }
 
 export default function App() {
   return (
     <Router>
-      <Toaster />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
@@ -114,11 +122,22 @@ export default function App() {
         />
 
         <Route
-          path="/admin/college/:id/applications"
+          path="/admin/admissions"
           element={
             <ProtectedRoute>
               <AdminLayout>
-                <CollegeApplications />
+                <AdminAdmissionList />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/admissions/:id"
+          element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <AdminAdmissionDetail />
               </AdminLayout>
             </ProtectedRoute>
           }
@@ -244,8 +263,17 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin/mentorship-requests"
+          element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <MentorshipRequests />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/admin/exam/list" element={<ProtectedRoute><AdminLayout><ExamList /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/exam/add" element={<ProtectedRoute><AdminLayout><AddExam /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/exam/edit/:id" element={<ProtectedRoute><AdminLayout><EditExam /></AdminLayout></ProtectedRoute>} />
 
@@ -268,24 +296,46 @@ export default function App() {
         <Route path="/admin/exam-pattern/list" element={<ProtectedRoute><AdminLayout><ExamPatternList /></AdminLayout></ProtectedRoute>} />
 <Route path="/admin/exam-pattern/add" element={<ProtectedRoute><AdminLayout><AddExamPattern /></AdminLayout></ProtectedRoute>} />
 <Route path="/admin/exam-pattern/edit/:id" element={<ProtectedRoute><AdminLayout><EditExamPattern /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-syllabus/list" element={<ProtectedRoute><AdminLayout><ExamSyllabusList /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-syllabus/add" element={<ProtectedRoute><AdminLayout><AddExamSyllabus /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-syllabus/edit/:id" element={<ProtectedRoute><AdminLayout><EditExamSyllabus /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-sample-paper/list" element={<ProtectedRoute><AdminLayout><ExamSamplePaperList /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-sample-paper/add" element={<ProtectedRoute><AdminLayout><AddExamSamplePaper /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-sample-paper/edit/:id" element={<ProtectedRoute><AdminLayout><EditExamSamplePaper /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-mock-test/list" element={<ProtectedRoute><AdminLayout><ExamMockTestList /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-mock-test/add" element={<ProtectedRoute><AdminLayout><AddExamMockTest /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-mock-test/edit/:id" element={<ProtectedRoute><AdminLayout><EditExamMockTest /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-faq/list" element={<ProtectedRoute><AdminLayout><ExamFaqList /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-faq/add" element={<ProtectedRoute><AdminLayout><AddExamFaq /></AdminLayout></ProtectedRoute>} />
-<Route path="/admin/exam-faq/edit/:id" element={<ProtectedRoute><AdminLayout><EditExamFaq /></AdminLayout></ProtectedRoute>} />
+
 
         <Route path="/admin/prediction-management" element={<ProtectedRoute><AdminLayout><PredictionManagement /></AdminLayout></ProtectedRoute>} />
+
+        <Route path="/admin/upcoming-exams" element={<ProtectedRoute><AdminLayout><UpcomingExamsHome /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/upcoming-exams/list" element={<ProtectedRoute><AdminLayout><UpcomingExamList /></AdminLayout></ProtectedRoute>} />
 
         <Route path="/admin/ranking/list" element={<ProtectedRoute><AdminLayout><RankingList /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/ranking/add" element={<ProtectedRoute><AdminLayout><AddRanking /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/ranking/edit/:id" element={<ProtectedRoute><AdminLayout><EditRanking /></AdminLayout></ProtectedRoute>} />
+
+        <Route path="/admin/counselling" element={<ProtectedRoute><AdminLayout><AdminCounsellingList /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/counselling/guidance-persons" element={<ProtectedRoute><AdminLayout><GuidancePersonList /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/counselling/:id" element={<ProtectedRoute><AdminLayout><AdminCounsellingDetail /></AdminLayout></ProtectedRoute>} />
+
+        <Route path="/admin/scholarships" element={<ProtectedRoute><AdminLayout><ScholarshipList /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/scholarships/add" element={<ProtectedRoute><AdminLayout><ScholarshipForm /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/scholarships/edit/:id" element={<ProtectedRoute><AdminLayout><ScholarshipForm /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/scholarship-applications" element={<ProtectedRoute><AdminLayout><ScholarshipApplications /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/scholarship-applications/:id" element={<ProtectedRoute><AdminLayout><ScholarshipApplicationDetail /></AdminLayout></ProtectedRoute>} />
+
+        <Route path="/admin/education-loans" element={<ProtectedRoute><AdminLayout><AdminEducationLoanList /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/education-loans/add" element={<ProtectedRoute><AdminLayout><AdminEducationLoanForm /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/education-loans/edit/:id" element={<ProtectedRoute><AdminLayout><AdminEducationLoanForm /></AdminLayout></ProtectedRoute>} />
+
+        <Route path="/admin/online-courses" element={<ProtectedRoute><AdminLayout><OnlineCourseList /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/online-course/add" element={<ProtectedRoute><AdminLayout><OnlineCourseForm /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/online-course/edit/:id" element={<ProtectedRoute><AdminLayout><OnlineCourseForm /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/online-course-enrollments" element={<ProtectedRoute><AdminLayout><OnlineCourseEnrollments /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/online-course-certificates" element={<ProtectedRoute><AdminLayout><OnlineCourseCertificates /></AdminLayout></ProtectedRoute>} />
+
+        <Route path="/admin/education-updates" element={<ProtectedRoute><AdminLayout><EducationUpdateList /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/education-updates/add" element={<ProtectedRoute><AdminLayout><EducationUpdateForm /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/education-updates/edit/:id" element={<ProtectedRoute><AdminLayout><EducationUpdateForm /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/education-alerts" element={<ProtectedRoute><AdminLayout><EducationAlertList /></AdminLayout></ProtectedRoute>} />
+
+        <Route path="/admin/qa" element={<ProtectedRoute><AdminLayout><QAQuestionList /></AdminLayout></ProtectedRoute>} />
+
+
+
 
         <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>

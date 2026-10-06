@@ -61,7 +61,7 @@ const AddCourse = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await axios.post("http://localhost:5001/api/course", {
+    await axios.post("/api/course", {
       ...form,
       fees: Number(form.fees) || 0,
       collegeCount: Number(form.collegeCount) || 0,
@@ -72,12 +72,12 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8">
+    <div className="min-h-screen bg-surface px-4 py-8">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Add Course</h1>
-            <p className="mt-1 text-sm text-slate-500">Add course information</p>
+            <p className="mt-1 text-sm text-ink-muted">Add course information</p>
           </div>
           <button
             type="button"
@@ -227,8 +227,7 @@ const AddCourse = () => {
             </div>
           </div>
 
-
-          <div className="rounded-xl bg-white p-6 shadow-sm">
+<div className="rounded-xl bg-white p-6 shadow-sm">
             <h2 className="mb-5 text-lg font-semibold">Eligibility & Exams</h2>
             <div className="space-y-5">
               <div>
@@ -276,8 +275,7 @@ const AddCourse = () => {
             </div>
           </div>
 
-
-          {/* <div className="rounded-xl bg-white p-6 shadow-sm">
+{/* <div className="rounded-xl bg-white p-6 shadow-sm">
             <h2 className="mb-5 text-lg font-semibold">
               Image
             </h2>
@@ -292,8 +290,7 @@ const AddCourse = () => {
             />
           </div> */}
 
-
-          <div className="rounded-xl bg-white p-6 shadow-sm">
+<div className="rounded-xl bg-white p-6 shadow-sm">
             <label className="flex items-center gap-3">
               <input
                 type="checkbox"
@@ -314,7 +311,7 @@ const AddCourse = () => {
 
             <button
               type="submit"
-              className="rounded-lg bg-[#0F766E] px-5 py-2.5 text-sm font-semibold text-white"
+              className="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white"
             >
               Save Course
             </button>

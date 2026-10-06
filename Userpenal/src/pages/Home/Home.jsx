@@ -76,12 +76,14 @@ export default function Home() {
           ]);
 
         const collegeData =
+          collegeResponse.colleges ||
           collegeResponse.data?.colleges ||
-          collegeResponse.data?.data ||
+          collegeResponse.data ||
           [];
         const topCollegeData =
+          topCollegeResponse.colleges ||
           topCollegeResponse.data?.colleges ||
-          topCollegeResponse.data?.data ||
+          topCollegeResponse.data ||
           [];
         const courseData =
           courseResponse.data?.data ||

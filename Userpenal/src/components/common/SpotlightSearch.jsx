@@ -58,7 +58,7 @@ export const SpotlightSearch = () => {
       setTimeout(() => inputRef.current?.focus(), 50);
 
       if (colleges.length === 0) {
-        fetch(createApiUrl('/college?status=Active'))
+        fetch(createApiUrl('/college?limit=100'))
           .then((res) => res.json())
           .then((res) => {
             setColleges(res.data?.colleges || res.data?.data || []);

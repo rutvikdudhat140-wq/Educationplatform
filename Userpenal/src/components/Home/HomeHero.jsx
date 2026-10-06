@@ -125,7 +125,7 @@ export default function HomeHero() {
   useEffect(() => {
     let alive = true;
     Promise.allSettled([
-      fetch(createApiUrl('/college?status=Active')).then(r => r.json()),
+      fetch(createApiUrl('/college?limit=100')).then(r => r.json()),
       fetch(createApiUrl('/course')).then(r => r.json()),
       fetch(createApiUrl('/scholarships')).then(r => r.json()),
       fetch(createApiUrl('/exam')).then(r => r.json()),

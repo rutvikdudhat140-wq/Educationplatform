@@ -109,32 +109,32 @@ export default function ExamDetails() {
           const examId = fetchedExam._id;
 
           axios
-            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-preparation?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-preparation?exam=${examId}`)
             .then((res) => setPreparations(res.data.examPreparations || []))
             .catch(() => {});
 
           axios
-            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-pattern?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-pattern?exam=${examId}`)
             .then((res) => setPatterns(res.data.data || []))
             .catch(() => {});
 
           axios
-            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-syllabus?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-syllabus?exam=${examId}`)
             .then((res) => setSyllabuses(res.data.data || []))
             .catch(() => {});
 
           axios
-            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-sample-paper?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-sample-paper?exam=${examId}`)
             .then((res) => setSamplePapers(res.data.data || []))
             .catch(() => {});
 
           axios
-            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-mock-test?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-mock-test?exam=${examId}`)
             .then((res) => setMockTests(res.data.data || []))
             .catch(() => {});
 
           axios
-            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-faq?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-faq?exam=${examId}`)
             .then((res) => setFaqs(res.data.data || []))
             .catch(() => {});
         }

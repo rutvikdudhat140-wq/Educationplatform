@@ -22,7 +22,7 @@ export default function RecommendedForYouSection() {
         }
 
         if (list.length < 4) {
-          const topRes = await axios.get(`${API}/college?status=Active&isTopCollege=true`);
+          const topRes = await axios.get(`${API}/college?isTopCollege=true`);
           const topList = topRes.data?.colleges || topRes.data?.data || [];
           const existingIds = new Set(list.map(c => c._id || c.id));
           const supp = topList.filter(c => !existingIds.has(c._id || c.id));

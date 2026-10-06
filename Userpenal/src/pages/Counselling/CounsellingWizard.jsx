@@ -38,10 +38,10 @@ const CounsellingWizard = () => {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     try {
       const [courseRes, collegeRes, examRes, careerRes] = await Promise.all([
-        axios.get('http://localhost:5001/api/course', { headers }),
-        axios.get('http://localhost:5001/api/college', { headers }),
-        axios.get('http://localhost:5001/api/exam', { headers }),
-        axios.get('http://localhost:5001/api/career?limit=200', { headers })
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/course`, { headers }),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/college`, { headers }),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam`, { headers }),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/career?limit=200`, { headers })
       ]);
       setCourses(courseRes.data.courses || courseRes.data.data || []);
       setColleges(collegeRes.data.colleges || collegeRes.data.data || []);
@@ -95,11 +95,11 @@ const CounsellingWizard = () => {
 
     if (token) {
       try {
-        await axios.post('http://localhost:5001/api/counselling', formData, {
+        await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/counselling`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        const recRes = await axios.post('http://localhost:5001/api/counselling/recommend', formData, {
+        const recRes = await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/counselling/recommend`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (recRes.data.courses) setCourses(recRes.data.courses);

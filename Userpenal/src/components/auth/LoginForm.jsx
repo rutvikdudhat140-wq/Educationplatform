@@ -23,7 +23,7 @@ export default function LoginForm() {
     }
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5001/api/user/login', { email, password });
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/user/login`, { email, password });
       localStorage.setItem('userToken', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       toast.success('Logged in successfully!');

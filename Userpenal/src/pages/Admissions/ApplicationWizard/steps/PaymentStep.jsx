@@ -21,7 +21,7 @@ export default function PaymentStep({ admissionId, data, onSuccess, onBack, load
 
       if (admissionId) {
         await axios.post(
-          `http://localhost:5001/api/admissions/draft`,
+          `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/draft`,
           {
             ...data,
             _id: admissionId,

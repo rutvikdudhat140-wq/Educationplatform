@@ -425,14 +425,14 @@ const CollegeList = () => {
       setLoading(true);
       try {
         const course = searchParams.get('course');
-        let collegeUrl = 'http://localhost:5001/api/college';
+        let collegeUrl = `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/college`;
         if (category) {
           collegeUrl += `?category=${encodeURIComponent(category)}`;
         } else if (course) {
           collegeUrl += `?course=${encodeURIComponent(course)}`;
         }
 
-        let universityUrl = 'http://localhost:5001/api/university';
+        let universityUrl = `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/university`;
         if (category) {
           universityUrl += `?category=${encodeURIComponent(category)}`;
         }

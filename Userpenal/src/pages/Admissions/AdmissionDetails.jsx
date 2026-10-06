@@ -35,7 +35,7 @@ export default function AdmissionDetails() {
         return;
       }
       try {
-        const res = await axios.get(`http://localhost:5001/api/admissions/${id}`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setAdmission(res.data.admission);

@@ -28,13 +28,13 @@ const RankingPage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5001/api/rankings")
+      .get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/rankings`)
       .then((res) => {
         setRankings(res.data.rankings || []);
       });
 
     axios
-      .get("http://localhost:5001/api/rankings/top-colleges")
+      .get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/rankings/top-colleges`)
       .then((res) => {
         setTopColleges(res.data.data || []);
       });

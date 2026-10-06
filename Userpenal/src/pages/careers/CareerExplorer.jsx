@@ -37,7 +37,7 @@ export default function CareerExplorer() {
     const fetchCareers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:5001/api/career", {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/career`, {
           params: { stream: selectedStream },
         });
         setCareers(response.data?.careers || []);

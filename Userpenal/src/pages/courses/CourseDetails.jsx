@@ -35,7 +35,7 @@ const CourseDetails = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/course/${id}`
+          `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/course/${id}`
         );
         setCourse(response.data.data || response.data.course || null);
       } catch (err) {

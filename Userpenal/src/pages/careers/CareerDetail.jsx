@@ -61,7 +61,7 @@ export default function CareerDetail() {
 
   const fetchCareerDetails = async () => {
     try {
-      const res = await axios.get(`http://localhost:5001/api/career/${id}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/career/${id}`);
       setCareer(res.data.career || res.data.data || res.data);
       setLoading(false);
     } catch (error) {
@@ -86,7 +86,7 @@ export default function CareerDetail() {
       if (user && user._id) {
         payload.studentId = user._id;
       }
-      await axios.post(`http://localhost:5001/api/career/${id}/mentor-request`, payload);
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/career/${id}/mentor-request`, payload);
       alert('Mentorship request sent successfully!');
       setSelectedMentor(null);
       setRequestTopic('');

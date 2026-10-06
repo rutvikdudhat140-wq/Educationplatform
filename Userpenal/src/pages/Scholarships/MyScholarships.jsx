@@ -142,7 +142,7 @@ const MyScholarships = () => {
     }
 
     try {
-      const response = await axios.get('http://localhost:5001/api/scholarships/my/applications', {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/scholarships/my/applications`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setApplications(response.data.data || []);

@@ -30,7 +30,7 @@ const ComparePage = () => {
   useEffect(() => {
     const getColleges = async () => {
       try {
-        const res = await axios.get('http://localhost:5001/api/college');
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/college`);
         const allColleges = res.data?.colleges || [];
         setColleges(allColleges);
 

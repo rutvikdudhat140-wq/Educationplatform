@@ -17,7 +17,7 @@ const ApplicationSuccess = () => {
       const token = localStorage.getItem("userToken");
       if (token) {
         axios
-          .get(`http://localhost:5001/api/scholarships/applications/${applicationId}`, {
+          .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/scholarships/applications/${applicationId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => {

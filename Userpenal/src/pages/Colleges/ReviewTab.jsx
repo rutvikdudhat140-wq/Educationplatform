@@ -68,7 +68,7 @@ export const ReviewTab = ({ college }) => {
   const getReviews = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5001/api/reviews/college/${college._id}`
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/reviews/college/${college._id}`
       );
       setReviews(res.data.data || []);
     } catch {
@@ -109,7 +109,7 @@ export const ReviewTab = ({ college }) => {
     };
 
     try {
-      await axios.post("http://localhost:5001/api/reviews", data);
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/reviews`, data);
     } catch {}
 
     setOpen(false);

@@ -38,7 +38,7 @@ export default function RankPredictor() {
     });
 
     useEffect(() => {
-        axios.get("http://localhost:5001/api/exam").then((response) => {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/exam`).then((response) => {
             setExams(response.data.exams || []);
         });
     }, []);
@@ -51,7 +51,7 @@ export default function RankPredictor() {
 
         axios
             .get(
-                `http://localhost:5001/api/predictor-exam-sessions?examId=${form.examId}`
+                `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/predictor-exam-sessions?examId=${form.examId}`
             )
             .then((response) => {
                 setSessions(response.data.examSessions || []);
@@ -74,7 +74,7 @@ export default function RankPredictor() {
         e.preventDefault();
 
         const response = await axios.post(
-            "http://localhost:5001/api/rank-predictor",
+            `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/rank-predictor`,
             {
                 examId: form.examId,
                 examSessionId: form.examSessionId,

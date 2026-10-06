@@ -60,7 +60,7 @@ export default function ScholarshipApplicationDetails() {
     const fetchApplication = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5001/api/scholarships/applications/${id}`,
+          `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/scholarships/applications/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setApplication(res.data.data || res.data);

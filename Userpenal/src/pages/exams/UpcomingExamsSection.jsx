@@ -4,7 +4,7 @@ import UpcomingExamCard from "./UpcomingExamCard";
 import EmptyState from "@/components/ui/empty-state";
 import { Calendar } from "lucide-react";
 
-const API_BASE = "http://localhost:5001";
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace("/api", "") : "http://localhost:5001");
 
 const VIEW_CONFIG = {
     upcoming: {

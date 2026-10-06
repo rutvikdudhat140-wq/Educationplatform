@@ -42,7 +42,7 @@ export default function EducationLoanDetail() {
     const controller = new AbortController();
 
     axios
-      .get(`http://localhost:5001/api/education-loan/articles/${slug}`, {
+      .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/education-loan/articles/${slug}`, {
         signal: controller.signal,
       })
       .then((res) =>

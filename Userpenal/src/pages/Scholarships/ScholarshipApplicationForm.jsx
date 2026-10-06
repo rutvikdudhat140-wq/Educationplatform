@@ -89,9 +89,9 @@ const ScholarshipApplicationForm = () => {
 
   const fetchData = async () => {
     const [scholarshipRes, collegesRes, coursesRes] = await Promise.all([
-      axios.get(`http://localhost:5001/api/scholarships/${id}`),
-      axios.get('http://localhost:5001/api/colleges'),
-      axios.get('http://localhost:5001/api/courses')
+      axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/scholarships/${id}`),
+      axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/colleges`),
+      axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/courses`)
     ]);
 
     setScholarship(scholarshipRes.data.data);
@@ -165,7 +165,7 @@ const ScholarshipApplicationForm = () => {
     };
 
     const response = await axios.post(
-      `http://localhost:5001/api/scholarships/${id}/apply`,
+      `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/scholarships/${id}/apply`,
       applicationData,
       {
         headers: {

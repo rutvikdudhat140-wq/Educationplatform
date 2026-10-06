@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MessageCircle } from "lucide-react";
 
 const NAVY = "#172554";
-const API = "http://localhost:5001/api";
+const API = `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`;
 
 const formatDate = (date) => {
   if (!date) return "";

@@ -47,7 +47,7 @@ const CounsellingDetail = () => {
     const fetchRequest = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5001/api/counselling/${id}`,
+          `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/counselling/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`

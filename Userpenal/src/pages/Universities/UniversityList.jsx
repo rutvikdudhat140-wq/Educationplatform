@@ -277,8 +277,8 @@ const UniversityList = () => {
   useEffect(() => {
     const getUniversities = async () => {
       const url = category
-        ? `http://localhost:5001/api/university?category=${encodeURIComponent(category)}`
-        : 'http://localhost:5001/api/university';
+        ? `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/university?category=${encodeURIComponent(category)}`
+        : `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/university`;
 
       const response = await axios.get(url);
 
@@ -315,7 +315,7 @@ const UniversityList = () => {
     }
 
     await axios.post(
-      'http://localhost:5001/api/university-applications',
+      `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/university-applications`,
       {
         universityId: selectedUniversity._id,
         ...applyForm,

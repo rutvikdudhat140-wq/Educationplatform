@@ -47,7 +47,7 @@ export default function DocumentsStep({ admissionId, documents = [], onNext, onB
       formData.append('file', file);
 
       const token = localStorage.getItem('userToken');
-      const res = await axios.post(`http://localhost:5001/api/admissions/${admissionId}/document`, formData, {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/${admissionId}/document`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

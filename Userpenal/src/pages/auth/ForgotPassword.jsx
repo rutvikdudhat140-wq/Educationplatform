@@ -20,7 +20,7 @@ export default function ForgotPassword() {
     }
     setLoading(true);
     try {
-      await axios.post('http://localhost:5001/api/user/forgot-password', { email });
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/user/forgot-password`, { email });
       setIsSent(true);
       toast.success('Password reset link sent to your email.');
     } catch (err) {

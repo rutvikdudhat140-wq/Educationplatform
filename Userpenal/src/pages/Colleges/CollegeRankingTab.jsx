@@ -9,7 +9,7 @@ const CollegeRankingTab = ({ college }) => {
     if (!college?._id) return;
 
     axios
-      .get(`http://localhost:5001/api/rankings/college/${college._id}`)
+      .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/rankings/college/${college._id}`)
       .then((res) => {
         setRankings(res.data.rankings || []);
       });

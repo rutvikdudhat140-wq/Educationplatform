@@ -58,7 +58,7 @@ export default function SignUpForm() {
     setLoading(true);
     try {
       const name = `${firstName.trim()} ${lastName.trim()}`.trim();
-      const response = await axios.post('http://localhost:5001/api/user/signup', {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/user/signup`, {
         name,
         email,
         password,

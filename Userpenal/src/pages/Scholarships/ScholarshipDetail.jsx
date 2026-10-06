@@ -40,7 +40,7 @@ const ScholarshipDetail = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/scholarships/${id}`
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/scholarships/${id}`
       );
       setScholarship(response.data.data);
     } catch (err) {
@@ -60,7 +60,7 @@ const ScholarshipDetail = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/scholarships/my/applications`,
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/scholarships/my/applications`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

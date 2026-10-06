@@ -75,7 +75,7 @@ const CourseList = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/course?search=${encodeURIComponent(search)}&level=${encodeURIComponent(level)}&stream=${encodeURIComponent(stream)}`
+          `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/course?search=${encodeURIComponent(search)}&level=${encodeURIComponent(level)}&stream=${encodeURIComponent(stream)}`
         );
         setCourses(response.data?.data || response.data?.courses || []);
       } catch (err) {

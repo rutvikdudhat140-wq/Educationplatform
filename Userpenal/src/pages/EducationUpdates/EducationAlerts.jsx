@@ -149,7 +149,7 @@ export default function EducationAlerts() {
       try {
         const baseUrl = typeof window !== 'undefined' && window.location && window.location.hostname
           ? `http://${window.location.hostname}:5001/api`
-          : 'http://localhost:5001/api';
+          : `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}`;
         const token = localStorage.getItem('userToken');
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 

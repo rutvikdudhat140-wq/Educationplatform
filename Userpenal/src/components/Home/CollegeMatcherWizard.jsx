@@ -31,7 +31,7 @@ export const CollegeMatcherWizard = () => {
   const [matchedResults, setMatchedResults] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5001/api/college?status=Active').then((res) => {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/college?status=Active`).then((res) => {
       setAllColleges(res.data.colleges || res.data.data || []);
     }).catch(() => {});
   }, []);

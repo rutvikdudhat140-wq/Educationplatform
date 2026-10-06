@@ -100,7 +100,7 @@ export default function ExamDetails() {
   useEffect(() => {
     window.scrollTo(0, 0);
     axios
-      .get(`http://localhost:5001/api/exam/${id}`)
+      .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam/${id}`)
       .then((res) => {
         const fetchedExam = res.data.exam;
         setExam(fetchedExam);
@@ -109,32 +109,32 @@ export default function ExamDetails() {
           const examId = fetchedExam._id;
 
           axios
-            .get(`http://localhost:5001/api/exam-preparation?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-preparation?exam=${examId}&status=Active`)
             .then((res) => setPreparations(res.data.examPreparations || []))
             .catch(() => {});
 
           axios
-            .get(`http://localhost:5001/api/exam-pattern?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-pattern?exam=${examId}&status=Active`)
             .then((res) => setPatterns(res.data.data || []))
             .catch(() => {});
 
           axios
-            .get(`http://localhost:5001/api/exam-syllabus?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-syllabus?exam=${examId}&status=Active`)
             .then((res) => setSyllabuses(res.data.data || []))
             .catch(() => {});
 
           axios
-            .get(`http://localhost:5001/api/exam-sample-paper?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-sample-paper?exam=${examId}&status=Active`)
             .then((res) => setSamplePapers(res.data.data || []))
             .catch(() => {});
 
           axios
-            .get(`http://localhost:5001/api/exam-mock-test?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-mock-test?exam=${examId}&status=Active`)
             .then((res) => setMockTests(res.data.data || []))
             .catch(() => {});
 
           axios
-            .get(`http://localhost:5001/api/exam-faq?exam=${examId}&status=Active`)
+            .get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam-faq?exam=${examId}&status=Active`)
             .then((res) => setFaqs(res.data.data || []))
             .catch(() => {});
         }

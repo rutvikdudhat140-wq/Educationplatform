@@ -354,7 +354,7 @@ const ScholarshipList = () => {
     const fetchScholarships = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5001/api/scholarships"
+          `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/scholarships`
         );
 
         setScholarships(response.data?.data || []);

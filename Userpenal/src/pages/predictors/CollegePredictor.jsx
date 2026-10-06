@@ -25,11 +25,11 @@ export default function CollegePredictor() {
     });
 
     useEffect(() => {
-        axios.get("http://localhost:5001/api/exam").then((response) => {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/exam`).then((response) => {
             setExams(response.data.exams || []);
         });
 
-        axios.get("http://localhost:5001/api/course").then((response) => {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/course`).then((response) => {
             setCourses(response.data.courses || []);
         });
     }, []);
@@ -38,7 +38,7 @@ export default function CollegePredictor() {
         if (form.examId) {
             axios
                 .get(
-                    `http://localhost:5001/api/predictor-exam-sessions?examId=${form.examId}`
+                    `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/predictor-exam-sessions?examId=${form.examId}`
                 )
                 .then((response) => {
                     setSessions(response.data.examSessions || []);

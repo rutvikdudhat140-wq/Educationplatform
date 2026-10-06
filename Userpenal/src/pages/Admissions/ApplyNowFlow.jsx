@@ -54,7 +54,7 @@ const ApplyNowFlow = () => {
 
   useEffect(() => {
     if (collegeId && !courseId) {
-      axios.get(`http://localhost:5001/api/course?collegeId=${collegeId}`).then(res => {
+      axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/course?collegeId=${collegeId}`).then(res => {
         const courses = res.data.courses || res.data.data || [];
         if (courses.length > 0) {
           setCourseId(courses[0]._id);
@@ -97,9 +97,9 @@ const ApplyNowFlow = () => {
 
   const fetchDetails = async () => {
     try {
-      const promises = [axios.get(`http://localhost:5001/api/college/${collegeId}`)];
+      const promises = [axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/college/${collegeId}`)];
       if (courseId) {
-        promises.push(axios.get(`http://localhost:5001/api/course/${courseId}`));
+        promises.push(axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/course/${courseId}`));
       }
       
       const resList = await Promise.all(promises);
@@ -124,7 +124,7 @@ const ApplyNowFlow = () => {
   const fetchAdmissionStatus = async () => {
     if (!admissionId) return;
     try {
-      const res = await axios.get(`http://localhost:5001/api/admissions/${admissionId}`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/${admissionId}`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       setAdmissionData(res.data.data || res.data.admission);
@@ -281,7 +281,7 @@ const ApplyNowFlow = () => {
   const handleCheckEligibility = async () => {
     setCheckingEligibility(true);
     try {
-      const res = await axios.post('http://localhost:5001/api/admissions/eligibility', {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/eligibility`, {
         collegeId,
         courseId,
         tenthPercentage: formData.tenthPercentage,
@@ -514,7 +514,7 @@ const ApplyNowFlow = () => {
     try {
       const payload = { ...formData, ...values, collegeId, courseId, admissionYear: new Date().getFullYear() };
       
-      const res = await axios.post('http://localhost:5001/api/admissions/draft', payload, {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/draft`, payload, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
 
@@ -699,7 +699,7 @@ const ApplyNowFlow = () => {
       
       try {
         toast.info(`Uploading ${doc.name}...`);
-        await axios.put(`http://localhost:5001/api/admissions/${admissionId}/documents`, formPayload, {
+        await axios.put(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/${admissionId}/documents`, formPayload, {
           headers: { 
             Authorization: `Bearer ${getToken()}`,
             'Content-Type': 'multipart/form-data'
@@ -791,7 +791,7 @@ const ApplyNowFlow = () => {
 
     try {
       toast.info("Submitting application directly to college admissions...");
-      await axios.put(`http://localhost:5001/api/admissions/${admissionId}/submit`, null, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/${admissionId}/submit`, null, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       fetchAdmissionStatus();
@@ -1026,7 +1026,7 @@ const ApplyNowFlow = () => {
     try {
       const token = localStorage.getItem('userToken');
       const headers = { Authorization: `Bearer ${token}` };
-      const res = await axios.post(`http://localhost:5001/api/admissions/${admissionId}/calculate-fee`, null, { headers });
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/${admissionId}/calculate-fee`, null, { headers });
       if (res.data.success) {
         setAdmissionData(prev => ({ ...prev, ...res.data.data }));
         nextStep();
@@ -1086,7 +1086,7 @@ const ApplyNowFlow = () => {
     try {
       const token = localStorage.getItem('userToken');
       const headers = { Authorization: `Bearer ${token}` };
-      const res = await axios.post(`http://localhost:5001/api/admissions/${admissionId}/payments`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/${admissionId}/payments`, {
         amount: admissionData?.remainingAmount || 50000,
         paymentMethod: 'UPI'
       }, { headers });

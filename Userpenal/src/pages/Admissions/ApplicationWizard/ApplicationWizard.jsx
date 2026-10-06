@@ -47,7 +47,7 @@ export default function ApplicationWizard() {
   const loadApplication = async () => {
     try {
       const token = localStorage.getItem('userToken');
-      const res = await axios.get(`http://localhost:5001/api/admissions/${id}`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
@@ -66,7 +66,7 @@ export default function ApplicationWizard() {
       const token = localStorage.getItem('userToken');
       const updatedData = { ...formData, ...stepData, currentStep: isNext ? currentStepIndex + 2 : currentStepIndex + 1 };
 
-      const endpoint = `http://localhost:5001/api/admissions/draft`;
+      const endpoint = `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/admissions/draft`;
 
       const res = await axios.post(endpoint, updatedData, {
         headers: { Authorization: `Bearer ${token}` }

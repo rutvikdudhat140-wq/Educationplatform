@@ -141,12 +141,12 @@ const CounsellingGuidanceForm = () => {
       const [requestRes, collegeRes, courseRes, examRes] =
         await Promise.all([
           axios.get(
-            `http://localhost:5001/api/counselling/${id}`,
+            `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/counselling/${id}`,
             getAuthHeaders()
           ),
-          axios.get(`http://localhost:5001/api/college`),
-          axios.get(`http://localhost:5001/api/course`),
-          axios.get(`http://localhost:5001/api/exam`)
+          axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/college`),
+          axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/course`),
+          axios.get(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/exam`)
         ]);
 
       const data = requestRes.data.request;
@@ -203,7 +203,7 @@ const CounsellingGuidanceForm = () => {
   const handleSave = async () => {
     try {
       await axios.put(
-        `http://localhost:5001/api/counselling/${id}/guidance`,
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/counselling/${id}/guidance`,
         {
           collegeSuggestions: collegeSuggestions.map((item) => ({
             collegeId: item._id,
@@ -240,7 +240,7 @@ const CounsellingGuidanceForm = () => {
 
     try {
       await axios.put(
-        `http://localhost:5001/api/counselling/${id}/complete`,
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`}/counselling/${id}/complete`,
         null,
         getAuthHeaders()
       );

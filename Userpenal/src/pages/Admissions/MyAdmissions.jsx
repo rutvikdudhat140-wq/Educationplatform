@@ -28,7 +28,7 @@ export default function MyAdmissions() {
     if (!token) { navigate("/login"); return; }
     setLoading(true);
     axios
-      .get("http://localhost:5001/api/admissions/my", {
+      .get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/admissions/my`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setAdmissions(res.data.admissions || []))

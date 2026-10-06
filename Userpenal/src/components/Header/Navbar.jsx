@@ -262,7 +262,7 @@ const Navbar = () => {
             try {
                 const token = localStorage.getItem("userToken");
                 const res = await axios.get(
-                    "http://localhost:5001/api/education-alerts/unread-count",
+                    `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/education-alerts/unread-count`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -304,7 +304,7 @@ const Navbar = () => {
         const token = localStorage.getItem("userToken");
         if (token) {
             try {
-                await axios.post("http://localhost:5001/api/user/logout", null, {
+                await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/user/logout`, null, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
             } catch {

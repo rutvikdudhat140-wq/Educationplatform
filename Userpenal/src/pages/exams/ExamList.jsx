@@ -59,7 +59,7 @@ export default function ExamList() {
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
     useEffect(() => {
-        axios.get("http://localhost:5001/api/exam").then((res) => {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}/exam`).then((res) => {
             setExams(res.data.exams || []);
         });
     }, []);

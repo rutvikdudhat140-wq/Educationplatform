@@ -62,14 +62,14 @@ function getNearestCity(lat, lon) {
 }
 
 export function getLocation() {
-  return localStorage.getItem("user_selected_city") || "";
+  return localStorage.getItem("user_city_v2") || "";
 }
 
 export function setLocation(city) {
   if (city) {
-    localStorage.setItem("user_selected_city", city);
+    localStorage.setItem("user_city_v2", city);
   } else {
-    localStorage.removeItem("user_selected_city");
+    localStorage.removeItem("user_city_v2");
   }
   window.dispatchEvent(
     new CustomEvent("user_location_changed", { detail: { city } })
@@ -90,9 +90,9 @@ export default function LocationSelector({ triggerClassName = "" }) {
     window.addEventListener("user_location_changed", handleLocationChange);
 
     // Auto-detect location on initial mount if not already saved
-    if (!getLocation()) {
-      handleDetectLocation(true);
-    }
+    // if (!getLocation()) {
+    //   handleDetectLocation(true);
+    // }
 
     return () => {
       window.removeEventListener("user_location_changed", handleLocationChange);
